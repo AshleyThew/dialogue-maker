@@ -3,8 +3,7 @@ import { MouseEvent } from "react";
 import { SelectingState, State, Action, InputType, ActionEvent, DragCanvasState } from "@projectstorm/react-canvas-core";
 import { DiagramEngine, PortModel } from "@projectstorm/react-diagrams";
 
-import { DragDiagramItemsState } from "./DragDiagramItemsState";
-import { DragNewLinkState } from "@projectstorm/react-diagrams";
+import { DragNewLinkState, DragDiagramItemsState } from "@projectstorm/react-diagrams";
 
 export class CustomDiagramState extends State<DiagramEngine> {
 	dragCanvas: DragCanvasState;
