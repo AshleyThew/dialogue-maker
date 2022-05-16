@@ -3,9 +3,10 @@ import { MouseEvent } from "react";
 import { SelectingState, State, Action, InputType, ActionEvent, DragCanvasState } from "@projectstorm/react-canvas-core";
 import { DiagramEngine, PortModel } from "@projectstorm/react-diagrams";
 
-import { DragNewLinkState, DragDiagramItemsState } from "@projectstorm/react-diagrams";
+import { DragNewLinkState } from "@projectstorm/react-diagrams";
+import { DragDiagramItemsState } from "./DragDiagramItemsState";
 
-export class CustomDiagramState extends State<DiagramEngine> {
+export class DialogueDiagramState extends State<DiagramEngine> {
 	dragCanvas: DragCanvasState;
 	dragNewLink: DragNewLinkState;
 	dragItems: DragDiagramItemsState;
@@ -16,7 +17,7 @@ export class CustomDiagramState extends State<DiagramEngine> {
 		});
 		this.childStates = [new SelectingState()];
 		this.dragCanvas = new DragCanvasState();
-		this.dragNewLink = new DragNewLinkState();
+		this.dragNewLink = new DragNewLinkState({ allowLooseLinks: false }); // Do not allow dangling links
 		this.dragItems = new DragDiagramItemsState();
 
 		// determine what was clicked on

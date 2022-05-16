@@ -1,10 +1,9 @@
 import { MouseEvent } from "react";
 
 import { Action, ActionEvent, DragCanvasState, InputType, SelectingState, State } from "@projectstorm/react-canvas-core";
+import { DialogueMoveItemsState } from "./DialogueMoveItemsState";
 
-import { MoveItemsState } from "./MoveItemsState";
-
-export class CustomState extends State {
+export class DialogueDefaultState extends State {
 	constructor() {
 		super({
 			name: "default",
@@ -24,7 +23,7 @@ export class CustomState extends State {
 					if (!element) {
 						this.transitionWithEvent(new DragCanvasState(), event);
 					} else {
-						this.transitionWithEvent(new MoveItemsState(), event);
+						this.transitionWithEvent(new DialogueMoveItemsState(), event);
 					}
 				},
 			})

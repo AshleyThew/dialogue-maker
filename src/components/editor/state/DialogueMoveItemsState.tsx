@@ -12,13 +12,13 @@ import {
 } from "@projectstorm/react-canvas-core";
 import { Point } from "@projectstorm/geometry";
 
-export class MoveItemsState<E extends CanvasEngine = CanvasEngine> extends AbstractDisplacementState<E> {
+export class DialogueMoveItemsState<E extends CanvasEngine = CanvasEngine> extends AbstractDisplacementState<E> {
 	initialPositions: {
 		[id: string]: {
 			point: Point;
 			item: BasePositionModel;
 		};
-	};
+	} = {};
 
 	constructor() {
 		super({
