@@ -1,5 +1,5 @@
 import { ZoomCanvasAction } from "@projectstorm/react-canvas-core";
-import createEngine, { DiagramModel, DiagramEngine } from "@projectstorm/react-diagrams";
+import createEngine, { DiagramModel, DiagramEngine, DefaultDiagramState } from "@projectstorm/react-diagrams";
 import { DialogueDiagramState } from "./components/editor/state/DialogueDiagramState";
 import { DialogueFactory, NodeFactories } from "./components/node/";
 
@@ -40,7 +40,14 @@ export class Application {
 
 		this.activeModel.addAll(node1, node2);
 
-		this.diagramEngine.getStateMachine().setState(new DialogueDiagramState());
+		this.diagramEngine.getStateMachine().registerListener({
+			stateChanged: (event) => {
+				if (event.newState instanceof DefaultDiagramState) {
+					this.diagramEngine.getStateMachine().setState(new DialogueDiagramState());
+				}
+			},
+		});
+
 		this.diagramEngine.getActionEventBus().registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 	}
 

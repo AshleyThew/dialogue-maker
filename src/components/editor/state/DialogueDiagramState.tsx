@@ -3,12 +3,12 @@ import { MouseEvent } from "react";
 import { SelectingState, State, Action, InputType, ActionEvent, DragCanvasState } from "@projectstorm/react-canvas-core";
 import { DiagramEngine, PortModel } from "@projectstorm/react-diagrams";
 
-import { DragNewLinkState } from "@projectstorm/react-diagrams";
 import { DragDiagramItemsState } from "./DragDiagramItemsState";
+import { DialogueDragNewLinkState } from "./DialogueNewLinkState";
 
 export class DialogueDiagramState extends State<DiagramEngine> {
 	dragCanvas: DragCanvasState;
-	dragNewLink: DragNewLinkState;
+	dragNewLink: DialogueDragNewLinkState;
 	dragItems: DragDiagramItemsState;
 
 	constructor() {
@@ -17,7 +17,7 @@ export class DialogueDiagramState extends State<DiagramEngine> {
 		});
 		this.childStates = [new SelectingState()];
 		this.dragCanvas = new DragCanvasState();
-		this.dragNewLink = new DragNewLinkState({ allowLooseLinks: false }); // Do not allow dangling links
+		this.dragNewLink = new DialogueDragNewLinkState(); // Do not allow dangling links
 		this.dragItems = new DragDiagramItemsState();
 
 		// determine what was clicked on
@@ -33,6 +33,7 @@ export class DialogueDiagramState extends State<DiagramEngine> {
 					if (!element) {
 						this.transitionWithEvent(this.dragCanvas, event);
 					} else {
+						console.log(element);
 						// initiate dragging a new link
 						if (element instanceof PortModel) {
 							this.transitionWithEvent(this.dragNewLink, event);

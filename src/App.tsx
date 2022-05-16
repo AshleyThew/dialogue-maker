@@ -1,10 +1,10 @@
-import './App.css';
-import { Application } from './Application';
-import { BodyWidget } from './components/BodyWidget';
+import "./App.css";
+import { Application } from "./Application";
+import { BodyWidget } from "./components/BodyWidget";
+
+const app = new Application();
 
 function App() {
-	var app = new Application();
-
 	return (
 		<div className="App">
 			<BodyWidget app={app}></BodyWidget>
