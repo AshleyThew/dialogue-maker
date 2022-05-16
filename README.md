@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# dialogue-maker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A dialogue designer made with typescript
 
 ## Available Scripts
 
