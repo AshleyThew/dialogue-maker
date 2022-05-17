@@ -37,8 +37,13 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 		});
 		this.portsOut = [];
 		this.portsIn = [];
-		_.times(this.options.inputs, (i) => this.addInPort("❯", i));
-		_.times(this.options.outputs, (i) => this.addOutPort("❯", i));
+		_.range(0, this.options.inputs).forEach((i) => {
+			this.addInPort("❯");
+		});
+		_.range(0, this.options.outputs).forEach((i) => {
+			this.addOutPort("❯");
+		});
+		// _.times(this.options.outputs, (i) => this.addOutPort("❯", i));
 	}
 
 	doClone(lookupTable: {}, clone: any): void {
@@ -70,32 +75,25 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 		return port;
 	}
 
-	addInPort(label: string, id: string = undefined, index: number = undefined): DefaultPortModel {
-		if (!id) {
-			id = label;
-		}
+	addInPort(label: string): DefaultPortModel {
 		const p = new DefaultPortModel({
 			in: true,
-			name: "in-" + index,
+			name: `${new Date().getTime()}`,
 			label: label,
 			alignment: PortModelAlignment.LEFT,
 		});
-		if (!index) {
-			this.portsIn.splice(index, 0, p);
-		}
+		this.portsIn.push(p);
 		return this.addPort(p);
 	}
 
-	addOutPort(label: string, id: string = undefined, index: number = undefined): DefaultPortModel {
+	addOutPort(label: string, index?: number): DefaultPortModel {
 		const p = new DefaultPortModel({
 			in: false,
-			name: "out-" + index,
+			name: `${new Date().getTime()}`,
 			label: label,
 			alignment: PortModelAlignment.RIGHT,
 		});
-		if (!index) {
-			this.portsOut.splice(index, 0, p);
-		}
+		this.portsOut.push(p);
 		return this.addPort(p);
 	}
 

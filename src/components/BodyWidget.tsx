@@ -3,7 +3,7 @@ import { Application } from "../Application";
 import { TrayItemWidget } from "./TrayItemWidget";
 import { NodeFactories } from "./node/";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
-import { DemoCanvasWidget } from "./DemoCanvasWidget";
+import { DialogueSidebar } from "./DialogueSidebar";
 import styled from "@emotion/styled";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "./node/base/";
 
@@ -78,9 +78,9 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 							event.preventDefault();
 						}}
 					>
-						<DemoCanvasWidget>
+						<DialogueSidebar>
 							<CanvasWidget engine={this.props.app.getDiagramEngine()} />
-						</DemoCanvasWidget>
+						</DialogueSidebar>
 					</S.Layer>
 				</S.Content>
 			</S.Body>

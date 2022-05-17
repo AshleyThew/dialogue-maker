@@ -10,8 +10,7 @@ export type BaseNodeProps<T> = {
 	node: T;
 	engine: DiagramEngine;
 };
-
-namespace S {
+export namespace S {
 	export const Node = styled.div<{ background: string; selected: boolean }>`
 		background-color: ${(p) => p.background};
 		border-radius: 5px;
@@ -27,6 +26,7 @@ namespace S {
 		display: flex;
 		white-space: nowrap;
 		margin: auto;
+		justify-content: center;
 		width: 90%;
 	`;
 
@@ -38,20 +38,30 @@ namespace S {
 		width: 100%;
 	`;
 
-	export const PortIn = styled.td`
+	export const PortIn = styled.div<{ engine?: DiagramEngine }>`
 		display: inline-block;
 		position: relative;
 		left: -18px;
 		margin-right: -18px;
+		height: 17px;
 		background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
+
+		&:hover .port div {
+			background: rgba(191, 255, 0, 0.644);
+		}
 	`;
 
-	export const PortOut = styled.td`
+	export const PortOut = styled.div<{ engine?: DiagramEngine }>`
 		display: inline-block;
 		position: relative;
 		right: -18px;
 		margin-left: -18px;
+		height: 17px;
 		background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
+
+		&:hover .port div {
+			background: "rgb(192, 255, 0)";
+		}
 	`;
 
 	export const NodeContent = styled.td`
@@ -85,31 +95,47 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 				selected={this.props.node.isSelected()}
 				background={this.props.node.getOptions().color}
 			>
-				<S.Title>
-					<EditableInput
-						style={{ width: "100%" }}
-						value={this.props.node.getOptions().title}
-						setValue={(value) => (this.props.node.getOptions().title = value)}
-					/>
-				</S.Title>
+				<S.Title style={{ display: "flex", alignItems: "center" }}>{this.renderHeader()}</S.Title>
 				<table>
 					<tbody>
 						<tr>
-							{this.props.node.getInPorts().length && (
-								<S.PortIn>
-									<S.PortsContainer>{_.map(this.props.node.getInPorts(), this.generatePort)}</S.PortsContainer>
-								</S.PortIn>
-							)}
+							<td style={{ verticalAlign: "sub" }}>{this.renderInPorts()}</td>
 							<S.NodeContent>{children}</S.NodeContent>
-							{this.props.node.getOutPorts().length && (
-								<S.PortOut>
-									<S.PortsContainer>{_.map(this.props.node.getOutPorts(), this.generatePort)}</S.PortsContainer>
-								</S.PortOut>
-							)}
+							<td style={{ verticalAlign: "sub" }}>{this.renderOutPorts()}</td>
 						</tr>
 					</tbody>
 				</table>
 			</S.Node>
+		);
+	}
+
+	renderHeader(): JSX.Element {
+		return (
+			<EditableInput
+				style={{ width: "100%" }}
+				value={this.props.node.getOptions().title}
+				setValue={(value) => (this.props.node.getOptions().title = value)}
+			/>
+		);
+	}
+
+	renderInPorts(): JSX.Element {
+		return (
+			this.props.node.getInPorts().length && (
+				<S.PortIn engine={this.props.engine}>
+					<S.PortsContainer>{_.map(this.props.node.getInPorts(), this.generatePort)}</S.PortsContainer>
+				</S.PortIn>
+			)
+		);
+	}
+
+	renderOutPorts(): JSX.Element {
+		return (
+			this.props.node.getOutPorts().length && (
+				<S.PortOut engine={this.props.engine}>
+					<S.PortsContainer>{_.map(this.props.node.getOutPorts(), this.generatePort)}</S.PortsContainer>
+				</S.PortOut>
+			)
 		);
 	}
 }

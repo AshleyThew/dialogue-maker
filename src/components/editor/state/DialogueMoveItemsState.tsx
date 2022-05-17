@@ -31,12 +31,13 @@ export class DialogueMoveItemsState<E extends CanvasEngine = CanvasEngine> exten
 					const target = event.event.target as HTMLElement | null;
 					// find the first parent element that is allowed to be dragged (an element can be marked as non-draggable by specifying the "data-no-drag" attribute)
 					let parentElement = target;
-					while (parentElement && !parentElement.hasAttribute("data-no-drag")) {
+					while (parentElement && !parentElement.hasAttribute("data-no-drag") && !(parentElement instanceof HTMLInputElement)) {
 						parentElement = parentElement.parentElement;
 					}
 
 					// if we could not find any draggable parent element then reject the drag
-					if (parentElement && parentElement.hasAttribute("data-no-drag")) {
+					if (parentElement && (parentElement.hasAttribute("data-no-drag") || parentElement instanceof HTMLInputElement)) {
+						this.engine.getModel().clearSelection();
 						this.eject();
 						return;
 					}

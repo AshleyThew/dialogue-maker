@@ -1,8 +1,8 @@
-import * as React from 'react';
-import styled from '@emotion/styled';
-import { css, Global } from '@emotion/react';
+import * as React from "react";
+import styled from "@emotion/styled";
+import { css, Global } from "@emotion/react";
 
-export interface DemoCanvasWidgetProps {
+export interface DialogueSidebarProps {
 	color?: string;
 	background?: string;
 	children?: any;
@@ -56,15 +56,12 @@ namespace S {
 	`;
 }
 
-export class DemoCanvasWidget extends React.Component<DemoCanvasWidgetProps> {
+export class DialogueSidebar extends React.Component<DialogueSidebarProps> {
 	render() {
 		return (
 			<>
 				<Global styles={S.Expand} />
-				<S.Container
-					background={this.props.background || 'rgb(60, 60, 60)'}
-					color={this.props.color || 'rgba(255,255,255, 0.05)'}
-				>
+				<S.Container background={this.props.background || "rgb(60, 60, 60)"} color={this.props.color || "rgba(255,255,255, 0.05)"}>
 					{this.props.children}
 				</S.Container>
 			</>

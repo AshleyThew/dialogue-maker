@@ -1,9 +1,35 @@
+import * as _ from "lodash";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
 
+export interface OptionProps {
+	conditions?: string[];
+	args?: [string[]];
+	text: string;
+}
+
+export class Option implements OptionProps {
+	conditions?: string[];
+	args?: [string[]];
+	text: string;
+
+	constructor(conditions?: any, args?: any, text?: any) {
+		this.conditions = conditions || [""];
+		this.args = args || [];
+		this.text = text || "";
+	}
+
+	serialize(): any {
+		return {
+			conditions: this.conditions,
+			args: this.args,
+			text: this.text,
+		};
+	}
+}
 export interface OptionNodeModelOptions extends BaseNodeModelOptions {
-	text?: string;
+	options?: Option[];
 }
 
 export interface OptionNodeModelGenerics extends BaseNodeModelGenerics<OptionNodeModelOptions> {}
@@ -11,19 +37,20 @@ export interface OptionNodeModelGenerics extends BaseNodeModelGenerics<OptionNod
 export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 	constructor(name: string, text: string);
 	constructor(options?: OptionNodeModelOptions);
-	constructor(options: any = {}, text?: string) {
+	constructor(options: any = {}, text?: string, defaultOptions?: Option[]) {
 		if (typeof options === "string") {
 			options = {
 				title: options,
 				text: text,
+				options: defaultOptions,
 			};
 		}
 		super({
 			type: "option",
 			title: "Select an option.",
-			text: "",
 			inputs: 1,
-			outputs: 1,
+			outputs: 2,
+			options: defaultOptions || [new Option()],
 			...options,
 		});
 	}
@@ -34,13 +61,17 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
-		this.options.text = event.data.text;
+		this.options.options = event.data.options.map((option) => {
+			return new Option(option.conditions, option.args, option.text);
+		});
 	}
 
 	serialize(): any {
 		return {
 			...super.serialize(),
-			text: this.options.text,
+			options: _.map(this.options?.options, (option) => {
+				return option.serialize();
+			}),
 		};
 	}
 
@@ -50,9 +81,5 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 
 	getOutPorts(): DefaultPortModel[] {
 		return this.portsOut;
-	}
-
-	getText(): string {
-		return this.options.text;
 	}
 }

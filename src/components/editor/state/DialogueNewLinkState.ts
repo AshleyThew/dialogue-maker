@@ -22,6 +22,7 @@ export class DialogueDragNewLinkState extends AbstractDisplacementState<DiagramE
 						this.eject();
 						return;
 					}
+
 					this.link.setSelected(true);
 					this.link.setSourcePort(this.port);
 					this.engine.getModel().addLink(this.link);
@@ -46,6 +47,7 @@ export class DialogueDragNewLinkState extends AbstractDisplacementState<DiagramE
 							this.link.setTargetPort(model);
 							model.reportPosition();
 							this.engine.repaintCanvas();
+							this.engine.getModel().clearSelection();
 							return;
 						} else {
 							this.link.remove();

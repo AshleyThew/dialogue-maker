@@ -8,7 +8,7 @@ export class Application {
 	protected diagramEngine: DiagramEngine;
 
 	constructor() {
-		this.diagramEngine = createEngine({ registerDefaultDeleteItemsAction: false, registerDefaultZoomCanvasAction: false });
+		this.diagramEngine = createEngine({ registerDefaultZoomCanvasAction: false });
 
 		this.newModel();
 	}
@@ -40,13 +40,17 @@ export class Application {
 
 		this.activeModel.addAll(node1, node2);
 
+		const state = new DialogueDiagramState();
+
 		this.diagramEngine.getStateMachine().registerListener({
 			stateChanged: (event) => {
 				if (event.newState instanceof DefaultDiagramState) {
-					this.diagramEngine.getStateMachine().setState(new DialogueDiagramState());
+					this.diagramEngine.getStateMachine().setState(state);
 				}
+				//console.log(event.newState);
 			},
 		});
+		this.diagramEngine.getStateMachine().setState(state);
 
 		this.diagramEngine.getActionEventBus().registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 	}

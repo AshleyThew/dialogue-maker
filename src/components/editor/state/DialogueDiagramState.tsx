@@ -1,7 +1,8 @@
 import { MouseEvent } from "react";
+import * as _ from "lodash";
 
 import { SelectingState, State, Action, InputType, ActionEvent, DragCanvasState } from "@projectstorm/react-canvas-core";
-import { DiagramEngine, PortModel } from "@projectstorm/react-diagrams";
+import { DefaultPortModel, DiagramEngine, PortModel } from "@projectstorm/react-diagrams";
 
 import { DragDiagramItemsState } from "./DragDiagramItemsState";
 import { DialogueDragNewLinkState } from "./DialogueNewLinkState";
@@ -33,9 +34,16 @@ export class DialogueDiagramState extends State<DiagramEngine> {
 					if (!element) {
 						this.transitionWithEvent(this.dragCanvas, event);
 					} else {
-						console.log(element);
 						// initiate dragging a new link
 						if (element instanceof PortModel) {
+							var port = (element as DefaultPortModel) || undefined;
+							if (port && port.getOptions().in) {
+								_.forEach(port.getLinks(), (link) => {
+									link.remove();
+									this.engine.repaintCanvas();
+								});
+								return;
+							}
 							this.transitionWithEvent(this.dragNewLink, event);
 						}
 						// move the items (and potentially link points)

@@ -17,17 +17,52 @@ namespace S {
 		text-align: center;
 		border-radius: 5px;
 	`;
+
+	export const Select = styled.select`
+		flex-grow: 1;
+		padding: 5px 5px;
+		border: none;
+		border-radius: 5px;
+	`;
 }
 
-export const EditableInput = (props: { value: string; setValue; style?: React.CSSProperties }) => {
+interface EditableInputProps {
+	value: string;
+	setValue: any;
+	style?: React.CSSProperties;
+	minLength?: number;
+	placeholder?: string;
+	pattern?: RegExp;
+	number?: boolean;
+}
+
+export const EditableInput = (props: EditableInputProps) => {
 	return (
 		<S.Input
 			data-no-drag
-			style={props.style}
+			style={{ ...props.style, maxWidth: Math.max(props.value.length + 1, props.minLength || 5) + "ch", textAlign: "center" }}
 			defaultValue={props.value}
-			size={props.value.length + 1}
+			placeholder={props.placeholder}
+			size={Math.max(props.value.length + 1, props.minLength || 5)}
+			onKeyDown={(e) => {
+				if (e.key.length === 1 && props.pattern && !props.pattern.test(e.key)) {
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
+			}}
 			onChange={(e) => {
-				e.target.size = Math.max(e.target.value.length + 1, 5);
+				if (props.number) {
+					const {
+						target: { value },
+					} = e;
+					if (value.length > 0) {
+						const formatNumber = parseInt(value.replace(/,/g, "")).toLocaleString();
+						e.target.value = formatNumber;
+					}
+				}
+				e.target.size = Math.max(e.target.value.length + 1, props.minLength || 5);
+				e.target.style.maxWidth = e.target.size + "ch";
 			}}
 			onBlur={(e) => {
 				props.setValue(e.target.value);
@@ -36,18 +71,27 @@ export const EditableInput = (props: { value: string; setValue; style?: React.CS
 	);
 };
 
-export const EditableText = (props: { value: string; setValue; style?: React.CSSProperties }) => {
+interface EditableTextProps {
+	value: string;
+	setValue: any;
+	style?: React.CSSProperties;
+	minLength?: number;
+	placeholder?: string;
+}
+
+export const EditableText = (props: EditableTextProps) => {
 	return (
 		<S.TextArea
 			data-no-drag
 			defaultValue={props.value}
+			placeholder={props.placeholder}
 			style={{
 				resize: "none",
-				width: Math.max(...props.value.split("\n").map((line) => line.length + 2), 5) + "ch",
+				width: Math.max(...props.value.split("\n").map((line) => line.length + 2), props.minLength || 5) + "ch",
 			}}
 			onChange={(e) => {
 				var lines = e.target.value.split("\n");
-				e.target.style.width = Math.max(...lines.map((line) => line.length + 2), 5) + "ch";
+				e.target.style.width = Math.max(...lines.map((line) => line.length + 2), props.minLength || 5) + "ch";
 			}}
 			onBlur={(e) => {
 				props.setValue(e.target.value);
