@@ -9,11 +9,10 @@ export interface DialogueContextInterface {
 
 export const DialogueContext = React.createContext<DialogueContextInterface | null>(null);
 
-// Provider in your app
 const conditions = [
 	{ condition: "", variables: [] },
 	{ condition: "hasItem", variables: [{ source: "items", type: "list" }, { type: "number" }] },
-	{ condition: "hasItemTake", variables: [{ source: "items", type: "list" }, { type: "number" }] },
+	{ condition: "hasItemTake", variables: [{ source: "items", type: "list" }, { type: "number" }], actionable: true },
 	{ condition: "other", variables: [] },
 ] as ConditionProps[];
 

@@ -47,7 +47,7 @@ export namespace S {
 		background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
 
 		&:hover .port div {
-			background: rgba(191, 255, 0, 0.644);
+			background: rgb(108, 145, 0);
 		}
 	`;
 

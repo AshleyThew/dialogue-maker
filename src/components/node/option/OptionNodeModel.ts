@@ -2,30 +2,22 @@ import * as _ from "lodash";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
+import { Conditional, ConditionalProps } from "../../editor/Condition";
 
-export interface OptionProps {
-	conditions?: string[];
-	args?: [string[]];
+export interface OptionProps extends ConditionalProps {
 	text: string;
 }
 
-export class Option implements OptionProps {
-	conditions?: string[];
-	args?: [string[]];
+export class Option extends Conditional implements OptionProps {
 	text: string;
 
 	constructor(conditions?: any, args?: any, text?: any) {
-		this.conditions = conditions || [""];
-		this.args = args || [];
+		super(conditions, args);
 		this.text = text || "";
 	}
 
 	serialize(): any {
-		return {
-			conditions: this.conditions,
-			args: this.args,
-			text: this.text,
-		};
+		return { ...super.serialize(), text: this.text };
 	}
 }
 export interface OptionNodeModelOptions extends BaseNodeModelOptions {
@@ -49,7 +41,7 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 			type: "option",
 			title: "Select an option.",
 			inputs: 1,
-			outputs: 2,
+			outputs: 1,
 			options: defaultOptions || [new Option()],
 			...options,
 		});

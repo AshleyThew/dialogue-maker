@@ -38,12 +38,11 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 		this.portsOut = [];
 		this.portsIn = [];
 		_.range(0, this.options.inputs).forEach((i) => {
-			this.addInPort("❯");
+			this.addInPort("❯", i);
 		});
 		_.range(0, this.options.outputs).forEach((i) => {
-			this.addOutPort("❯");
+			this.addOutPort("❯", i);
 		});
-		// _.times(this.options.outputs, (i) => this.addOutPort("❯", i));
 	}
 
 	doClone(lookupTable: {}, clone: any): void {
@@ -75,10 +74,11 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 		return port;
 	}
 
-	addInPort(label: string): DefaultPortModel {
+	addInPort(label: string, index?: number): DefaultPortModel {
+		var id = `in-${new Date().getTime()} ${index || ""}`;
 		const p = new DefaultPortModel({
 			in: true,
-			name: `${new Date().getTime()}`,
+			name: id,
 			label: label,
 			alignment: PortModelAlignment.LEFT,
 		});
@@ -87,9 +87,10 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 	}
 
 	addOutPort(label: string, index?: number): DefaultPortModel {
+		var id = `out-${new Date().getTime()}${index || ""}`;
 		const p = new DefaultPortModel({
 			in: false,
-			name: `${new Date().getTime()}`,
+			name: id,
 			label: label,
 			alignment: PortModelAlignment.RIGHT,
 		});
