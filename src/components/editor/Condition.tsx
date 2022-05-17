@@ -51,7 +51,7 @@ export namespace C {
 	`;
 
 	export const Plus = styled.span`
-		color: #0cd10c;
+		color: #02ff02;
 		margin-right: 2px;
 
 		cursor: pointer;

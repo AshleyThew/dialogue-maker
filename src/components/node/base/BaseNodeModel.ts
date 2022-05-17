@@ -5,6 +5,7 @@ import { BasePositionModelOptions, DeserializeEvent } from "@projectstorm/react-
 
 export interface BaseNodeModelOptions extends BasePositionModelOptions {
 	title?: string;
+	editableTitle?: boolean;
 	color?: string;
 	inputs?: number;
 	outputs?: number;

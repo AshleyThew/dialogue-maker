@@ -34,12 +34,15 @@ interface EditableInputProps {
 	placeholder?: string;
 	pattern?: RegExp;
 	number?: boolean;
+	editable?: boolean;
 }
 
 export const EditableInput = (props: EditableInputProps) => {
+	var disabled = props.editable !== undefined && !props.editable;
 	return (
 		<S.Input
 			data-no-drag
+			disabled={disabled}
 			style={{ ...props.style, maxWidth: Math.max(props.value.length + 1, props.minLength || 5) + "ch", textAlign: "center" }}
 			defaultValue={props.value}
 			placeholder={props.placeholder}

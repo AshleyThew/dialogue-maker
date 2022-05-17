@@ -112,9 +112,10 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 	renderHeader(): JSX.Element {
 		return (
 			<EditableInput
-				style={{ width: "100%" }}
+				style={{ width: "100%", color: "black" }}
 				value={this.props.node.getOptions().title}
 				setValue={(value) => (this.props.node.getOptions().title = value)}
+				editable={this.props.node.getOptions().editableTitle}
 			/>
 		);
 	}
