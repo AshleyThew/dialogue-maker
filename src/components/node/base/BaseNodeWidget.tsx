@@ -99,7 +99,7 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 				<table>
 					<tbody>
 						<tr>
-							<td style={{ verticalAlign: "sub" }}>{this.renderInPorts()}</td>
+							<td style={{ verticalAlign: "top" }}>{this.renderInPorts()}</td>
 							<S.NodeContent>{children}</S.NodeContent>
 							<td style={{ verticalAlign: "sub" }}>{this.renderOutPorts()}</td>
 						</tr>

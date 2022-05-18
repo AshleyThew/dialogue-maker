@@ -44,14 +44,18 @@ interface EditableInputProps {
 
 export const EditableInput = (props: EditableInputProps) => {
 	var disabled = props.editable !== undefined && !props.editable;
+	const getSize = (value) => {
+		return Math.max(value.length + 1, Math.max(props?.placeholder?.length || 0, props.minLength || 5));
+	};
+	const size = getSize(props.value);
 	return (
 		<S.Input
 			data-no-drag
 			disabled={disabled}
-			style={{ ...props.style, maxWidth: Math.max(props.value.length + 1, props.minLength || 5) + "ch", textAlign: "center" }}
+			style={{ ...props.style, maxWidth: size + "ch", textAlign: "center" }}
 			defaultValue={props.value}
 			placeholder={props.placeholder}
-			size={Math.max(props.value.length + 1, props.minLength || 5)}
+			size={size}
 			onKeyDown={(e) => {
 				if (e.key.length === 1 && props.pattern && !props.pattern.test(e.key)) {
 					e.preventDefault();
@@ -69,7 +73,7 @@ export const EditableInput = (props: EditableInputProps) => {
 						e.target.value = formatNumber;
 					}
 				}
-				e.target.size = Math.max(e.target.value.length + 1, props.minLength || 5);
+				e.target.size = getSize(e.target.value);
 				e.target.style.maxWidth = e.target.size + "ch";
 			}}
 			onBlur={(e) => {
@@ -108,7 +112,7 @@ export const EditableText = (props: EditableTextProps) => {
 	);
 };
 
-export const DropdownInput = (props: { values: string[]; setValue: any; value: string; placeholder?: string }) => {
+export const DropdownInput = (props: { values: string[]; setValue: any; value: string; placeholder?: string; minLength?: number }) => {
 	const options = [...props.values.map((option) => ({ label: option, value: option }))];
 	const style = {
 		container: () => ({ display: "inline-block", flexGrow: "0!important" }),
@@ -119,13 +123,13 @@ export const DropdownInput = (props: { values: string[]; setValue: any; value: s
 		control: (provided) => ({ ...provided, minHeight: "0" }),
 		valueContainer: (provided) => ({ ...provided, padding: "0 0" }),
 		selectContainer: (provided) => ({ ...provided, padding: "0 0" }),
-		input: (provided) => ({ ...provided, width: "100%" }),
+		input: (provided) => ({ ...provided, width: "100%", minWidth: Math.max(props?.placeholder?.length || 0, props.minLength || 2) + "ch" }),
 	};
 
 	return (
 		<S.Dropdown
 			styles={style}
-			value={{ label: props.value, value: props.value }}
+			value={props.value ? { label: props.value, value: props.value } : props.value}
 			options={options}
 			placeholder={props.placeholder}
 			onChange={(e) => {

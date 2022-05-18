@@ -93,6 +93,7 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 						<DropdownInput
 							values={selectable}
 							value={option.conditions[cindex]}
+							placeholder="If"
 							setValue={(value: string) => {
 								option.conditions[cindex] = value;
 								const condition: ConditionProps = conditions.find((condition) => condition.condition === value);

@@ -72,6 +72,7 @@ export const ActionBlock = (props: { option: ActionsProps; remove: Function }): 
 						<DropdownInput
 							values={actionKeys}
 							value={option.actions[cindex]}
+							placeholder="If"
 							setValue={(value: string) => {
 								option.actions[cindex] = value;
 								const action: ActionProps = actions.find((action) => action.action === value);

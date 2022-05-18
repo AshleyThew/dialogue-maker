@@ -14,19 +14,44 @@ export const DialogueContext = React.createContext<DialogueContextInterface | nu
 
 const conditions = [
 	{ condition: "", variables: [] },
-	{ condition: "hasItem", variables: [{ source: "items", type: "list" }, { type: "number" }] },
-	{ condition: "takeItem", variables: [{ source: "items", type: "list" }, { type: "number" }], actionable: true },
+	{
+		condition: "hasItem",
+		variables: [
+			{ source: "items", type: "list", placeholder: "item" },
+			{ type: "number", placeholder: "amount" },
+		],
+	},
+	{
+		condition: "takeItem",
+		variables: [
+			{ source: "items", type: "list", placeholder: "item" },
+			{ type: "number", placeholder: "amount" },
+		],
+		actionable: true,
+	},
 	{ condition: "other", variables: [] },
 ] as ConditionProps[];
 
 const actions = [
 	{ action: "", variables: [] },
-	{ action: "takeItem", variables: [{ source: "items", type: "list" }, { type: "number" }] },
-	{ action: "giveItem", variables: [{ source: "items", type: "list" }, { type: "number" }] },
+	{
+		action: "takeItem",
+		variables: [
+			{ source: "items", type: "list", placeholder: "item" },
+			{ type: "number", placeholder: "amount" },
+		],
+	},
+	{
+		action: "giveItem",
+		variables: [
+			{ source: "items", type: "list", placeholder: "item" },
+			{ type: "number", placeholder: "amount" },
+		],
+	},
 ] as ActionProps[];
 
 const sources: { [key: string]: string[] } = {
-	items: ["", "COINS", "FEATHERS", "IRON_BAR", "AIR_RUNE"],
+	items: ["COINS", "FEATHERS", "IRON_BAR", "AIR_RUNE"],
 };
 
 export const defaultDialogueContext: DialogueContextInterface = {
