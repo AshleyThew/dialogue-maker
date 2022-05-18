@@ -1,66 +1,45 @@
 import React from "react";
-import styled from "@emotion/styled";
 import { DialogueContext } from "../DialogueContext";
-import { DropdownInput } from "./Inputs";
 import { VariableEditor, VariableProps } from "./Variables";
+import { C } from "./Condition";
+import { DropdownInput } from "./Inputs";
 
-export interface ConditionProps {
-	condition: string;
+export interface ActionProps {
+	action: string;
 	variables: VariableProps[];
-	actionable?: boolean;
 }
 
-export interface ConditionalProps {
-	conditions?: string[];
+export interface ActionsProps {
+	actions?: string[];
 	args?: [string[]];
 }
 
-export class Conditions implements ConditionalProps {
-	conditions?: string[];
+export class Actions implements ActionsProps {
+	actions?: string[];
 	args?: [string[]];
 
-	constructor(conditions?: any, args?: any) {
-		this.conditions = conditions || [""];
+	constructor(actions?: any, args?: any) {
+		this.actions = actions || [""];
 		this.args = args || [];
 	}
 
 	serialize(): any {
 		return {
-			conditions: this.conditions,
+			actions: this.actions,
 			args: this.args,
 		};
 	}
 }
 
-export namespace C {
-	export const Plus = styled.span`
-		color: #02ff02;
-		margin-right: 2px;
-
-		cursor: pointer;
-	`;
-	export const Delete = styled.span`
-		color: #ee0c0c;
-		margin-right: -10px;
-		position: relative;
-		left: -13px;
-
-		cursor: pointer;
-	`;
-}
-
-export const ConditionBlock = (props: { option: ConditionalProps; remove: Function; allowActionable: boolean }): JSX.Element => {
-	const { keys, conditions } = React.useContext(DialogueContext);
+export const ActionBlock = (props: { option: ActionsProps; remove: Function }): JSX.Element => {
+	const { actionKeys, actions } = React.useContext(DialogueContext);
 	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const { option } = props;
-	var selectable = keys;
-	if (!props.allowActionable) {
-		selectable = conditions.filter((cond) => !cond.actionable).map((cond) => cond.condition);
-	}
+
 	return (
 		<div style={{ display: "table", borderSpacing: "0px" }}>
-			{option.conditions.map((cond, cindex) => {
-				const condition: ConditionProps = conditions.find((condition) => condition.condition === cond);
+			{option.actions.map((act, cindex) => {
+				const action: ActionProps = actions.find((action) => action.action === act);
 				return (
 					<div key={`c${cindex}`} style={{ display: "flex", alignItems: "center" }}>
 						{cindex !== 0 ? (
@@ -68,7 +47,7 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								data-no-drag
 								title="Remove condition"
 								onClick={() => {
-									option.conditions.splice(cindex, 1);
+									option.actions.splice(cindex, 1);
 									option.args.splice(cindex, 1);
 									forceUpdate();
 								}}
@@ -91,17 +70,17 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 							)
 						)}
 						<DropdownInput
-							values={selectable}
-							value={option.conditions[cindex]}
+							values={actionKeys}
+							value={option.actions[cindex]}
 							setValue={(value: string) => {
-								option.conditions[cindex] = value;
-								const condition: ConditionProps = conditions.find((condition) => condition.condition === value);
-								option.args[cindex] = Array(condition.variables.length).fill("");
+								option.actions[cindex] = value;
+								const action: ActionProps = actions.find((action) => action.action === value);
+								option.args[cindex] = Array(action.variables.length).fill("");
 								forceUpdate();
 							}}
 						/>
-						{condition &&
-							condition.variables.map((variable, vindex) => {
+						{action &&
+							action.variables.map((variable, vindex) => {
 								const setValue = (value: string) => {
 									option.args[cindex][vindex] = value;
 									forceUpdate();
@@ -110,12 +89,12 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								var key = `v${vindex}`;
 								return <VariableEditor key={key} variable={variable} value={option.args[cindex][vindex]} setValue={setValue} />;
 							})}
-						{cond.length > 0 && cindex === option.conditions.length - 1 && (
+						{act.length > 0 && cindex === option.actions.length - 1 && (
 							<C.Plus
 								data-no-drag
 								title="Add condition"
 								onClick={(e) => {
-									option.conditions.push("");
+									option.actions.push("");
 									option.args.push([]);
 									forceUpdate();
 								}}

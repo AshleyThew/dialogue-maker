@@ -1,18 +1,18 @@
 import * as React from "react";
 import * as _ from "lodash";
 import { BaseNodeProps, BaseNodeWidget, S } from "../base";
-import { ConditionNodeModel } from "./ConditionNodeModel";
-import { ConditionBlock } from "../../editor/Condition";
+import { ActionNodeModel } from "./ActionNodeModel";
 import { EditableInput } from "../../editor/Inputs";
+import { ActionBlock } from "../../editor/Action";
 
-export interface ConditionNodeProps extends BaseNodeProps<ConditionNodeModel> {}
+export interface ActionNodeProps extends BaseNodeProps<ActionNodeModel> {}
 
-export class ConditionNodeWidget extends BaseNodeWidget<ConditionNodeProps> {
+export class ActionNodeWidget extends BaseNodeWidget<ActionNodeProps> {
 	render() {
 		return super.construct(
 			<>
 				<div style={{ color: "black", display: "flex", justifyContent: "space-between" }}>
-					<ConditionBlock option={this.props.node.getOptions().conditions} remove={undefined} allowActionable={true} />
+					<ActionBlock option={this.props.node.getOptions().actions} remove={undefined} />
 				</div>
 			</>
 		);

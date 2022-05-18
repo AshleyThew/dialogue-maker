@@ -2,33 +2,32 @@ import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
 import { Conditions } from "../../editor/Condition";
+import { Actions } from "../../editor/Action";
 
-export interface ConditionNodeModelOptions extends BaseNodeModelOptions {
-	conditions?: Conditions;
+export interface ActionNodeModelOptions extends BaseNodeModelOptions {
+	actions?: Actions;
 }
 
-export interface ConditionNodeModelGenerics extends BaseNodeModelGenerics<ConditionNodeModelOptions> {}
+export interface ActionNodeModelGenerics extends BaseNodeModelGenerics<ActionNodeModelOptions> {}
 
-export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics> {
-	constructor(options?: ConditionNodeModelOptions);
-	constructor(options: any = {}, defaultConditions?: Conditions[]) {
+export class ActionNodeModel extends BaseNodeModel<ActionNodeModelGenerics> {
+	constructor(options?: ActionNodeModelOptions);
+	constructor(options: any = {}, defaultActions?: Conditions[]) {
 		if (typeof options === "string") {
 			options = {
 				title: options,
-				conditions: defaultConditions,
+				action: defaultActions,
 			};
 		}
 		super({
-			type: "condition",
-			title: "Condition",
+			type: "action",
+			title: "Action",
 			editableTitle: false,
 			inputs: 1,
-			outputs: 0,
-			conditions: defaultConditions || new Conditions(),
+			outputs: 1,
+			actions: defaultActions || new Actions(),
 			...options,
 		});
-		this.addOutPort("true", 0);
-		this.addOutPort("false", 1);
 	}
 
 	doClone(lookupTable: {}, clone: any): void {
@@ -37,13 +36,13 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
-		this.options.conditions = new Conditions(event.data.conditions.conditions, event.data.condition.args);
+		this.options.actions = new Actions(event.data.actions.actions, event.data.actions.args);
 	}
 
 	serialize(): any {
 		return {
 			...super.serialize(),
-			conditions: this.options.conditions.serialize(),
+			actions: this.options.actions.serialize(),
 		};
 	}
 

@@ -2,13 +2,13 @@ import * as _ from "lodash";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
-import { Conditional, ConditionalProps } from "../../editor/Condition";
+import { Conditions, ConditionalProps } from "../../editor/Condition";
 
 export interface OptionProps extends ConditionalProps {
 	text: string;
 }
 
-export class Option extends Conditional implements OptionProps {
+export class Option extends Conditions implements OptionProps {
 	text: string;
 
 	constructor(conditions?: any, args?: any, text?: any) {
