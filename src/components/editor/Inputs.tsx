@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import React from "react";
-import Select from "react-select";
+import Select, { createFilter } from "react-select";
 import TextareaAutosize from "react-textarea-autosize";
 
 namespace S {
@@ -113,7 +113,10 @@ export const EditableText = (props: EditableTextProps) => {
 };
 
 export const DropdownInput = (props: { values: string[]; setValue: any; value: string; placeholder?: string; minLength?: number }) => {
-	const options = [...props.values.map((option) => ({ label: option, value: option }))];
+	var options = [];
+	if (props.values) {
+		options = [...props.values.map((option) => ({ label: option, value: option }))];
+	}
 	const style = {
 		container: () => ({ display: "inline-block", flexGrow: "0!important" }),
 		dropdownIndicator: () => ({ padding: "0 0" }),
@@ -128,6 +131,7 @@ export const DropdownInput = (props: { values: string[]; setValue: any; value: s
 
 	return (
 		<S.Dropdown
+			filterOption={createFilter({ ignoreAccents: false })}
 			styles={style}
 			value={props.value ? { label: props.value, value: props.value } : props.value}
 			options={options}

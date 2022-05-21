@@ -104,12 +104,16 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 						{condition &&
 							condition.variables.map((variable, vindex) => {
 								const setValue = (value: string) => {
-									option.args[cindex][vindex] = value;
+									const val = option.args[cindex];
+									val[vindex] = value;
+									for (var i = vindex + 1; i < val.length; i++) {
+										val[i] = "";
+									}
 									forceUpdate();
 								};
 
 								var key = `v${vindex}`;
-								return <VariableEditor key={key} variable={variable} value={option.args[cindex][vindex]} setValue={setValue} />;
+								return <VariableEditor key={key} variable={variable} args={option.args[cindex]} index={vindex} setValue={setValue} />;
 							})}
 						{cond.length > 0 && cindex === option.conditions.length - 1 && (
 							<C.Plus

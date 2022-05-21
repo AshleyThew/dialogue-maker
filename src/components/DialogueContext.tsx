@@ -1,6 +1,9 @@
 import * as React from "react";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
+import { items } from "./sources/items";
+import { quest } from "./sources/quest";
+import { quests } from "./sources/quests";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
@@ -29,7 +32,14 @@ const conditions = [
 		],
 		actionable: true,
 	},
-	{ condition: "other", variables: [] },
+	{
+		condition: "quest",
+		variables: [
+			{ source: "quest", type: "list", placeholder: "quest" },
+			{ source: "compare", type: "list", placeholder: "?" },
+			{ source: "quest[-2]", type: "list", placeholder: "value" },
+		],
+	},
 ] as ConditionProps[];
 
 const actions = [
@@ -48,10 +58,21 @@ const actions = [
 			{ type: "number", placeholder: "amount" },
 		],
 	},
+	{
+		action: "setQuest",
+		variables: [
+			{ source: "quest", type: "list", placeholder: "quest" },
+			{ source: "quest[-1]", type: "list", placeholder: "value" },
+		],
+	},
 ] as ActionProps[];
 
 const sources: { [key: string]: string[] } = {
-	items: ["COINS", "FEATHERS", "IRON_BAR", "AIR_RUNE"],
+	compare: ["<", "<=", "==", ">=", ">"],
+	items: items,
+	quest: quest,
+	// QUESTS
+	...quests,
 };
 
 export const defaultDialogueContext: DialogueContextInterface = {

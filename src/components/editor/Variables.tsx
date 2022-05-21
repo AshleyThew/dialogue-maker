@@ -9,9 +9,9 @@ export interface VariableProps {
 	required?: boolean;
 }
 
-export const VariableEditor = (props: { variable: VariableProps; setValue: Function; value: string }): JSX.Element => {
+export const VariableEditor = (props: { variable: VariableProps; setValue: Function; index: number; args: string[] }): JSX.Element => {
 	const { sources } = React.useContext(DialogueContext);
-	const { variable, setValue, value } = props;
+	const { variable, setValue, index, args } = props;
 	var pattern = undefined;
 	var number = false;
 	switch (variable.type) {
@@ -23,7 +23,7 @@ export const VariableEditor = (props: { variable: VariableProps; setValue: Funct
 			return (
 				<EditableInput
 					style={{ margin: "5px 2px", alignSelf: "flex-end" }}
-					value={value}
+					value={args[index]}
 					setValue={setValue}
 					minLength={2}
 					placeholder={variable.placeholder}
@@ -33,8 +33,14 @@ export const VariableEditor = (props: { variable: VariableProps; setValue: Funct
 			);
 		}
 		case "list": {
-			const keys = sources[variable.source];
-			return <DropdownInput values={keys} value={value} setValue={setValue} placeholder={variable.placeholder} />;
+			var source = variable.source;
+			var matches = /\[(.*?)\]/.exec(source);
+			if (matches) {
+				const number = Number(matches[1]);
+				source = source.replace(matches[1], args[index + number]);
+			}
+			const keys = sources[source];
+			return <DropdownInput values={keys} value={args[index]} setValue={setValue} placeholder={variable.placeholder} />;
 		}
 		default: {
 			return <div />;

@@ -72,7 +72,7 @@ export const ActionBlock = (props: { option: ActionsProps; remove: Function }): 
 						<DropdownInput
 							values={actionKeys}
 							value={option.actions[cindex]}
-							placeholder="If"
+							placeholder="Action"
 							setValue={(value: string) => {
 								option.actions[cindex] = value;
 								const action: ActionProps = actions.find((action) => action.action === value);
@@ -88,7 +88,7 @@ export const ActionBlock = (props: { option: ActionsProps; remove: Function }): 
 								};
 
 								var key = `v${vindex}`;
-								return <VariableEditor key={key} variable={variable} value={option.args[cindex][vindex]} setValue={setValue} />;
+								return <VariableEditor key={key} variable={variable} args={option.args[cindex]} index={vindex} setValue={setValue} />;
 							})}
 						{act.length > 0 && cindex === option.actions.length - 1 && (
 							<C.Plus
