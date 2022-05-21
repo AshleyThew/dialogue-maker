@@ -6,6 +6,7 @@ export interface VariableProps {
 	source?: string;
 	type?: "text" | "number" | "list" | undefined;
 	placeholder?: string;
+	required?: boolean;
 }
 
 export const VariableEditor = (props: { variable: VariableProps; setValue: Function; value: string }): JSX.Element => {

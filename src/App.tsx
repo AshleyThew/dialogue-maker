@@ -1,16 +1,16 @@
 import "./App.css";
 import { Application } from "./Application";
-import { BodyWidget } from "./components/BodyWidget";
-import { DialogueContextProvider } from "./components/DialogueContext";
+import { BodyWidget } from "./components/route/editor/BodyWidget";
+import { Routes, Route } from "react-router-dom";
 
 const app = new Application();
 
 function App() {
 	return (
 		<div className="App">
-			<DialogueContextProvider>
-				<BodyWidget app={app}></BodyWidget>
-			</DialogueContextProvider>
+			<Routes>
+				<Route path="/" element={<BodyWidget app={app} />} />
+			</Routes>
 		</div>
 	);
 }

@@ -1,7 +1,7 @@
 import { ZoomCanvasAction } from "@projectstorm/react-canvas-core";
 import createEngine, { DiagramModel, DiagramEngine, DefaultDiagramState } from "@projectstorm/react-diagrams";
-import { DialogueDiagramState } from "./components/editor/state/DialogueDiagramState";
-import { DialogueFactory, NodeFactories } from "./components/node/";
+import { DialogueDiagramState } from "./components/state/DialogueDiagramState";
+import { NodeFactories } from "./components/node/";
 
 export class Application {
 	protected activeModel: DiagramModel;
@@ -18,18 +18,6 @@ export class Application {
 		this.diagramEngine.setModel(this.activeModel);
 
 		NodeFactories.forEach((factory) => this.diagramEngine.getNodeFactories().registerFactory(factory));
-
-		var node1 = DialogueFactory.generateModel(undefined);
-		node1.getOptions().title = "<player>";
-		node1.getOptions().text = "Hello";
-		node1.setPosition(100, 100);
-
-		var node2 = DialogueFactory.generateModel(undefined);
-		node2.getOptions().title = "Hans";
-		node2.getOptions().text = "Welcome";
-		node2.setPosition(400, 100);
-
-		this.activeModel.addAll(node1, node2);
 
 		const state = new DialogueDiagramState();
 

@@ -1,11 +1,13 @@
 import * as React from "react";
-import { Application } from "../Application";
+import { Application } from "../../../Application";
 import { TrayItemWidget } from "./TrayItemWidget";
-import { NodeFactories } from "./node/";
+import { NodeFactories } from "../../node";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 import { DialogueSidebar } from "./DialogueSidebar";
 import styled from "@emotion/styled";
-import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "./node/base/";
+import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../../node/base";
+import { showOpenFilePicker } from "file-system-access";
+import { DiagramModel } from "@projectstorm/react-diagrams";
 
 export interface BodyWidgetProps {
 	app: Application;
@@ -46,7 +48,64 @@ namespace S {
 		flex-grow: 0;
 		flex-shrink: 0;
 	`;
+
+	export const Toolbar = styled.div`
+		background: black;
+		padding: 5px;
+		display: flex;
+		flex-shrink: 0;
+	`;
+
+	export const DemoButton = styled.button`
+		background: rgb(60, 60, 60);
+		font-size: 14px;
+		padding: 5px 10px;
+		border: none;
+		color: white;
+		outline: none;
+		cursor: pointer;
+		margin: 2px;
+		border-radius: 3px;
+
+		&:hover {
+			background: rgb(0, 192, 255);
+		}
+	`;
 }
+
+const loadFile = async (app: Application) => {
+	var fileHandle: FileSystemFileHandle[];
+	try {
+		fileHandle = await showOpenFilePicker({
+			multiple: false,
+			types: [{ accept: { "json/*": [".json"] } }],
+		});
+	} catch (error) {
+		return;
+	}
+
+	fileHandle[0].getFile().then((file) => {
+		file.text().then((data) => {
+			var model2 = new DiagramModel();
+			model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
+			app.getDiagramEngine().setModel(model2);
+		});
+	});
+};
+
+const saveFile = async (app: Application) => {
+	var fileHandle: FileSystemFileHandle;
+	try {
+		fileHandle = await showSaveFilePicker({ types: [{ accept: { "json/*": [".json"] } }] });
+	} catch (error) {
+		return;
+	}
+
+	fileHandle.createWritable().then((stream) => {
+		stream.write(JSON.stringify(app.getActiveDiagram().serialize(), null, 2));
+		stream.close();
+	});
+};
 
 export class BodyWidget extends React.Component<BodyWidgetProps> {
 	render() {
@@ -55,6 +114,10 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 				<S.Header>
 					<div className="title">Dialogue</div>
 				</S.Header>
+				<S.Toolbar>
+					<S.DemoButton onClick={() => loadFile(this.props.app)}>Load</S.DemoButton>
+					<S.DemoButton onClick={() => saveFile(this.props.app)}>Save</S.DemoButton>
+				</S.Toolbar>
 				<S.Content>
 					<S.Tray>
 						{NodeFactories.map((factory) => {
@@ -62,6 +125,7 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 							return <TrayItemWidget key={options.id} model={{ id: options.id }} name={options.id} color={options.color} />;
 						})}
 					</S.Tray>
+
 					<S.Layer
 						onDrop={(event) => {
 							var data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
