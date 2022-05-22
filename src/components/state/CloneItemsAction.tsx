@@ -1,7 +1,7 @@
 import { KeyboardEvent } from "react";
 import * as _ from "lodash";
 import { Action, ActionEvent, BaseModel, InputType } from "@projectstorm/react-canvas-core";
-import { DiagramEngine, LinkModel, NodeModel } from "@projectstorm/react-diagrams";
+import { DiagramEngine, NodeModel } from "@projectstorm/react-diagrams";
 
 export interface CloneItemsActionOptions {
 	keyCodes?: number[];
