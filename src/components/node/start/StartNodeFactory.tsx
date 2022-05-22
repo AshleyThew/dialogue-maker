@@ -4,7 +4,7 @@ import { BaseNodeFactory } from "../base";
 
 export class StartNodeFactory extends BaseNodeFactory<StartNodeModel> {
 	constructor() {
-		super("start", "Start", "#02630a");
+		super("start", "Start", "#16db26");
 	}
 
 	generateReactWidget(event): JSX.Element {
