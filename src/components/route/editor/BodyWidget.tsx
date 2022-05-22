@@ -87,6 +87,7 @@ const loadFile = async (app: Application) => {
 			var model2 = new DiagramModel();
 			model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
 			app.getDiagramEngine().setModel(model2);
+			app.registerListener(true);
 		});
 	});
 };

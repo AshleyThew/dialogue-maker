@@ -6,7 +6,6 @@ import { ZoomCanvasAction } from "./components/state/ZoomCanvasAction";
 import { StartFactory } from "./components/node/start/StartNodeFactory";
 
 export class Application {
-	protected activeModel: DiagramModel;
 	protected diagramEngine: DiagramEngine;
 	protected updateAction: Function;
 
@@ -14,11 +13,12 @@ export class Application {
 		this.updateAction = updateAction;
 		this.diagramEngine = createEngine({ registerDefaultZoomCanvasAction: false, registerDefaultDeleteItemsAction: false });
 		this.newModel();
+		this.registerListener();
 	}
 
 	public newModel() {
-		this.activeModel = new DiagramModel();
-		this.diagramEngine.setModel(this.activeModel);
+		const model = new DiagramModel();
+		this.diagramEngine.setModel(model);
 
 		this.diagramEngine.getNodeFactories().registerFactory(StartFactory);
 		NodeFactories.forEach((factory) => this.diagramEngine.getNodeFactories().registerFactory(factory));
@@ -35,22 +35,27 @@ export class Application {
 		});
 		this.diagramEngine.getStateMachine().setState(state);
 
-		this.activeModel.registerListener({
-			nodesUpdated: () => {
-				this.updateAction();
-			},
-		});
-
 		const eventBus = this.diagramEngine.getActionEventBus();
 		eventBus.registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 		eventBus.registerAction(new DeleteItemsAction({ keyCodes: [46], modifiers: { shiftKey: true } }));
 	}
 
 	public getActiveDiagram(): DiagramModel {
-		return this.activeModel;
+		return this.diagramEngine.getModel();
 	}
 
 	public getDiagramEngine(): DiagramEngine {
 		return this.diagramEngine;
+	}
+
+	public registerListener(update?: boolean): void {
+		this.diagramEngine.getModel().registerListener({
+			nodesUpdated: () => {
+				this.updateAction();
+			},
+		});
+		if (update) {
+			this.updateAction();
+		}
 	}
 }
