@@ -39,7 +39,7 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
-		this.options.conditions = new Conditions(event.data.conditions.conditions, event.data.condition.args);
+		this.options.conditions = new Conditions(event.data.conditions.conditions, event.data.conditions.args);
 	}
 
 	serialize(): any {
