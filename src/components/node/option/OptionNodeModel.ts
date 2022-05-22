@@ -49,6 +49,10 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 
 	doClone(lookupTable: {}, clone: any): void {
 		super.doClone(lookupTable, clone);
+		const data = JSON.parse(JSON.stringify(this.options.options));
+		clone.options.options = data.map((option) => {
+			return new Option(option.conditions, option.args, option.text);
+		});
 	}
 
 	deserialize(event: DeserializeEvent<this>) {

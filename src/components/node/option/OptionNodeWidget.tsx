@@ -30,7 +30,12 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 								<ConditionBlock option={option} remove={remove} allowActionable={false} />
 								<div style={{ margin: "5px 2px", width: "1px", backgroundColor: "black" }} />
 								<div style={{ color: "white", display: "flex", alignItems: "center" }}>
-									<EditableInput style={{ margin: "5px 2px" }} value="Text" setValue={(value: any) => (option.text = value)} />
+									<EditableInput
+										style={{ margin: "5px 2px" }}
+										value={option.text}
+										setValue={(value: any) => (option.text = value)}
+										placeholder="Text"
+									/>
 									<S.PortOut engine={this.props.engine}>
 										<S.PortsContainer>{this.generatePort(this.props.node.getOutPorts()[index])}</S.PortsContainer>
 									</S.PortOut>

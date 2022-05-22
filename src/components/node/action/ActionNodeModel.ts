@@ -32,6 +32,8 @@ export class ActionNodeModel extends BaseNodeModel<ActionNodeModelGenerics> {
 
 	doClone(lookupTable: {}, clone: any): void {
 		super.doClone(lookupTable, clone);
+		const data = JSON.parse(JSON.stringify(clone.options.actions));
+		clone.options.actions = new Actions(data.actions, data.args);
 	}
 
 	deserialize(event: DeserializeEvent<this>) {
