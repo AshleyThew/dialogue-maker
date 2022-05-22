@@ -1,7 +1,10 @@
-import styled from "@emotion/styled";
 import React from "react";
+import PropTypes from "prop-types";
+import { components, GroupBase, OptionProps } from "react-select";
+import styled from "@emotion/styled";
 import Select, { createFilter } from "react-select";
 import TextareaAutosize from "react-textarea-autosize";
+import { CustomMenuList } from "./CustomMenu";
 
 namespace S {
 	export const Input = styled.input`
@@ -41,6 +44,18 @@ interface EditableInputProps {
 	number?: boolean;
 	editable?: boolean;
 }
+
+const CustomOption = ({ children, ...props }) => {
+	// eslint-disable-next-line no-unused-vars
+	const { onMouseMove, onMouseOver, ...rest } = props.innerProps;
+	const newProps = { ...props, innerProps: rest } as OptionProps<unknown, boolean, GroupBase<unknown>>;
+	return <components.Option {...newProps}>{children}</components.Option>;
+};
+
+CustomOption.propTypes = {
+	innerProps: PropTypes.object.isRequired,
+	children: PropTypes.node.isRequired,
+};
 
 export const EditableInput = (props: EditableInputProps) => {
 	var disabled = props.editable !== undefined && !props.editable;
@@ -112,29 +127,27 @@ export const EditableText = (props: EditableTextProps) => {
 	);
 };
 
-export const DropdownInput = (props: { values: string[]; setValue: any; value: string; placeholder?: string; minLength?: number }) => {
-	var options = [];
-	if (props.values) {
-		options = [...props.values.map((option) => ({ label: option, value: option }))];
-	}
+export const DropdownInput = (props: { values: any[]; setValue: any; value: string; placeholder?: string; minLength?: number }) => {
 	const style = {
 		container: () => ({ display: "inline-block", flexGrow: "0!important" }),
 		dropdownIndicator: () => ({ padding: "0 0" }),
 		menuList: (provided) => ({ ...provided, padding: "0 0" }),
-		menu: (provided) => ({ ...provided, width: "", margin: "0 0", top: "" }),
+		menu: (provided) => ({ ...provided, margin: "0 0", top: "" }),
 		indicatorSeparator: () => ({ display: "none" }),
 		control: (provided) => ({ ...provided, minHeight: "0" }),
 		valueContainer: (provided) => ({ ...provided, padding: "0 0" }),
 		selectContainer: (provided) => ({ ...provided, padding: "0 0" }),
 		input: (provided) => ({ ...provided, width: "100%", minWidth: Math.max(props?.placeholder?.length || 0, props.minLength || 2) + "ch" }),
+		option: (provided) => ({ ...provided, padding: "2px 0px", minHeight: "16px" }),
 	};
 
 	return (
 		<S.Dropdown
+			components={{ Option: CustomOption, MenuList: CustomMenuList }}
 			filterOption={createFilter({ ignoreAccents: false })}
 			styles={style}
 			value={props.value ? { label: props.value, value: props.value } : props.value}
-			options={options}
+			options={props.values}
 			placeholder={props.placeholder}
 			onChange={(e) => {
 				props.setValue(e["value"]);

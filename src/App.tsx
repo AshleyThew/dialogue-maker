@@ -1,15 +1,12 @@
-import "./App.css";
-import { Application } from "./Application";
+import "./App.scss";
 import { BodyWidget } from "./components/route/editor/BodyWidget";
 import { Routes, Route } from "react-router-dom";
-
-const app = new Application();
 
 function App() {
 	return (
 		<div className="App">
 			<Routes>
-				<Route path="/" element={<BodyWidget app={app} />} />
+				<Route path="/" element={<BodyWidget />} />
 			</Routes>
 		</div>
 	);

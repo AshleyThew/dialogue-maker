@@ -14,7 +14,6 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 	constructor(options: any = {}, defaultConditions?: Conditions[]) {
 		if (typeof options === "string") {
 			options = {
-				title: options,
 				conditions: defaultConditions,
 			};
 		}

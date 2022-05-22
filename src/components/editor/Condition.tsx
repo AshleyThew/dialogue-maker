@@ -7,7 +7,6 @@ import { VariableEditor, VariableProps } from "./Variables";
 export interface ConditionProps {
 	condition: string;
 	variables: VariableProps[];
-	actionable?: boolean;
 }
 
 export interface ConditionalProps {
@@ -50,13 +49,9 @@ export namespace C {
 }
 
 export const ConditionBlock = (props: { option: ConditionalProps; remove: Function; allowActionable: boolean }): JSX.Element => {
-	const { keys, conditions } = React.useContext(DialogueContext);
+	const { conditionKeys, conditions } = React.useContext(DialogueContext);
 	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const { option } = props;
-	var selectable = keys;
-	if (!props.allowActionable) {
-		selectable = conditions.filter((cond) => !cond.actionable).map((cond) => cond.condition);
-	}
 	return (
 		<div style={{ display: "table", borderSpacing: "0px" }}>
 			{option.conditions.map((cond, cindex) => {
@@ -91,7 +86,7 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 							)
 						)}
 						<DropdownInput
-							values={selectable}
+							values={conditionKeys}
 							value={option.conditions[cindex]}
 							placeholder="If"
 							setValue={(value: string) => {

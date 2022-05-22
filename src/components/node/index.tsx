@@ -3,6 +3,7 @@ import { BaseNodeFactory, BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOpt
 import { ConditionFactory } from "./condition/ConditionNodeFactory";
 import { DialogueFactory } from "./dialogue/DialogueNodeFactory";
 import { OptionFactory } from "./option/OptionNodeFactory";
+import { StartFactory } from "./start/StartNodeFactory";
 
 export * from "./dialogue/DialogueNodeFactory";
 export * from "./dialogue/DialogueNodeModel";
@@ -21,6 +22,14 @@ export * from "./action/ActionNodeModel";
 export * from "./action/ActionNodeWidget";
 
 export const NodeFactories: BaseNodeFactory<BaseNodeModel<BaseNodeModelGenerics<BaseNodeModelOptions>>>[] = [
+	DialogueFactory,
+	OptionFactory,
+	ConditionFactory,
+	AcitonFactory,
+];
+
+export const AllNodeFactories: BaseNodeFactory<BaseNodeModel<BaseNodeModelGenerics<BaseNodeModelOptions>>>[] = [
+	StartFactory,
 	DialogueFactory,
 	OptionFactory,
 	ConditionFactory,

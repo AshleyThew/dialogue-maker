@@ -96,23 +96,29 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 				background={this.props.node.getOptions().color}
 			>
 				<S.Title style={{ display: "flex", alignItems: "center" }}>{this.renderHeader()}</S.Title>
-				<table>
-					<tbody>
-						<tr>
-							<td style={{ verticalAlign: "top" }}>{this.renderInPorts()}</td>
-							<S.NodeContent>{children}</S.NodeContent>
-							<td style={{ verticalAlign: "sub" }}>{this.renderOutPorts()}</td>
-						</tr>
-					</tbody>
-				</table>
+				{children && (
+					<table>
+						<tbody>
+							<tr>
+								<td style={{ verticalAlign: "top" }}>{this.renderInPorts()}</td>
+								<S.NodeContent>{children}</S.NodeContent>
+								<td style={{ verticalAlign: "sub" }}>{this.renderOutPorts()}</td>
+							</tr>
+						</tbody>
+					</table>
+				)}
 			</S.Node>
 		);
 	}
 
 	renderHeader(): JSX.Element {
+		const style = { width: "100%", color: "black" };
+		if (!this.props.node.getOptions().editableTitle) {
+			style["background"] = "transparent";
+		}
 		return (
 			<EditableInput
-				style={{ width: "100%", color: "black" }}
+				style={style}
 				value={this.props.node.getOptions().title}
 				setValue={(value) => (this.props.node.getOptions().title = value)}
 				editable={this.props.node.getOptions().editableTitle}

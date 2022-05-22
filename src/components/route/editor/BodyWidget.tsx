@@ -1,17 +1,15 @@
 import * as React from "react";
 import { Application } from "../../../Application";
 import { TrayItemWidget } from "./TrayItemWidget";
-import { NodeFactories } from "../../node";
+import { AllNodeFactories, NodeFactories } from "../../node";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 import { DialogueSidebar } from "./DialogueSidebar";
 import styled from "@emotion/styled";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../../node/base";
 import { showOpenFilePicker } from "file-system-access";
 import { DiagramModel } from "@projectstorm/react-diagrams";
-
-export interface BodyWidgetProps {
-	app: Application;
-}
+import { StartFactory } from "../../node/start/StartNodeFactory";
+import { StartNodeModel } from "../../node/start/StartNodeModel";
 
 namespace S {
 	export const Body = styled.div`
@@ -107,7 +105,13 @@ const saveFile = async (app: Application) => {
 	});
 };
 
-export class BodyWidget extends React.Component<BodyWidgetProps> {
+export class BodyWidget extends React.Component {
+	state = {
+		app: new Application(() => {
+			this.forceUpdate();
+		}),
+	};
+
 	render() {
 		return (
 			<S.Body>
@@ -115,11 +119,17 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 					<div className="title">Dialogue</div>
 				</S.Header>
 				<S.Toolbar>
-					<S.DemoButton onClick={() => loadFile(this.props.app)}>Load</S.DemoButton>
-					<S.DemoButton onClick={() => saveFile(this.props.app)}>Save</S.DemoButton>
+					<S.DemoButton onClick={() => loadFile(this.state.app)}>Load</S.DemoButton>
+					<S.DemoButton onClick={() => saveFile(this.state.app)}>Save</S.DemoButton>
 				</S.Toolbar>
 				<S.Content>
 					<S.Tray>
+						{!this.state.app
+							.getActiveDiagram()
+							.getNodes()
+							.some((val) => val instanceof StartNodeModel) && (
+							<TrayItemWidget key={"start"} model={{ id: "start" }} name={"start"} color={StartFactory.options.color} />
+						)}
 						{NodeFactories.map((factory) => {
 							var options = factory.options;
 							return <TrayItemWidget key={options.id} model={{ id: options.id }} name={options.id} color={options.color} />;
@@ -131,11 +141,11 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 							var data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
 
 							var node: BaseNodeModel<BaseNodeModelGenerics<BaseNodeModelOptions>> = null!;
-							const factory = NodeFactories.find((factory) => factory.options.id === data.id);
+							const factory = AllNodeFactories.find((factory) => factory.options.id === data.id);
 							node = factory.generateModel(undefined);
-							var point = this.props.app.getDiagramEngine().getRelativeMousePoint(event);
+							var point = this.state.app.getDiagramEngine().getRelativeMousePoint(event);
 							node.setPosition(point);
-							this.props.app.getDiagramEngine().getModel().addNode(node);
+							this.state.app.getDiagramEngine().getModel().addNode(node);
 							this.forceUpdate();
 						}}
 						onDragOver={(event) => {
@@ -143,7 +153,7 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 						}}
 					>
 						<DialogueSidebar>
-							<CanvasWidget engine={this.props.app.getDiagramEngine()} />
+							<CanvasWidget engine={this.state.app.getDiagramEngine()} />
 						</DialogueSidebar>
 					</S.Layer>
 				</S.Content>
