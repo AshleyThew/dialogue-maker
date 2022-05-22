@@ -45,6 +45,8 @@ namespace S {
 		background: rgb(20, 20, 20);
 		flex-grow: 0;
 		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
 	`;
 
 	export const Toolbar = styled.div`
@@ -135,6 +137,16 @@ export class BodyWidget extends React.Component {
 							var options = factory.options;
 							return <TrayItemWidget key={options.id} model={{ id: options.id }} name={options.id} color={options.color} />;
 						})}
+						<div style={{ marginTop: "auto", color: "#ffffff" }}>
+							<p style={{ color: "#23f0e5" }}>Shortcuts:</p>
+							<p>
+								Duplicate: Ctrl + d
+								<br />
+								Delete selected: Shift + del
+								<br />
+								Zoom: Mouse scroll
+							</p>
+						</div>
 					</S.Tray>
 
 					<S.Layer

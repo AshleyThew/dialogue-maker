@@ -4,6 +4,7 @@ import { DialogueDiagramState } from "./components/state/DialogueDiagramState";
 import { NodeFactories } from "./components/node/";
 import { ZoomCanvasAction } from "./components/state/ZoomCanvasAction";
 import { StartFactory } from "./components/node/start/StartNodeFactory";
+import { CloneItemsAction } from "./components/state/CloneItemsAction";
 
 export class Application {
 	protected diagramEngine: DiagramEngine;
@@ -38,6 +39,7 @@ export class Application {
 		const eventBus = this.diagramEngine.getActionEventBus();
 		eventBus.registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 		eventBus.registerAction(new DeleteItemsAction({ keyCodes: [46], modifiers: { shiftKey: true } }));
+		eventBus.registerAction(new CloneItemsAction());
 	}
 
 	public getActiveDiagram(): DiagramModel {
