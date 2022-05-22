@@ -15,3 +15,11 @@
 .react-virtualized-list-wrapper li {
 	list-style: none;
 }
+
+svg {
+	width: 100000000000000px !important;
+}
+
+svg + div {
+	width: 100000000000000px !important;
+}
