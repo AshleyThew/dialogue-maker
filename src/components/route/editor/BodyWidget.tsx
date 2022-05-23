@@ -58,7 +58,7 @@ namespace S {
 		flex-shrink: 0;
 	`;
 
-	export const DemoButton = styled.button`
+	export const DemoButton = styled.button<{ hover? }>`
 		background: rgb(60, 60, 60);
 		font-size: 14px;
 		padding: 5px 10px;
@@ -70,7 +70,7 @@ namespace S {
 		border-radius: 3px;
 
 		&:hover {
-			background: rgb(0, 192, 255);
+			background: ${(props) => props.hover || "rgb(0, 192, 255)"};
 		}
 	`;
 }
@@ -124,6 +124,11 @@ const saveFile = async (app: Application) => {
 	});
 };
 
+const clear = async (app: Application) => {
+	var model2 = new DiagramModel();
+	app.getDiagramEngine().setModel(model2);
+};
+
 const Buttons = (props): JSX.Element => {
 	const { sourcesKeys } = React.useContext(DialogueContext);
 	const [selected, setSelected] = React.useState("");
@@ -134,8 +139,13 @@ const Buttons = (props): JSX.Element => {
 
 	return (
 		<>
-			<S.DemoButton onClick={() => loadFile(props.app)}>Load</S.DemoButton>
+			<S.DemoButton hover="rgb(29, 167, 29)" onClick={() => loadFile(props.app)}>
+				Load
+			</S.DemoButton>
 			<S.DemoButton onClick={() => saveFile(props.app)}>Save</S.DemoButton>
+			<S.DemoButton hover="rgb(248, 19, 19)" onClick={() => clear(props.app)}>
+				Clear
+			</S.DemoButton>
 			<div style={{ marginLeft: "auto" }} />
 			<DropdownInput values={keys} value={selected} setValue={setSelected} placeholder={"Github"} width={"200px"} right={0} />;
 			<S.DemoButton
