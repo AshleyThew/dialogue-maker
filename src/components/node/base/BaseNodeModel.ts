@@ -38,6 +38,9 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 		});
 		this.portsOut = [];
 		this.portsIn = [];
+	}
+
+	setupPorts(): void {
 		_.range(0, this.options.inputs).forEach((i) => {
 			this.addInPort("❯", i);
 		});

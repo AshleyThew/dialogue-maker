@@ -142,7 +142,7 @@ export class BodyWidget extends React.Component {
 							<p>
 								Duplicate: Ctrl + d
 								<br />
-								Delete selected: Shift + del
+								Delete: Shift + del
 								<br />
 								Zoom: Mouse scroll
 							</p>
@@ -156,6 +156,7 @@ export class BodyWidget extends React.Component {
 							var node: BaseNodeModel<BaseNodeModelGenerics<BaseNodeModelOptions>> = null!;
 							const factory = AllNodeFactories.find((factory) => factory.options.id === data.id);
 							node = factory.generateModel(undefined);
+							node.setupPorts();
 							var point = this.state.app.getDiagramEngine().getRelativeMousePoint(event);
 							node.setPosition(point);
 							this.state.app.getDiagramEngine().getModel().addNode(node);

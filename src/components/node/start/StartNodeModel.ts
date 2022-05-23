@@ -23,8 +23,8 @@ export class StartNodeModel extends BaseNodeModel<StartNodeModelGenerics> {
 		});
 	}
 
-	doClone(lookupTable: {}, clone: any): void {
-		super.doClone(lookupTable, clone);
+	clone(lookupTable?: { [s: string]: any }) {
+		return undefined;
 	}
 
 	getInPorts(): DefaultPortModel[] {

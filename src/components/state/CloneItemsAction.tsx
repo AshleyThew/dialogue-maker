@@ -44,13 +44,16 @@ export class CloneItemsAction extends Action<DiagramEngine> {
 					let itemMap = {};
 					_.forEach(model.getSelectedEntities(), (item: BaseModel<any>) => {
 						let newItem = item.clone(itemMap);
+						if (!newItem) {
+							return;
+						}
+						item.setSelected(false);
 
 						// offset the nodes slightly
 						if (newItem instanceof NodeModel) {
 							newItem.setPosition(newItem.getX() + offset.x, newItem.getY() + offset.y);
 							model.addNode(newItem);
 						}
-						(newItem as BaseModel).setSelected(false);
 					});
 					this.engine.repaintCanvas();
 				}
