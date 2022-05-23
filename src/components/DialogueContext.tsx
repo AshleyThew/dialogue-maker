@@ -4,6 +4,7 @@ import { ConditionProps } from "./editor/Condition";
 import { items } from "./sources/items";
 import { quest } from "./sources/quest";
 import { quests } from "./sources/quests";
+import { shops } from "./sources/shops";
 import { skills } from "./sources/skills";
 
 export interface DialogueContextInterface {
@@ -34,7 +35,7 @@ const conditions = [
 		],
 	},
 	{
-		condition: "hasSkill",
+		condition: "hasSkillLevel",
 		variables: [
 			{ source: "skills", type: "list", placeholder: "skill" },
 			{ type: "number", placeholder: "level" },
@@ -82,6 +83,21 @@ const actions = [
 			{ source: "quest[-1]", type: "list", placeholder: "value" },
 		],
 	},
+	{
+		action: "giveExp",
+		variables: [
+			{ source: "skills", type: "list", placeholder: "skill" },
+			{ type: "number", placeholder: "exp" },
+		],
+	},
+	{
+		action: "openShop",
+		variables: [{ source: "shops", type: "list", placeholder: "shop" }],
+	},
+	{
+		action: "npcText",
+		variables: [{ type: "text", placeholder: "text" }],
+	},
 ] as ActionProps[];
 
 const sources: { [key: string]: string[] } = {
@@ -90,6 +106,7 @@ const sources: { [key: string]: string[] } = {
 	skills: skills,
 	items: items,
 	quest: quest,
+	shops: shops,
 	// QUESTS
 	...quests,
 };
