@@ -10,6 +10,8 @@ import { showOpenFilePicker } from "file-system-access";
 import { DiagramModel } from "@projectstorm/react-diagrams";
 import { StartFactory } from "../../node/start/StartNodeFactory";
 import { StartNodeModel } from "../../node/start/StartNodeModel";
+import { DialogueContext } from "../../DialogueContext";
+import { DropdownInput } from "../../editor/Inputs";
 
 namespace S {
 	export const Body = styled.div`
@@ -86,12 +88,26 @@ const loadFile = async (app: Application) => {
 
 	fileHandle[0].getFile().then((file) => {
 		file.text().then((data) => {
-			var model2 = new DiagramModel();
-			model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
-			app.getDiagramEngine().setModel(model2);
-			app.registerListener(true);
+			loadData(app, data);
 		});
 	});
+};
+
+const loadGithub = async (app: Application, location: string) => {
+	fetch(`https://raw.githubusercontent.com/MineScape-me/MineScape/main/dialogue/regions/${location}.json`)
+		.then((data) => data.text())
+		.then((data) => loadData(app, data))
+		.catch((err) => {
+			console.log(err);
+		});
+};
+
+const loadData = (app: Application, data: string): void => {
+	console.log(data);
+	var model2 = new DiagramModel();
+	model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
+	app.getDiagramEngine().setModel(model2);
+	app.registerListener(true);
 };
 
 const saveFile = async (app: Application) => {
@@ -108,6 +124,32 @@ const saveFile = async (app: Application) => {
 	});
 };
 
+const Buttons = (props): JSX.Element => {
+	const { sourcesKeys } = React.useContext(DialogueContext);
+	const [selected, setSelected] = React.useState("");
+
+	const keys = sourcesKeys["dialogues"];
+
+	console.log(keys);
+
+	return (
+		<>
+			<S.DemoButton onClick={() => loadFile(props.app)}>Load</S.DemoButton>
+			<S.DemoButton onClick={() => saveFile(props.app)}>Save</S.DemoButton>
+			<div style={{ marginLeft: "auto" }} />
+			<DropdownInput values={keys} value={selected} setValue={setSelected} placeholder={"Github"} width={"200px"} />;
+			<S.DemoButton
+				onClick={() => {
+					loadGithub(props.app, selected);
+					setSelected("");
+				}}
+			>
+				Load Github
+			</S.DemoButton>
+		</>
+	);
+};
+
 export class BodyWidget extends React.Component {
 	state = {
 		app: new Application(() => {
@@ -122,8 +164,7 @@ export class BodyWidget extends React.Component {
 					<div className="title">Dialogue</div>
 				</S.Header>
 				<S.Toolbar>
-					<S.DemoButton onClick={() => loadFile(this.state.app)}>Load</S.DemoButton>
-					<S.DemoButton onClick={() => saveFile(this.state.app)}>Save</S.DemoButton>
+					<Buttons app={this.state.app} />
 				</S.Toolbar>
 				<S.Content>
 					<S.Tray>

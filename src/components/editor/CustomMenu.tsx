@@ -41,7 +41,7 @@ export class CustomMenuList extends React.Component<MenuListProps<any, boolean, 
 			<span className="react-virtualized-list-wrapper">
 				<VirtualList
 					width=""
-					height={wrapperHeight + 6}
+					height={wrapperHeight + 8}
 					scrollOffset={initialOffset}
 					itemCount={childrenOptions.length}
 					itemSize={DefaultItemHeight}

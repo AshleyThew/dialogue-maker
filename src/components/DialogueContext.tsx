@@ -12,7 +12,7 @@ export interface DialogueContextInterface {
 	conditionKeys: any[];
 	actions: ActionProps[];
 	actionKeys: any[];
-	sources: { [key: string]: string[] };
+	sources?: { [key: string]: string[] };
 	sourcesKeys: { [key: string]: any[] };
 }
 
@@ -100,32 +100,54 @@ const actions = [
 	},
 ] as ActionProps[];
 
-const sources: { [key: string]: string[] } = {
-	compare: ["<", "<=", "==", ">=", ">"],
-	equipmentSlot: ["HEAD", "CAPE", "NECK", "AMMUNITION", "BODY", "SHIELD", "LEGS", "HANDS", "FEET", "RING", "WEAPON"],
-	skills: skills,
-	items: items,
-	quest: quest,
-	shops: shops,
-	// QUESTS
-	...quests,
-};
-
 const sourcesKeys = {};
 
-Object.entries(sources).forEach(([key, value]) => {
-	sourcesKeys[key] = value.map((val) => ({ label: val, value: val }));
-});
-
-export const defaultDialogueContext: DialogueContextInterface = {
-	conditions: conditions,
-	conditionKeys: conditions.map((cond) => ({ label: cond.condition, value: cond.condition })),
-	actions: actions,
-	actionKeys: actions.map((act) => ({ label: act.action, value: act.action })),
-	sources: sources,
-	sourcesKeys: sourcesKeys,
-};
-
 export const DialogueContextProvider = (props) => {
+	const [sources, setSources] = React.useState({});
+	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
+
+	const defaultDialogueContext: DialogueContextInterface = {
+		conditions: conditions,
+		conditionKeys: conditions.map((cond) => ({ label: cond.condition, value: cond.condition })),
+		actions: actions,
+		actionKeys: actions.map((act) => ({ label: act.action, value: act.action })),
+		sources: sources,
+		sourcesKeys: sourcesKeys,
+	};
+
+	React.useEffect(() => {
+		Object.entries(sources).forEach(([key, value]) => {
+			const val = value as [];
+			sourcesKeys[key] = val.map((val) => ({ label: val, value: val }));
+		});
+		forceUpdate();
+	}, [sources]);
+
+	React.useEffect(() => {
+		setSources({
+			compare: ["<", "<=", "==", ">=", ">"],
+			equipmentSlot: ["HEAD", "CAPE", "NECK", "AMMUNITION", "BODY", "SHIELD", "LEGS", "HANDS", "FEET", "RING", "WEAPON"],
+			skills: skills,
+			items: items,
+			quest: quest,
+			shops: shops,
+			// QUESTS
+			...quests,
+		});
+		fetch("https://raw.githubusercontent.com/MineScape-me/MineScape/main/dialogue/paths.txt")
+			.then((data) => data.text())
+			.then((data) => {
+				var files = data
+					.split("\n")
+					.filter((line) => line !== "")
+					.map((file) => file.replace("dialogue/regions/", "").replace(".json", ""));
+				files = ["", ...files];
+				setSources((sources) => ({ ...sources, dialogues: files }));
+			})
+			.catch((e) => {
+				console.log(e);
+			});
+	}, []);
+
 	return <DialogueContext.Provider value={defaultDialogueContext}>{props.children}</DialogueContext.Provider>;
 };
