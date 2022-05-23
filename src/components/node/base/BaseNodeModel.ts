@@ -103,6 +103,9 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 	}
 
 	deserialize(event: DeserializeEvent<this>) {
+		_.remove(event.data.ports, (port) => {
+			return event.data.portsInOrder.indexOf(port.id) === -1 && event.data.portsOutOrder.indexOf(port.id) === -1;
+		});
 		super.deserialize(event);
 		this.options.title = event.data.title;
 		this.options.color = event.data.color;
