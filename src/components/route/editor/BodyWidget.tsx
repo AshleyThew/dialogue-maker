@@ -137,7 +137,7 @@ const Buttons = (props): JSX.Element => {
 			<S.DemoButton onClick={() => loadFile(props.app)}>Load</S.DemoButton>
 			<S.DemoButton onClick={() => saveFile(props.app)}>Save</S.DemoButton>
 			<div style={{ marginLeft: "auto" }} />
-			<DropdownInput values={keys} value={selected} setValue={setSelected} placeholder={"Github"} width={"200px"} />;
+			<DropdownInput values={keys} value={selected} setValue={setSelected} placeholder={"Github"} width={"200px"} right={0} />;
 			<S.DemoButton
 				onClick={() => {
 					loadGithub(props.app, selected);

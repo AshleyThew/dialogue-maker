@@ -127,12 +127,20 @@ export const EditableText = (props: EditableTextProps) => {
 	);
 };
 
-export const DropdownInput = (props: { values: any[]; setValue: any; value: string; placeholder?: string; minLength?: number; width?: string }) => {
+export const DropdownInput = (props: {
+	values: any[];
+	setValue: any;
+	value: string;
+	placeholder?: string;
+	minLength?: number;
+	width?: string;
+	right?: number;
+}) => {
 	const style = {
 		container: () => ({ display: "inline-block", flexGrow: "0!important" }),
 		dropdownIndicator: () => ({ padding: "0 0" }),
 		menuList: (provided) => ({ ...provided, padding: "0 0" }),
-		menu: (provided) => ({ ...provided, margin: "0 0", top: "", width: props.width || "100%", fontSize: "11px" }),
+		menu: (provided) => ({ ...provided, margin: "0 0", top: "", right: props.right, width: props.width || "100%", fontSize: "11px" }),
 		indicatorSeparator: () => ({ display: "none" }),
 		control: (provided) => ({ ...provided, minHeight: "0" }),
 		valueContainer: (provided) => ({ ...provided, padding: "0 0" }),
