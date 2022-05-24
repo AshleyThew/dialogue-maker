@@ -13,7 +13,7 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 			<>
 				{this.props.node.getOptions().options.map((option, index) => {
 					var remove = () => {
-						this.props.node.getOptions().options.splice(index, 1);
+						console.log(this.props.node.getOptions().options.splice(index, 1));
 						const outPort = this.props.node.getOutPorts().splice(index, 1)[0];
 						_.forEach(outPort.getLinks(), (link) => {
 							link.remove();
@@ -25,7 +25,7 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 						this.props.engine.repaintCanvas();
 					};
 					return (
-						<div key={`o${index}`}>
+						<div key={`o${index}-${option.text}`}>
 							{index !== 0 && <hr style={{ margin: "0 0", background: "black", border: "0px", height: "1px" }} />}
 							<div style={{ color: "black", display: "flex", justifyContent: "space-between" }}>
 								<ConditionBlock option={option} remove={remove} allowActionable={false} />
