@@ -127,6 +127,7 @@ const saveFile = async (app: Application) => {
 const clear = async (app: Application) => {
 	var model2 = new DiagramModel();
 	app.getDiagramEngine().setModel(model2);
+	app.forceUpdate();
 };
 
 const Buttons = (props): JSX.Element => {
@@ -134,8 +135,6 @@ const Buttons = (props): JSX.Element => {
 	const [selected, setSelected] = React.useState("");
 
 	const keys = sourcesKeys["dialogues"];
-
-	console.log(keys);
 
 	return (
 		<>

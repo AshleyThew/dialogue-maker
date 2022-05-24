@@ -1,9 +1,7 @@
-import * as React from "react";
 import * as _ from "lodash";
 import { BaseNodeProps, BaseNodeWidget, S } from "../base";
 import { ConditionNodeModel } from "./ConditionNodeModel";
 import { ConditionBlock } from "../../editor/Condition";
-import { EditableInput } from "../../editor/Inputs";
 
 export interface ConditionNodeProps extends BaseNodeProps<ConditionNodeModel> {}
 
@@ -15,17 +13,6 @@ export class ConditionNodeWidget extends BaseNodeWidget<ConditionNodeProps> {
 					<ConditionBlock option={this.props.node.getOptions().conditions} remove={undefined} allowActionable={true} />
 				</div>
 			</>
-		);
-	}
-
-	renderHeader(): JSX.Element {
-		return (
-			<EditableInput
-				style={{ width: "100%", color: "black", background: "transparent" }}
-				value={this.props.node.getOptions().title}
-				setValue={(value) => (this.props.node.getOptions().title = value)}
-				editable={this.props.node.getOptions().editableTitle}
-			/>
 		);
 	}
 

@@ -8,10 +8,10 @@ import { CloneItemsAction } from "./components/state/CloneItemsAction";
 
 export class Application {
 	protected diagramEngine: DiagramEngine;
-	protected updateAction: Function;
+	protected updateFunction: Function;
 
-	constructor(updateAction: Function) {
-		this.updateAction = updateAction;
+	constructor(updateFunction: Function) {
+		this.updateFunction = updateFunction;
 		this.diagramEngine = createEngine({ registerDefaultZoomCanvasAction: false, registerDefaultDeleteItemsAction: false });
 		this.newModel();
 		this.registerListener();
@@ -50,14 +50,18 @@ export class Application {
 		return this.diagramEngine;
 	}
 
+	public forceUpdate(): void {
+		this.updateFunction();
+	}
+
 	public registerListener(update?: boolean): void {
 		this.diagramEngine.getModel().registerListener({
 			nodesUpdated: () => {
-				this.updateAction();
+				this.updateFunction();
 			},
 		});
 		if (update) {
-			this.updateAction();
+			this.updateFunction();
 		}
 	}
 }

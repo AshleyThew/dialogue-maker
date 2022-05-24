@@ -60,7 +60,7 @@ CustomOption.propTypes = {
 export const EditableInput = (props: EditableInputProps) => {
 	var disabled = props.editable !== undefined && !props.editable;
 	const getSize = (value) => {
-		return Math.max(value.length + 1, Math.max(props?.placeholder?.length || 0, props.minLength || 5));
+		return Math.max(value.length + 2, Math.max(props?.placeholder?.length || 0, props.minLength || 5));
 	};
 	const size = getSize(props.value);
 	return (

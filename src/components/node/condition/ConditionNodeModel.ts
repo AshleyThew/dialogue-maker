@@ -32,7 +32,6 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 
 	doClone(lookupTable: {}, clone: any): void {
 		super.doClone(lookupTable, clone);
-		console.log(clone);
 		const data = JSON.parse(JSON.stringify(clone.options.conditions));
 		clone.options.conditions = new Conditions(data.conditions, data.args);
 	}

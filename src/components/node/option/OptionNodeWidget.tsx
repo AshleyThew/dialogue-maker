@@ -36,7 +36,7 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 										setValue={(value: any) => (option.text = value)}
 										placeholder="Text"
 									/>
-									<S.PortOut engine={this.props.engine}>
+									<S.PortOut engine={this.props.engine} style={{ right: "-24px" }}>
 										<S.PortsContainer>{this.generatePort(this.props.node.getOutPorts()[index])}</S.PortsContainer>
 									</S.PortOut>
 								</div>
