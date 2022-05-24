@@ -12,17 +12,18 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 		return super.construct(
 			<>
 				{this.props.node.getOptions().options.map((option, index) => {
-					var remove;
-					if (index > 0) {
-						remove = () => {
-							this.props.node.getOptions().options.splice(index, 1);
-							const outPort = this.props.node.getOutPorts().splice(index, 1)[0];
-							_.forEach(outPort.getLinks(), (link) => {
-								link.remove();
-							});
-							this.props.engine.repaintCanvas();
-						};
-					}
+					var remove = () => {
+						this.props.node.getOptions().options.splice(index, 1);
+						const outPort = this.props.node.getOutPorts().splice(index, 1)[0];
+						_.forEach(outPort.getLinks(), (link) => {
+							link.remove();
+						});
+						if (this.props.node.getOptions().options.length === 0) {
+							this.props.node.addOutPort("❯");
+							this.props.node.getOptions().options.push(new Option());
+						}
+						this.props.engine.repaintCanvas();
+					};
 					return (
 						<div key={`o${index}`}>
 							{index !== 0 && <hr style={{ margin: "0 0", background: "black", border: "0px", height: "1px" }} />}

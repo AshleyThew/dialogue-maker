@@ -15,7 +15,7 @@ export class RandomNodeWidget extends BaseNodeWidget<RandomNodeProps> {
 						<div key={`p${index}`} style={{ color: "black", display: "flex", justifyContent: "space-between" }}>
 							<div style={{ minWidth: "85%" }} />
 							{index !== 0 ? (
-								<C.Delete
+								<C.DeleteLine
 									data-no-drag
 									title="Remove condition"
 									onClick={() => {
@@ -27,7 +27,7 @@ export class RandomNodeWidget extends BaseNodeWidget<RandomNodeProps> {
 									}}
 								>
 									&#x268A;
-								</C.Delete>
+								</C.DeleteLine>
 							) : (
 								<></>
 							)}

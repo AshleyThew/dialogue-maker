@@ -38,11 +38,18 @@ export namespace C {
 
 		cursor: pointer;
 	`;
-	export const Delete = styled.span`
+	export const DeleteLine = styled.span`
 		color: #ee0c0c;
 		margin-right: -10px;
 		position: relative;
 		left: -13px;
+
+		cursor: pointer;
+	`;
+
+	export const DeleteRow = styled.span`
+		color: #ee0c0c;
+		position: relative;
 
 		cursor: pointer;
 	`;
@@ -58,32 +65,18 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 				const condition: ConditionProps = conditions.find((condition) => condition.condition === cond);
 				return (
 					<div key={`c${cindex}`} style={{ display: "flex", alignItems: "center" }}>
-						{cindex !== 0 ? (
-							<C.Delete
+						{props.remove && cindex === 0 && (
+							<C.DeleteLine
 								data-no-drag
-								title="Remove condition"
+								title="Remove option"
+								style={{ WebkitTextStroke: "1px black" }}
 								onClick={() => {
-									option.conditions.splice(cindex, 1);
-									option.args.splice(cindex, 1);
+									props.remove();
 									forceUpdate();
 								}}
 							>
-								&#x268A;
-							</C.Delete>
-						) : (
-							props.remove && (
-								<C.Delete
-									data-no-drag
-									title="Remove option"
-									style={{ WebkitTextStroke: "1px black" }}
-									onClick={() => {
-										props.remove();
-										forceUpdate();
-									}}
-								>
-									&#x268B;
-								</C.Delete>
-							)
+								&#x268B;
+							</C.DeleteLine>
 						)}
 						<DropdownInput
 							values={conditionKeys}
@@ -110,6 +103,7 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								var key = `v${vindex}`;
 								return <VariableEditor key={key} variable={variable} args={option.args[cindex]} index={vindex} setValue={setValue} />;
 							})}
+
 						{cond.length > 0 && cindex === option.conditions.length - 1 && (
 							<C.Plus
 								data-no-drag
@@ -122,6 +116,23 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 							>
 								&#x271A;
 							</C.Plus>
+						)}
+						{option.conditions[0].length > 0 && (
+							<C.DeleteRow
+								data-no-drag
+								title="Remove condition"
+								onClick={() => {
+									option.conditions.splice(cindex, 1);
+									option.args.splice(cindex, 1);
+									if (option.conditions.length === 0) {
+										option.conditions.push("");
+										option.args.push([]);
+									}
+									forceUpdate();
+								}}
+							>
+								&#x268A;
+							</C.DeleteRow>
 						)}
 					</div>
 				);

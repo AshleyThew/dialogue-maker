@@ -42,32 +42,18 @@ export const ActionBlock = (props: { option: ActionsProps; remove: Function }): 
 				const action: ActionProps = actions.find((action) => action.action === act);
 				return (
 					<div key={`c${cindex}`} style={{ display: "flex", alignItems: "center" }}>
-						{cindex !== 0 ? (
-							<C.Delete
+						{props.remove && cindex === 0 && (
+							<C.DeleteLine
 								data-no-drag
-								title="Remove condition"
+								title="Remove option"
+								style={{ WebkitTextStroke: "1px black" }}
 								onClick={() => {
-									option.actions.splice(cindex, 1);
-									option.args.splice(cindex, 1);
+									props.remove();
 									forceUpdate();
 								}}
 							>
-								&#x268A;
-							</C.Delete>
-						) : (
-							props.remove && (
-								<C.Delete
-									data-no-drag
-									title="Remove option"
-									style={{ WebkitTextStroke: "1px black" }}
-									onClick={() => {
-										props.remove();
-										forceUpdate();
-									}}
-								>
-									&#x268B;
-								</C.Delete>
-							)
+								&#x268B;
+							</C.DeleteLine>
 						)}
 						<DropdownInput
 							values={actionKeys}
@@ -90,10 +76,11 @@ export const ActionBlock = (props: { option: ActionsProps; remove: Function }): 
 								var key = `v${vindex}`;
 								return <VariableEditor key={key} variable={variable} args={option.args[cindex]} index={vindex} setValue={setValue} />;
 							})}
+
 						{act.length > 0 && cindex === option.actions.length - 1 && (
 							<C.Plus
 								data-no-drag
-								title="Add condition"
+								title="Add action"
 								onClick={(e) => {
 									option.actions.push("");
 									option.args.push([]);
@@ -102,6 +89,23 @@ export const ActionBlock = (props: { option: ActionsProps; remove: Function }): 
 							>
 								&#x271A;
 							</C.Plus>
+						)}
+						{option.actions[0].length > 0 && (
+							<C.DeleteRow
+								data-no-drag
+								title="Remove action"
+								onClick={() => {
+									option.actions.splice(cindex, 1);
+									option.args.splice(cindex, 1);
+									if (option.actions.length === 0) {
+										option.actions.push("");
+										option.args.push([]);
+									}
+									forceUpdate();
+								}}
+							>
+								&#x268A;
+							</C.DeleteRow>
 						)}
 					</div>
 				);
