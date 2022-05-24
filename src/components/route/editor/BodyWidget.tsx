@@ -103,7 +103,6 @@ const loadGithub = async (app: Application, location: string) => {
 };
 
 const loadData = (app: Application, data: string): void => {
-	console.log(data);
 	var model2 = new DiagramModel();
 	model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
 	app.getDiagramEngine().setModel(model2);
@@ -195,6 +194,15 @@ export class BodyWidget extends React.Component {
 								Delete: Shift + del
 								<br />
 								Zoom: Mouse scroll
+							</p>
+							<p>
+								Copyright
+								<br />
+								MineScape&reg; {new Date().getFullYear()}
+								<br />
+								<a href={"https://creativecommons.org/licenses/by-nc-nd/4.0/"} target="_blank" rel="noreferrer">
+									CC BY-NC-ND 4.0
+								</a>
 							</p>
 						</div>
 					</S.Tray>
