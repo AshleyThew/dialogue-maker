@@ -98,6 +98,10 @@ const actions = [
 		action: "npcText",
 		variables: [{ type: "text", placeholder: "text" }],
 	},
+	{
+		action: "message",
+		variables: [{ type: "text", placeholder: "message" }],
+	},
 ] as ActionProps[];
 
 const sourcesKeys = {};
