@@ -1,4 +1,4 @@
-import { BaseNodeProps, BaseNodeWidget } from "../base";
+import { BaseNodeProps, BaseNodeWidget, S } from "../base";
 import { StartNodeModel } from "./StartNodeModel";
 
 export interface StartNodeProps extends BaseNodeProps<StartNodeModel> {}
@@ -12,7 +12,7 @@ export class StartNodeWidget extends BaseNodeWidget<StartNodeProps> {
 		return (
 			<>
 				{super.renderHeader()}
-				{super.renderOutPorts()}
+				{super.renderOutPorts(true)}
 			</>
 		);
 	}

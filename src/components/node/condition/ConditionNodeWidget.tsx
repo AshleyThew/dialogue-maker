@@ -1,5 +1,4 @@
-import * as _ from "lodash";
-import { BaseNodeProps, BaseNodeWidget, S } from "../base";
+import { BaseNodeProps, BaseNodeWidget } from "../base";
 import { ConditionNodeModel } from "./ConditionNodeModel";
 import { ConditionBlock } from "../../editor/Condition";
 
@@ -16,15 +15,7 @@ export class ConditionNodeWidget extends BaseNodeWidget<ConditionNodeProps> {
 		);
 	}
 
-	renderInPorts(): JSX.Element {
-		return (
-			<div style={{ display: "flex", alignItems: "center" }}>
-				{this.props.node.getInPorts().length && (
-					<S.PortIn engine={this.props.engine}>
-						<S.PortsContainer>{_.map(this.props.node.getInPorts(), this.generatePort)}</S.PortsContainer>
-					</S.PortIn>
-				)}
-			</div>
-		);
+	renderOutPorts(required?: boolean): JSX.Element {
+		return super.renderOutPorts(true);
 	}
 }

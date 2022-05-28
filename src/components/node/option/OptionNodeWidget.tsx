@@ -12,9 +12,9 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 		return super.construct(
 			<>
 				{this.props.node.getOptions().options.map((option, index) => {
+					const outPort = this.props.node.getOutPorts()[index];
 					var remove = () => {
-						console.log(this.props.node.getOptions().options.splice(index, 1));
-						const outPort = this.props.node.getOutPorts().splice(index, 1)[0];
+						this.props.node.getOptions().options.splice(index, 1);
 						_.forEach(outPort.getLinks(), (link) => {
 							link.remove();
 						});
@@ -24,6 +24,13 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 						}
 						this.props.engine.repaintCanvas();
 					};
+
+					var color = "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));";
+
+					if (_.size(outPort.getLinks()) === 0) {
+						color = "linear-gradient(rgba(170, 14, 14, 0.3), rgba(170, 14, 14, 0.4))";
+					}
+
 					return (
 						<div key={`o${index}-${option.text}`}>
 							{index !== 0 && <hr style={{ margin: "0 0", background: "black", border: "0px", height: "1px" }} />}
@@ -37,7 +44,7 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 										setValue={(value: any) => (option.text = value)}
 										placeholder="Text"
 									/>
-									<S.PortOut engine={this.props.engine} style={{ right: "-24px" }}>
+									<S.PortOut color={color} style={{ right: "-24px" }}>
 										<S.PortsContainer>{this.generatePort(this.props.node.getOutPorts()[index])}</S.PortsContainer>
 									</S.PortOut>
 								</div>
@@ -65,18 +72,6 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 					&#x271A;
 				</C.Plus>
 			</>
-		);
-	}
-
-	renderInPorts(): JSX.Element {
-		return (
-			<div style={{ display: "flex", alignItems: "center" }}>
-				{this.props.node.getInPorts().length && (
-					<S.PortIn engine={this.props.engine}>
-						<S.PortsContainer>{_.map(this.props.node.getInPorts(), this.generatePort)}</S.PortsContainer>
-					</S.PortIn>
-				)}
-			</div>
 		);
 	}
 

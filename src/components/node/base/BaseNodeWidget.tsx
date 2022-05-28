@@ -38,26 +38,26 @@ export namespace S {
 		width: 100%;
 	`;
 
-	export const PortIn = styled.div<{ engine?: DiagramEngine }>`
+	export const PortIn = styled.div<{ color?: string }>`
 		display: inline-block;
 		position: relative;
 		left: -18px;
 		margin-right: -18px;
 		height: 17px;
-		background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
+		background-image: ${(props) => props.color || "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));"};
 
 		&:hover .port div {
 			background: rgb(108, 145, 0);
 		}
 	`;
 
-	export const PortOut = styled.div<{ engine?: DiagramEngine }>`
+	export const PortOut = styled.div<{ color?: string }>`
 		display: inline-block;
 		position: relative;
 		right: -18px;
 		margin-left: -18px;
 		height: 17px;
-		background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
+		background-image: ${(props) => props.color || "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));"};
 
 		&:hover .port div {
 			background: "rgb(192, 255, 0)";
@@ -100,7 +100,7 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 					<table>
 						<tbody>
 							<tr>
-								<td style={{ verticalAlign: "top" }}>{this.renderInPorts()}</td>
+								<td style={{ verticalAlign: "top" }}>{this.renderInPorts(true)}</td>
 								<S.NodeContent>{children}</S.NodeContent>
 								<td style={{ verticalAlign: "sub" }}>{this.renderOutPorts()}</td>
 							</tr>
@@ -126,23 +126,41 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 		);
 	}
 
-	renderInPorts(): JSX.Element {
+	renderInPorts(required?: boolean): JSX.Element {
 		return (
-			this.props.node.getInPorts().length && (
-				<S.PortIn engine={this.props.engine}>
-					<S.PortsContainer>{_.map(this.props.node.getInPorts(), this.generatePort)}</S.PortsContainer>
-				</S.PortIn>
-			)
+			<div style={{ display: "flex", alignItems: "center" }}>
+				{this.props.node.getInPorts().map((port, index) => {
+					var color = "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));";
+
+					if (required && _.size(port.getLinks()) === 0) {
+						color = "linear-gradient(rgba(170, 14, 14, 0.3), rgba(170, 14, 14, 0.4))";
+					}
+					return (
+						<S.PortIn key={index} color={color}>
+							<S.PortsContainer>{this.generatePort(port)}</S.PortsContainer>
+						</S.PortIn>
+					);
+				})}
+			</div>
 		);
 	}
 
-	renderOutPorts(): JSX.Element {
+	renderOutPorts(required?: boolean): JSX.Element {
 		return (
-			this.props.node.getOutPorts().length && (
-				<S.PortOut engine={this.props.engine}>
-					<S.PortsContainer>{_.map(this.props.node.getOutPorts(), this.generatePort)}</S.PortsContainer>
-				</S.PortOut>
-			)
+			<>
+				{this.props.node.getOutPorts().map((port, index) => {
+					var color = "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));";
+
+					if (required && _.size(port.getLinks()) === 0) {
+						color = "linear-gradient(rgba(170, 14, 14, 0.3), rgba(170, 14, 14, 0.4))";
+					}
+					return (
+						<S.PortOut key={index} color={color}>
+							<S.PortsContainer>{this.generatePort(port)}</S.PortsContainer>
+						</S.PortOut>
+					);
+				})}
+			</>
 		);
 	}
 }

@@ -99,6 +99,10 @@ const actions = [
 		variables: [{ type: "text", placeholder: "text" }],
 	},
 	{
+		action: "playerText",
+		variables: [{ type: "text", placeholder: "text" }],
+	},
+	{
 		action: "message",
 		variables: [{ type: "text", placeholder: "message" }],
 	},

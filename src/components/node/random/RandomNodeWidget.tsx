@@ -11,6 +11,11 @@ export class RandomNodeWidget extends BaseNodeWidget<RandomNodeProps> {
 		return super.construct(
 			<>
 				{this.props.node.getOutPorts().map((port, index) => {
+					var color = "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));";
+
+					if (_.size(port.getLinks()) === 0) {
+						color = "linear-gradient(rgba(170, 14, 14, 0.3), rgba(170, 14, 14, 0.4))";
+					}
 					return (
 						<div key={`p${index}`} style={{ color: "black", display: "flex", justifyContent: "space-between" }}>
 							<div style={{ minWidth: "85%" }} />
@@ -32,7 +37,7 @@ export class RandomNodeWidget extends BaseNodeWidget<RandomNodeProps> {
 								<></>
 							)}
 							<div style={{ color: "white", display: "flex", alignItems: "center" }}>
-								<S.PortOut engine={this.props.engine}>
+								<S.PortOut color={color}>
 									<S.PortsContainer>{this.generatePort(port)}</S.PortsContainer>
 								</S.PortOut>
 							</div>
@@ -59,18 +64,6 @@ export class RandomNodeWidget extends BaseNodeWidget<RandomNodeProps> {
 					&#x271A;
 				</C.Plus>
 			</>
-		);
-	}
-
-	renderInPorts(): JSX.Element {
-		return (
-			<div style={{ display: "flex", alignItems: "center" }}>
-				{this.props.node.getInPorts().length && (
-					<S.PortIn engine={this.props.engine}>
-						<S.PortsContainer>{_.map(this.props.node.getInPorts(), this.generatePort)}</S.PortsContainer>
-					</S.PortIn>
-				)}
-			</div>
 		);
 	}
 
