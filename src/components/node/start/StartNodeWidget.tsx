@@ -1,4 +1,4 @@
-import { BaseNodeProps, BaseNodeWidget, S } from "../base";
+import { BaseNodeProps, BaseNodeWidget } from "../base";
 import { StartNodeModel } from "./StartNodeModel";
 
 export interface StartNodeProps extends BaseNodeProps<StartNodeModel> {}
