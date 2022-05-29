@@ -2,7 +2,8 @@ import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
 import { Conditions } from "../../editor/Condition";
-import { Actions } from "../../editor/Action";
+import { ActionProps, Actions } from "../../editor/Action";
+import { DialogueContextInterface } from "../../DialogueContext";
 
 export interface ActionNodeModelOptions extends BaseNodeModelOptions {
 	actions?: Actions;
@@ -54,5 +55,16 @@ export class ActionNodeModel extends BaseNodeModel<ActionNodeModelGenerics> {
 
 	getOutPorts(): DefaultPortModel[] {
 		return this.portsOut;
+	}
+
+	fix(context: DialogueContextInterface) {
+		const { actions } = context;
+		const { actions: acts } = this.options;
+		acts.actions.forEach((act, index) => {
+			const action: ActionProps = actions.find((action) => action.action === act);
+			while (action && action.variables.length && acts.args[index].length < action.variables.length) {
+				acts.args[index].push("");
+			}
+		});
 	}
 }

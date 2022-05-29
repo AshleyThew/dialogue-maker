@@ -1,7 +1,8 @@
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
-import { Conditions } from "../../editor/Condition";
+import { ConditionProps, Conditions } from "../../editor/Condition";
+import { DialogueContextInterface } from "../../DialogueContext";
 
 export interface ConditionNodeModelOptions extends BaseNodeModelOptions {
 	conditions?: Conditions;
@@ -54,5 +55,16 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 
 	getOutPorts(): DefaultPortModel[] {
 		return this.portsOut;
+	}
+
+	fix(context: DialogueContextInterface) {
+		const { conditions } = context;
+		const { conditions: conds } = this.options;
+		conds.conditions.forEach((cond, index) => {
+			const condition: ConditionProps = conditions.find((condition) => condition.condition === cond);
+			while (condition && condition.variables.length && conds.args[index].length < condition.variables.length) {
+				conds.args[index].push("");
+			}
+		});
 	}
 }

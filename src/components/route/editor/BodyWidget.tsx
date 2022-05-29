@@ -10,7 +10,7 @@ import { showOpenFilePicker } from "file-system-access";
 import { DiagramModel } from "@projectstorm/react-diagrams";
 import { StartFactory } from "../../node/start/StartNodeFactory";
 import { StartNodeModel } from "../../node/start/StartNodeModel";
-import { DialogueContext } from "../../DialogueContext";
+import { DialogueContext, DialogueContextInterface } from "../../DialogueContext";
 import { DropdownInput } from "../../editor/Inputs";
 
 namespace S {
@@ -75,7 +75,7 @@ namespace S {
 	`;
 }
 
-const loadFile = async (app: Application) => {
+const loadFile = async (app: Application, context: DialogueContextInterface) => {
 	var fileHandle: FileSystemFileHandle[];
 	try {
 		fileHandle = await showOpenFilePicker({
@@ -88,25 +88,30 @@ const loadFile = async (app: Application) => {
 
 	fileHandle[0].getFile().then((file) => {
 		file.text().then((data) => {
-			loadData(app, data);
+			loadData(app, data, context);
 		});
 	});
 };
 
-const loadGithub = async (app: Application, location: string) => {
+const loadGithub = async (app: Application, location: string, context: DialogueContextInterface) => {
 	fetch(`https://raw.githubusercontent.com/MineScape-me/MineScape/main/dialogue/regions/${location}.json`)
 		.then((data) => data.text())
-		.then((data) => loadData(app, data))
+		.then((data) => loadData(app, data, context))
 		.catch((err) => {
 			console.log(err);
 		});
 };
 
-const loadData = (app: Application, data: string): void => {
+const loadData = (app: Application, data: string, context: DialogueContextInterface): void => {
 	clear(app);
 	setTimeout(() => {
 		var model2 = new DiagramModel();
 		model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
+		model2.getNodes().forEach((node) => {
+			if (node instanceof BaseNodeModel) {
+				node.fix(context);
+			}
+		});
 		app.getDiagramEngine().setModel(model2);
 		app.registerListener(true);
 	}, 100);
@@ -134,14 +139,15 @@ const clear = async (app: Application) => {
 };
 
 const Buttons = (props): JSX.Element => {
-	const { sourcesKeys } = React.useContext(DialogueContext);
+	const context = React.useContext(DialogueContext);
+	const { sourcesKeys } = context;
 	const [selected, setSelected] = React.useState("");
 
 	const keys = sourcesKeys["dialogues"];
 
 	return (
 		<>
-			<S.DemoButton hover="rgb(29, 167, 29)" onClick={() => loadFile(props.app)}>
+			<S.DemoButton hover="rgb(29, 167, 29)" onClick={() => loadFile(props.app, context)}>
 				Load
 			</S.DemoButton>
 			<S.DemoButton onClick={() => saveFile(props.app)}>Save</S.DemoButton>
@@ -152,7 +158,7 @@ const Buttons = (props): JSX.Element => {
 			<DropdownInput values={keys} value={selected} setValue={setSelected} placeholder={"Github"} width={"200px"} right={0} />;
 			<S.DemoButton
 				onClick={() => {
-					loadGithub(props.app, selected);
+					loadGithub(props.app, selected, context);
 					setSelected("");
 				}}
 			>

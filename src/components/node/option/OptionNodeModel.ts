@@ -2,7 +2,8 @@ import * as _ from "lodash";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
-import { Conditions, ConditionalProps } from "../../editor/Condition";
+import { Conditions, ConditionalProps, ConditionProps } from "../../editor/Condition";
+import { DialogueContextInterface } from "../../DialogueContext";
 
 export interface OptionProps extends ConditionalProps {
 	text: string;
@@ -77,5 +78,18 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 
 	getOutPorts(): DefaultPortModel[] {
 		return this.portsOut;
+	}
+
+	fix(context: DialogueContextInterface) {
+		const { conditions } = context;
+		const { options: opts } = this.options;
+		opts.forEach((opt) => {
+			opt.conditions.forEach((cond, index) => {
+				const condition: ConditionProps = conditions.find((condition) => condition.condition === cond);
+				while (condition && condition.variables.length && opt.args[index].length < condition.variables.length) {
+					opt.args[index].push("");
+				}
+			});
+		});
 	}
 }

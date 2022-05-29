@@ -2,6 +2,7 @@ import * as _ from "lodash";
 import { NodeModel, NodeModelGenerics, PortModelAlignment } from "@projectstorm/react-diagrams-core";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { BasePositionModelOptions, DeserializeEvent } from "@projectstorm/react-canvas-core";
+import { DialogueContextInterface } from "../../DialogueContext";
 
 export interface BaseNodeModelOptions extends BasePositionModelOptions {
 	title?: string;
@@ -138,4 +139,6 @@ export class BaseNodeModel<T extends BaseNodeModelGenerics<BaseNodeModelOptions>
 	getOutPorts(): DefaultPortModel[] {
 		return this.portsOut;
 	}
+
+	fix(context: DialogueContextInterface) {}
 }

@@ -26,6 +26,7 @@ const conditions = [
 		variables: [
 			{ source: "items", type: "list", placeholder: "item" },
 			{ type: "number", placeholder: "amount" },
+			{ source: "boolean", type: "list", placeholder: "noted" },
 		],
 	},
 	{
@@ -72,6 +73,7 @@ const actions = [
 		variables: [
 			{ source: "items", type: "list", placeholder: "item" },
 			{ type: "number", placeholder: "amount" },
+			{ source: "boolean", type: "list", placeholder: "noted" },
 		],
 	},
 	{
@@ -146,6 +148,7 @@ export const DialogueContextProvider = (props) => {
 		setSources({
 			compare: ["<", "<=", "==", ">=", ">"],
 			equipmentSlot: ["HEAD", "CAPE", "NECK", "AMMUNITION", "BODY", "SHIELD", "LEGS", "HANDS", "FEET", "RING", "WEAPON"],
+			boolean: ["true", "false"],
 			skills,
 			items,
 			quest,
