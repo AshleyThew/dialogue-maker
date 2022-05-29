@@ -22,7 +22,7 @@ namespace S {
 		border-radius: 5px;
 	`;
 
-	export const Dropdown = styled(Select)`
+	export const Dropdown = styled(Select)<{ minWidth: string }>`
 		flex-grow: 1;
 		padding: 5px 2px;
 		border: none;
@@ -137,7 +137,7 @@ export const DropdownInput = (props: {
 	right?: number;
 }) => {
 	const style = {
-		container: () => ({ display: "inline-block", flexGrow: "0!important" }),
+		container: (provided, state) => ({ display: "inline-block", flexGrow: "0!important", minWidth: state.selectProps.minWidth }),
 		dropdownIndicator: () => ({ padding: "0 0" }),
 		menuList: (provided) => ({ ...provided, padding: "0 0" }),
 		menu: (provided) => ({ ...provided, margin: "0 0", top: "", right: props.right, width: props.width || "100%", fontSize: "11px" }),
@@ -148,6 +148,8 @@ export const DropdownInput = (props: {
 		input: (provided) => ({ ...provided, width: "100%", minWidth: Math.max(props?.placeholder?.length || 0, props.minLength || 2) + "ch" }),
 		option: (provided) => ({ ...provided, padding: "2px 0px", minHeight: "16px" }),
 	};
+
+	var minWidth = Math.max(props.value.length + 2, props.placeholder.length + 2, 2) + "ch";
 
 	return (
 		<S.Dropdown
@@ -160,6 +162,7 @@ export const DropdownInput = (props: {
 			onChange={(e) => {
 				props.setValue(e["value"]);
 			}}
+			minWidth={minWidth}
 		/>
 	);
 };
