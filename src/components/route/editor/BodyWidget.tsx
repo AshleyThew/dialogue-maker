@@ -103,10 +103,13 @@ const loadGithub = async (app: Application, location: string) => {
 };
 
 const loadData = (app: Application, data: string): void => {
-	var model2 = new DiagramModel();
-	model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
-	app.getDiagramEngine().setModel(model2);
-	app.registerListener(true);
+	clear(app);
+	setTimeout(() => {
+		var model2 = new DiagramModel();
+		model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
+		app.getDiagramEngine().setModel(model2);
+		app.registerListener(true);
+	}, 100);
 };
 
 const saveFile = async (app: Application) => {
@@ -126,6 +129,7 @@ const saveFile = async (app: Application) => {
 const clear = async (app: Application) => {
 	var model2 = new DiagramModel();
 	app.getDiagramEngine().setModel(model2);
+	app.registerListener(true);
 	app.forceUpdate();
 };
 
