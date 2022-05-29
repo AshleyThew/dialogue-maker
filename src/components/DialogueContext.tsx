@@ -2,6 +2,7 @@ import * as React from "react";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
 import { items } from "./sources/items";
+import { npcInteraction } from "./sources/npcInteraction";
 import { quest } from "./sources/quest";
 import { quests } from "./sources/quests";
 import { shops } from "./sources/shops";
@@ -57,6 +58,10 @@ const conditions = [
 	{
 		condition: "hasQuestPoints",
 		variables: [{ type: "number", placeholder: "points" }],
+	},
+	{
+		condition: "npcInteraction",
+		variables: [{ source: "npcInteraction", type: "list", placeholder: "interaction" }],
 	},
 ] as ConditionProps[];
 
@@ -116,18 +121,20 @@ export const DialogueContextProvider = (props) => {
 
 	const defaultDialogueContext: DialogueContextInterface = {
 		conditions: conditions,
-		conditionKeys: conditions.map((cond) => ({ label: cond.condition, value: cond.condition })),
+		conditionKeys: conditions.sort().map((cond) => ({ label: cond.condition, value: cond.condition })),
 		actions: actions,
-		actionKeys: actions.map((act) => ({ label: act.action, value: act.action })),
+		actionKeys: actions.sort().map((act) => ({ label: act.action, value: act.action })),
 		sources: sources,
 		sourcesKeys: sourcesKeys,
 	};
 
 	React.useEffect(() => {
-		Object.entries(sources).forEach(([key, value]) => {
-			const val = value as [];
-			sourcesKeys[key] = val.map((val) => ({ label: val, value: val }));
-		});
+		Object.entries(sources)
+			.sort()
+			.forEach(([key, value]) => {
+				const val = value as [];
+				sourcesKeys[key] = val.map((val) => ({ label: val, value: val }));
+			});
 		forceUpdate();
 	}, [sources]);
 
@@ -135,10 +142,11 @@ export const DialogueContextProvider = (props) => {
 		setSources({
 			compare: ["<", "<=", "==", ">=", ">"],
 			equipmentSlot: ["HEAD", "CAPE", "NECK", "AMMUNITION", "BODY", "SHIELD", "LEGS", "HANDS", "FEET", "RING", "WEAPON"],
-			skills: skills,
-			items: items,
-			quest: quest,
-			shops: shops,
+			skills,
+			items,
+			quest,
+			shops,
+			npcInteraction,
 			// QUESTS
 			...quests,
 		});

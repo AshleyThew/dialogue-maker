@@ -137,7 +137,7 @@ export const DropdownInput = (props: {
 	right?: number;
 }) => {
 	const style = {
-		container: (provided, state) => ({ display: "inline-block", flexGrow: "0!important", minWidth: state.selectProps.minWidth }),
+		container: (_provided, state) => ({ display: "inline-block", flexGrow: "0!important", minWidth: state.selectProps.minWidth }),
 		dropdownIndicator: () => ({ padding: "0 0" }),
 		menuList: (provided) => ({ ...provided, padding: "0 0" }),
 		menu: (provided) => ({ ...provided, margin: "0 0", top: "", right: props.right, width: props.width || "100%", fontSize: "11px" }),
