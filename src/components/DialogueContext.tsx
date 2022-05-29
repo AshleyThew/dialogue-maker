@@ -111,6 +111,10 @@ const actions = [
 		action: "message",
 		variables: [{ type: "text", placeholder: "message" }],
 	},
+	{
+		action: "openDialogue",
+		variables: [{ source: "dialogues", type: "list", placeholder: "dialogue" }],
+	},
 ] as ActionProps[];
 
 const sourcesKeys = {};
