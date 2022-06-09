@@ -48,6 +48,8 @@ export class DialogueDragNewLinkState extends State<DiagramEngine> {
 					if (event.buttons === 0) {
 						// If buttons is 0, it means the mouse is not down, the user may have released it
 						// outside of the canvas, then we eject the state
+						this.link.remove();
+						this.engine.repaintCanvas();
 						this.eject();
 
 						return;
