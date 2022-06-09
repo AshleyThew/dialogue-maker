@@ -149,7 +149,7 @@ export const DropdownInput = (props: {
 		option: (provided) => ({ ...provided, padding: "2px 0px", minHeight: "16px" }),
 	};
 
-	var minWidth = Math.max(props.value.length + 3, props.placeholder.length + 3, 2) + "ch";
+	var minWidth = Math.max(props.value.length + 4, props.placeholder.length + 4, 2) + "ch";
 
 	return (
 		<S.Dropdown
