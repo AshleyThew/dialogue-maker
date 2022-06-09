@@ -37,9 +37,10 @@ const conditions = [
 		],
 	},
 	{
-		condition: "hasSkillLevel",
+		condition: "skillLevel",
 		variables: [
 			{ source: "skills", type: "list", placeholder: "skill" },
+			{ source: "compare", type: "list", placeholder: "?" },
 			{ type: "number", placeholder: "level" },
 		],
 		actionable: true,

@@ -1,11 +1,16 @@
-import { AbstractDisplacementState, AbstractDisplacementStateEvent, Action, ActionEvent, InputType } from "@projectstorm/react-canvas-core";
+import { AbstractDisplacementStateEvent, Action, ActionEvent, InputType, State } from "@projectstorm/react-canvas-core";
 import { DiagramEngine, LinkModel, PortModel } from "@projectstorm/react-diagrams";
 import { MouseEvent } from "react";
 import * as _ from "lodash";
 
-export class DialogueDragNewLinkState extends AbstractDisplacementState<DiagramEngine> {
+export class DialogueDragNewLinkState extends State<DiagramEngine> {
 	port: PortModel;
 	link: LinkModel;
+
+	initialX: number;
+	initialY: number;
+	initialXRelative: number;
+	initialYRelative: number;
 
 	constructor() {
 		super({ name: "drag-new-link" });
@@ -27,6 +32,29 @@ export class DialogueDragNewLinkState extends AbstractDisplacementState<DiagramE
 					this.link.setSourcePort(this.port);
 					this.engine.getModel().addLink(this.link);
 					this.port.reportPosition();
+
+					const { clientX, clientY } = event.event;
+					this.handleMoveStart(clientX, clientY);
+				},
+			})
+		);
+
+		this.registerAction(
+			new Action({
+				type: InputType.MOUSE_MOVE,
+				fire: (actionEvent: ActionEvent<React.MouseEvent>) => {
+					const { event } = actionEvent;
+
+					if (event.buttons === 0) {
+						// If buttons is 0, it means the mouse is not down, the user may have released it
+						// outside of the canvas, then we eject the state
+						this.eject();
+
+						return;
+					}
+
+					const { clientX, clientY } = event;
+					this.handleMove(clientX, clientY, event);
 				},
 			})
 		);
@@ -48,19 +76,35 @@ export class DialogueDragNewLinkState extends AbstractDisplacementState<DiagramE
 							model.reportPosition();
 							this.engine.repaintCanvas();
 							this.engine.getModel().clearSelection();
-							return;
-						} else {
-							this.link.remove();
-							this.engine.repaintCanvas();
+							this.eject();
 							return;
 						}
 					}
 
 					this.link.remove();
 					this.engine.repaintCanvas();
+					this.eject();
 				},
 			})
 		);
+	}
+
+	protected handleMoveStart(x: number, y: number): void {
+		this.initialX = x;
+		this.initialY = y;
+		const rel = this.engine.getRelativePoint(x, y);
+		this.initialXRelative = rel.x;
+		this.initialYRelative = rel.y;
+	}
+
+	protected handleMove(x: number, y: number, event: React.MouseEvent | React.TouchEvent): void {
+		this.fireMouseMoved({
+			displacementX: x - this.initialX,
+			displacementY: y - this.initialY,
+			virtualDisplacementX: (x - this.initialX) / (this.engine.getModel().getZoomLevel() / 100.0),
+			virtualDisplacementY: (y - this.initialY) / (this.engine.getModel().getZoomLevel() / 100.0),
+			event,
+		});
 	}
 
 	/**
