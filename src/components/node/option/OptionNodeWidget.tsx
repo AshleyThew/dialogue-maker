@@ -75,7 +75,7 @@ export class OptionNodeWidget extends BaseNodeWidget<OptionNodeProps> {
 		);
 	}
 
-	renderOutPorts(): JSX.Element {
+	renderOutPorts(required?: boolean): JSX.Element {
 		return undefined;
 	}
 }

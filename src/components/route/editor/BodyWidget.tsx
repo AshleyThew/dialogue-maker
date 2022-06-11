@@ -141,9 +141,14 @@ const clear = async (app: Application) => {
 const Buttons = (props): JSX.Element => {
 	const context = React.useContext(DialogueContext);
 	const { sourcesKeys } = context;
-	const [selected, setSelected] = React.useState("");
+	const [github, setGithub] = React.useState("");
 
 	const keys = sourcesKeys["dialogues"];
+
+	const clearLocal = () => {
+		clear(props.app);
+		setGithub("");
+	};
 
 	return (
 		<>
@@ -151,19 +156,22 @@ const Buttons = (props): JSX.Element => {
 				Load
 			</S.DemoButton>
 			<S.DemoButton onClick={() => saveFile(props.app)}>Save</S.DemoButton>
-			<S.DemoButton hover="rgb(248, 19, 19)" onClick={() => clear(props.app)}>
+			<S.DemoButton hover="rgb(248, 19, 19)" onClick={clearLocal}>
 				Clear
 			</S.DemoButton>
 			<div style={{ marginLeft: "auto" }} />
-			<DropdownInput values={keys} value={selected} setValue={setSelected} placeholder={"Github"} width={"200px"} right={0} />;
-			<S.DemoButton
-				onClick={() => {
-					loadGithub(props.app, selected, context);
-					setSelected("");
+			<DropdownInput
+				values={keys}
+				value={github}
+				setValue={(e) => {
+					setGithub(e);
+					loadGithub(props.app, e, context);
 				}}
-			>
-				Load Github
-			</S.DemoButton>
+				placeholder={"Github"}
+				width={"200px"}
+				right={0}
+			/>
+			;
 		</>
 	);
 };

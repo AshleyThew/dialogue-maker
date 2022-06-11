@@ -13,6 +13,8 @@ export interface DialogueContextInterface {
 	conditionKeys: any[];
 	actions: ActionProps[];
 	actionKeys: any[];
+	switchs: { [key: string]: string[] };
+	switchsKeys: { label: string; value: string }[];
 	sources?: { [key: string]: string[] };
 	sourcesKeys: { [key: string]: any[] };
 }
@@ -121,6 +123,9 @@ const actions = [
 ] as ActionProps[];
 
 const sourcesKeys = {};
+const switchs = {};
+
+Object.entries(quests).forEach(([key, value]) => (switchs[key] = ["null", ...value]));
 
 export const DialogueContextProvider = (props) => {
 	const [sources, setSources] = React.useState({});
@@ -131,6 +136,10 @@ export const DialogueContextProvider = (props) => {
 		conditionKeys: conditions.sort().map((cond) => ({ label: cond.condition, value: cond.condition })),
 		actions: actions,
 		actionKeys: actions.sort().map((act) => ({ label: act.action, value: act.action })),
+		switchs: switchs,
+		switchsKeys: Object.keys(switchs)
+			.sort()
+			.map((sw) => ({ label: sw, value: sw })),
 		sources: sources,
 		sourcesKeys: sourcesKeys,
 	};
@@ -161,12 +170,12 @@ export const DialogueContextProvider = (props) => {
 		fetch("https://raw.githubusercontent.com/MineScape-me/MineScape/main/dialogue/paths.txt")
 			.then((data) => data.text())
 			.then((data) => {
-				var files = data
+				var github = data
 					.split("\n")
 					.filter((line) => line !== "")
 					.map((file) => file.replace("dialogue/regions/", "").replace(".json", ""));
-				files = ["", ...files];
-				setSources((sources) => ({ ...sources, dialogues: files }));
+				var files = [...new Set([...github])];
+				setSources((sources) => ({ ...sources, dialogues: files, github: github }));
 			})
 			.catch((e) => {
 				console.log(e);

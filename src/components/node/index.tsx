@@ -6,6 +6,7 @@ import { NoteFactory } from "./note/NoteNodeFactory";
 import { OptionFactory } from "./option/OptionNodeFactory";
 import { RandomFactory } from "./random/RandomNodeFactory";
 import { StartFactory } from "./start/StartNodeFactory";
+import { SwitchFactory } from "./switch/SwitchNodeFactory";
 
 export * from "./dialogue/DialogueNodeFactory";
 export * from "./dialogue/DialogueNodeModel";
@@ -31,10 +32,15 @@ export * from "./note/NoteNodeFactory";
 export * from "./note/NoteNodeModel";
 export * from "./note/NoteNodeWidget";
 
+export * from "./switch/SwitchNodeFactory";
+export * from "./switch/SwitchNodeModel";
+export * from "./switch/SwitchNodeWidget";
+
 export const NodeFactories: BaseNodeFactory<BaseNodeModel<BaseNodeModelGenerics<BaseNodeModelOptions>>>[] = [
 	DialogueFactory,
 	OptionFactory,
 	ConditionFactory,
+	SwitchFactory,
 	ActionFactory,
 	RandomFactory,
 	NoteFactory,

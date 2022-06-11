@@ -67,7 +67,7 @@ export class RandomNodeWidget extends BaseNodeWidget<RandomNodeProps> {
 		);
 	}
 
-	renderOutPorts(): JSX.Element {
+	renderOutPorts(required?: boolean): JSX.Element {
 		return undefined;
 	}
 }
