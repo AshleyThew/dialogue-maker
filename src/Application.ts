@@ -7,6 +7,8 @@ import { StartFactory } from "./components/node/start/StartNodeFactory";
 import { CloneItemsAction } from "./components/state/CloneItemsAction";
 
 export class Application {
+	protected model: DiagramModel;
+	protected trees: { [key: string]: DiagramModel };
 	protected diagramEngine: DiagramEngine;
 	protected updateFunction: Function;
 
@@ -18,8 +20,9 @@ export class Application {
 	}
 
 	public newModel() {
-		const model = new DiagramModel();
-		this.diagramEngine.setModel(model);
+		this.model = new DiagramModel();
+		this.trees = {};
+		this.diagramEngine.setModel(this.model);
 
 		this.diagramEngine.getNodeFactories().registerFactory(StartFactory);
 		NodeFactories.forEach((factory) => this.diagramEngine.getNodeFactories().registerFactory(factory));
@@ -42,8 +45,20 @@ export class Application {
 		eventBus.registerAction(new CloneItemsAction({ offset: { x: 50, y: 50 } }));
 	}
 
-	public getActiveDiagram(): DiagramModel {
-		return this.diagramEngine.getModel();
+	public getModel(): DiagramModel {
+		return this.model;
+	}
+
+	public getTrees(): { [key: string]: DiagramModel } {
+		return this.trees;
+	}
+
+	public setModel(model: DiagramModel, trees: { [key: string]: DiagramModel }): void {
+		this.model = model;
+		this.trees = { ...trees };
+		this.diagramEngine.setModel(model);
+		this.registerListener(true);
+		this.forceUpdate();
 	}
 
 	public getDiagramEngine(): DiagramEngine {

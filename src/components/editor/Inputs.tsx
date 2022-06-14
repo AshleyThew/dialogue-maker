@@ -43,6 +43,7 @@ interface EditableInputProps {
 	pattern?: RegExp;
 	number?: boolean;
 	editable?: boolean;
+	autoFocus?: boolean;
 }
 
 const CustomOption = ({ children, ...props }) => {
@@ -71,6 +72,7 @@ export const EditableInput = (props: EditableInputProps) => {
 			defaultValue={props.value}
 			placeholder={props.placeholder}
 			size={size}
+			autoFocus={props.autoFocus !== undefined && props.autoFocus}
 			onKeyDown={(e) => {
 				if (e.key.length === 1 && props.pattern && !props.pattern.test(e.key)) {
 					e.preventDefault();
@@ -92,7 +94,7 @@ export const EditableInput = (props: EditableInputProps) => {
 				e.target.style.maxWidth = e.target.size + "ch";
 			}}
 			onBlur={(e) => {
-				props.setValue(e.target.value);
+				props.setValue(e.target.value, e.target);
 			}}
 		/>
 	);

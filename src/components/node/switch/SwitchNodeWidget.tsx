@@ -45,7 +45,6 @@ export const SwitchBlock = (props: { switch: SwitchNodeProps }): JSX.Element => 
 	const { switchs, switchsKeys } = React.useContext(DialogueContext);
 	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const setValue = (e) => {
-		console.log(e);
 		props.switch.node.getOptions().switch = e;
 		[...props.switch.node.getOutPorts()].forEach((port) => {
 			_.forEach(port.getLinks(), (link) => {

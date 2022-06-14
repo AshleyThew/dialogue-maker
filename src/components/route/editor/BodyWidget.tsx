@@ -1,17 +1,15 @@
 import * as React from "react";
 import { Application } from "../../../Application";
-import { TrayItemWidget } from "./TrayItemWidget";
-import { AllNodeFactories, NodeFactories } from "../../node";
+import { AllNodeFactories } from "../../node";
 import { CanvasWidget } from "@projectstorm/react-canvas-core";
 import { DialogueSidebar } from "./DialogueSidebar";
 import styled from "@emotion/styled";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../../node/base";
 import { showOpenFilePicker } from "file-system-access";
 import { DiagramModel } from "@projectstorm/react-diagrams";
-import { StartFactory } from "../../node/start/StartNodeFactory";
-import { StartNodeModel } from "../../node/start/StartNodeModel";
 import { DialogueContext, DialogueContextInterface } from "../../DialogueContext";
 import { DropdownInput } from "../../editor/Inputs";
+import { Tray } from "./Tray";
 
 namespace S {
 	export const Body = styled.div`
@@ -40,15 +38,6 @@ namespace S {
 	export const Layer = styled.div`
 		position: relative;
 		flex-grow: 1;
-	`;
-
-	export const Tray = styled.div`
-		min-width: 200px;
-		background: rgb(20, 20, 20);
-		flex-grow: 0;
-		flex-shrink: 0;
-		display: flex;
-		flex-direction: column;
 	`;
 
 	export const Toolbar = styled.div`
@@ -102,18 +91,33 @@ const loadGithub = async (app: Application, location: string, context: DialogueC
 		});
 };
 
+const deserializeModel = (app: Application, model: any, context: DialogueContextInterface): DiagramModel => {
+	var newModel = new DiagramModel();
+	newModel.deserializeModel(model, app.getDiagramEngine());
+	newModel.getNodes().forEach((node) => {
+		if (node instanceof BaseNodeModel) {
+			node.fix(context);
+		}
+	});
+	return newModel;
+};
+
 const loadData = (app: Application, data: string, context: DialogueContextInterface): void => {
 	clear(app);
 	setTimeout(() => {
-		var model2 = new DiagramModel();
-		model2.deserializeModel(JSON.parse(data), app.getDiagramEngine());
-		model2.getNodes().forEach((node) => {
-			if (node instanceof BaseNodeModel) {
-				node.fix(context);
-			}
-		});
-		app.getDiagramEngine().setModel(model2);
-		app.registerListener(true);
+		const model = JSON.parse(data);
+
+		let trees = {};
+		if (model.trees) {
+			Object.entries(model.trees).forEach((entry) => {
+				const [key, value] = entry;
+				trees[key] = deserializeModel(app, value, context);
+			});
+			delete model["trees"];
+		}
+		const newModel = deserializeModel(app, model, context);
+
+		app.setModel(newModel, trees);
 	}, 100);
 };
 
@@ -124,18 +128,23 @@ const saveFile = async (app: Application) => {
 	} catch (error) {
 		return;
 	}
+	const output = app.getModel().serialize() as any;
+	const trees = { ...app.getTrees() };
+	output.trees = {};
+	Object.entries(trees).forEach((entry) => {
+		const [key, value] = entry;
+		output.trees[key] = value.serialize();
+	});
 
 	fileHandle.createWritable().then((stream) => {
-		stream.write(JSON.stringify(app.getActiveDiagram().serialize(), null, 2));
+		stream.write(JSON.stringify(output, null, 2));
 		stream.close();
 	});
 };
 
 const clear = async (app: Application) => {
-	var model2 = new DiagramModel();
-	app.getDiagramEngine().setModel(model2);
-	app.registerListener(true);
-	app.forceUpdate();
+	var newModel = new DiagramModel();
+	app.setModel(newModel, {});
 };
 
 const Buttons = (props): JSX.Element => {
@@ -177,54 +186,33 @@ const Buttons = (props): JSX.Element => {
 };
 
 export class BodyWidget extends React.Component {
+	static contextType = DialogueContext;
+
 	state = {
 		app: new Application(() => {
 			this.forceUpdate();
 		}),
 	};
 
+	componentDidMount() {
+		let value = this.context as any;
+		const { app, setApp } = value;
+		if (!app) {
+			setApp(this.state.app);
+		}
+	}
+
 	render() {
 		return (
 			<S.Body>
-				<S.Header>
+				{/* <S.Header>
 					<div className="title">Dialogue</div>
-				</S.Header>
+				</S.Header> */}
 				<S.Toolbar>
 					<Buttons app={this.state.app} />
 				</S.Toolbar>
 				<S.Content>
-					<S.Tray>
-						{!this.state.app
-							.getActiveDiagram()
-							.getNodes()
-							.some((val) => val instanceof StartNodeModel) && (
-							<TrayItemWidget key={"start"} model={{ id: "start" }} name={"start"} color={StartFactory.options.color} />
-						)}
-						{NodeFactories.map((factory) => {
-							var options = factory.options;
-							return <TrayItemWidget key={options.id} model={{ id: options.id }} name={options.id} color={options.color} />;
-						})}
-						<div style={{ marginTop: "auto", color: "#ffffff" }}>
-							<p style={{ color: "#23f0e5" }}>Shortcuts:</p>
-							<p>
-								Duplicate: Ctrl + d
-								<br />
-								Delete: Shift + del
-								<br />
-								Zoom: Mouse scroll
-							</p>
-							<p>
-								Copyright
-								<br />
-								MineScape&reg; {new Date().getFullYear()}
-								<br />
-								<a href={"https://creativecommons.org/licenses/by-nc-nd/4.0/"} target="_blank" rel="noreferrer">
-									CC BY-NC-ND 4.0
-								</a>
-							</p>
-						</div>
-					</S.Tray>
-
+					<Tray app={this.state.app} />
 					<S.Layer
 						onDrop={(event) => {
 							var data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
@@ -233,6 +221,13 @@ export class BodyWidget extends React.Component {
 							const factory = AllNodeFactories.find((factory) => factory.options.id === data.id);
 							node = factory.generateModel(undefined);
 							node.setupPorts();
+							if (data.extra) {
+								Object.entries(data.extra).forEach((entry) => {
+									const [key, value] = entry;
+									node.getOptions()[key] = value;
+								});
+							}
+
 							var point = this.state.app.getDiagramEngine().getRelativeMousePoint(event);
 							node.setPosition(point);
 							this.state.app.getDiagramEngine().getModel().addNode(node);

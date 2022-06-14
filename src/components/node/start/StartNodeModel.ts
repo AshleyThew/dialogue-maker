@@ -16,7 +16,7 @@ export class StartNodeModel extends BaseNodeModel<StartNodeModelGenerics> {
 		super({
 			type: "start",
 			title: "Start",
-			editableTitle: false,
+			editableTitle: true,
 			inputs: 0,
 			outputs: 1,
 			...options,

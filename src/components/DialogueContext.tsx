@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Application } from "../Application";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
 import { items } from "./sources/items";
@@ -17,6 +18,8 @@ export interface DialogueContextInterface {
 	switchsKeys: { label: string; value: string }[];
 	sources?: { [key: string]: string[] };
 	sourcesKeys: { [key: string]: any[] };
+	app: Application;
+	setApp: Function;
 }
 
 export const DialogueContext = React.createContext<DialogueContextInterface | null>(null);
@@ -123,36 +126,41 @@ const actions = [
 ] as ActionProps[];
 
 const sourcesKeys = {};
-const switchs = {};
+const switchs = { "": [] };
 
 Object.entries(quests).forEach(([key, value]) => (switchs[key] = ["null", ...value]));
 
 export const DialogueContextProvider = (props) => {
 	const [sources, setSources] = React.useState({});
-	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
+	const [app, setApp] = React.useState<Application>(null);
+	//const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
 	const defaultDialogueContext: DialogueContextInterface = {
-		conditions: conditions,
+		conditions,
 		conditionKeys: conditions.sort().map((cond) => ({ label: cond.condition, value: cond.condition })),
-		actions: actions,
+		actions,
 		actionKeys: actions.sort().map((act) => ({ label: act.action, value: act.action })),
-		switchs: switchs,
+		switchs,
 		switchsKeys: Object.keys(switchs)
 			.sort()
 			.map((sw) => ({ label: sw, value: sw })),
 		sources: sources,
 		sourcesKeys: sourcesKeys,
+		app,
+		setApp,
 	};
 
 	React.useEffect(() => {
-		Object.entries(sources)
-			.sort()
-			.forEach(([key, value]) => {
-				const val = value as [];
-				sourcesKeys[key] = val.map((val) => ({ label: val, value: val }));
-			});
-		forceUpdate();
-	}, [sources]);
+		if (app) {
+			Object.entries(sources)
+				.sort()
+				.forEach(([key, value]) => {
+					const val = value as [];
+					sourcesKeys[key] = val.map((val) => ({ label: val, value: val }));
+				});
+			app.forceUpdate();
+		}
+	}, [app, sources]);
 
 	React.useEffect(() => {
 		setSources({

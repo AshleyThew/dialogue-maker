@@ -7,6 +7,7 @@ import { OptionFactory } from "./option/OptionNodeFactory";
 import { RandomFactory } from "./random/RandomNodeFactory";
 import { StartFactory } from "./start/StartNodeFactory";
 import { SwitchFactory } from "./switch/SwitchNodeFactory";
+import { TreeFactory } from "./tree/TreeNodeFactory";
 
 export * from "./dialogue/DialogueNodeFactory";
 export * from "./dialogue/DialogueNodeModel";
@@ -36,11 +37,16 @@ export * from "./switch/SwitchNodeFactory";
 export * from "./switch/SwitchNodeModel";
 export * from "./switch/SwitchNodeWidget";
 
+export * from "./tree/TreeNodeFactory";
+export * from "./tree/TreeNodeModel";
+export * from "./tree/TreeNodeWidget";
+
 export const NodeFactories: BaseNodeFactory<BaseNodeModel<BaseNodeModelGenerics<BaseNodeModelOptions>>>[] = [
 	DialogueFactory,
 	OptionFactory,
 	ConditionFactory,
 	SwitchFactory,
+	TreeFactory,
 	ActionFactory,
 	RandomFactory,
 	NoteFactory,
