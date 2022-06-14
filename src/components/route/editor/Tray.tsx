@@ -120,7 +120,7 @@ const addModel = (app: Application) => {
 					<div />
 					<button
 						onClick={() => {
-							if (!app.getTrees()[value]) {
+							if (value.length > 0 && !app.getTrees()[value]) {
 								const newModel = new DiagramModel();
 								app.getDiagramEngine().setModel(newModel);
 								app.getTrees()[value] = newModel;

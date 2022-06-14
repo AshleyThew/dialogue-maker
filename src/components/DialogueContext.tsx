@@ -2,12 +2,14 @@ import * as React from "react";
 import { Application } from "../Application";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
-import { items } from "./sources/items";
+import items from "./sources/items.json";
 import { npcInteraction } from "./sources/npcInteraction";
-import { quest } from "./sources/quest";
-import { quests } from "./sources/quests";
-import { shops } from "./sources/shops";
+import quest from "./sources/quest.json";
+import quests from "./sources/quests.json";
+import shops from "./sources/shops.json";
 import { skills } from "./sources/skills";
+import characterStats from "./sources/character_stat.json";
+import basicActions from "./sources/basic_actions.json";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
@@ -70,6 +72,14 @@ const conditions = [
 		condition: "npcInteraction",
 		variables: [{ source: "npcInteraction", type: "list", placeholder: "interaction" }],
 	},
+	{
+		condition: "characterStat",
+		variables: [
+			{ source: "characterStats", type: "list", placeholder: "stat" },
+			{ source: "compare", type: "list", placeholder: "?" },
+			{ type: "number", placeholder: "value" },
+		],
+	},
 ] as ConditionProps[];
 
 const actions = [
@@ -123,6 +133,10 @@ const actions = [
 		action: "openDialogue",
 		variables: [{ source: "dialogues", type: "list", placeholder: "dialogue" }],
 	},
+	{
+		action: "basicAction",
+		variables: [{ source: "basicActions", type: "list", placeholder: "action" }],
+	},
 ] as ActionProps[];
 
 const sourcesKeys = {};
@@ -172,6 +186,8 @@ export const DialogueContextProvider = (props) => {
 			quest,
 			shops,
 			npcInteraction,
+			characterStats,
+			basicActions,
 			// QUESTS
 			...quests,
 		});
