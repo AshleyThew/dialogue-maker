@@ -203,7 +203,8 @@ export const DialogueContextProvider = (props) => {
 				var github = data
 					.split("\n")
 					.filter((line) => line !== "")
-					.map((file) => file.replace("dialogue/regions/", "").replace(".json", ""));
+					.map((file) => file.replace("dialogue/regions/", "").replace(".json", ""))
+					.sort();
 				var files = [...new Set([...github])];
 				setSources((sources) => ({ ...sources, dialogues: files, github: github }));
 			})
