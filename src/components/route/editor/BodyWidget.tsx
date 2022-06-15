@@ -103,7 +103,7 @@ const deserializeModel = (app: Application, model: any, context: DialogueContext
 };
 
 const loadData = (app: Application, data: string, context: DialogueContextInterface): void => {
-	clear(app);
+	clear(app, context);
 	setTimeout(() => {
 		const model = JSON.parse(data);
 
@@ -118,6 +118,7 @@ const loadData = (app: Application, data: string, context: DialogueContextInterf
 		const newModel = deserializeModel(app, model, context);
 
 		app.setModel(newModel, trees);
+		context.setApp(app);
 	}, 100);
 };
 
@@ -142,9 +143,10 @@ const saveFile = async (app: Application) => {
 	});
 };
 
-const clear = async (app: Application) => {
+const clear = async (app: Application, context: DialogueContextInterface) => {
 	var newModel = new DiagramModel();
 	app.setModel(newModel, {});
+	context.setApp(app);
 };
 
 const Buttons = (props): JSX.Element => {
@@ -155,7 +157,7 @@ const Buttons = (props): JSX.Element => {
 	const keys = sourcesKeys["dialogues"];
 
 	const clearLocal = () => {
-		clear(props.app);
+		clear(props.app, context);
 		setGithub("");
 	};
 

@@ -30,7 +30,17 @@ export class TreeNodeModel extends BaseNodeModel<TreeNodeModelGenerics> {
 		});
 	}
 
-	deserialize(event: DeserializeEvent<this>): void {
+	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
+		this.options.tree = event.data.tree;
+		this.options.start = event.data.start;
+	}
+
+	serialize(): any {
+		return {
+			...super.serialize(),
+			tree: this.options.tree,
+			start: this.options.start,
+		};
 	}
 }

@@ -10,6 +10,7 @@ import shops from "./sources/shops.json";
 import { skills } from "./sources/skills";
 import characterStats from "./sources/character_stat.json";
 import basicActions from "./sources/basic_actions.json";
+import basicConditions from "./sources/basic_conditions.json";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
@@ -79,6 +80,10 @@ const conditions = [
 			{ source: "compare", type: "list", placeholder: "?" },
 			{ type: "number", placeholder: "value" },
 		],
+	},
+	{
+		condition: "basicCondition",
+		variables: [{ source: "basicConditions", type: "list", placeholder: "condition" }],
 	},
 ] as ConditionProps[];
 
@@ -188,6 +193,7 @@ export const DialogueContextProvider = (props) => {
 			npcInteraction,
 			characterStats,
 			basicActions,
+			basicConditions,
 			// QUESTS
 			...quests,
 		});

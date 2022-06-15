@@ -27,7 +27,15 @@ export class SwitchNodeModel extends BaseNodeModel<SwitchNodeModelGenerics> {
 		});
 	}
 
-	deserialize(event: DeserializeEvent<this>): void {
+	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
+		this.options.switch = event.data.switch;
+	}
+
+	serialize(): any {
+		return {
+			...super.serialize(),
+			switch: this.options.switch,
+		};
 	}
 }
