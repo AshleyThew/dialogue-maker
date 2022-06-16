@@ -12,6 +12,7 @@ import characterStats from "./sources/character_stat.json";
 import basicActions from "./sources/basic_actions.json";
 import basicConditions from "./sources/basic_conditions.json";
 import sounds from "./sources/sounds.json";
+import farming from "./sources/farming.json";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
@@ -151,6 +152,13 @@ const actions = [
 			{ source: "sounds", type: "list", placeholder: "sound" },
 		],
 	},
+	{
+		action: "dialogueFarmPatch",
+		variables: [
+			{ type: "text", placeholder: "name" },
+			{ source: "farming", type: "list", placeholder: "patch" },
+		],
+	},
 ] as ActionProps[];
 
 const sourcesKeys = {};
@@ -204,6 +212,7 @@ export const DialogueContextProvider = (props) => {
 			basicActions,
 			basicConditions,
 			sounds,
+			farming,
 			// QUESTS
 			...quests,
 		});
