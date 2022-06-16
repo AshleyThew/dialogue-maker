@@ -61,7 +61,9 @@ export const TreeBlock = (props: { tree: TreeNodeProps }): JSX.Element => {
 		<>
 			<div style={{ color: "black", display: "flex", justifyContent: "space-between" }}>
 				<DropdownInput values={values} value={value || ""} setValue={setValue} placeholder={"Tree"} width={minWidth} />
-				{selectStart && <DropdownInput values={startValues} value={start || ""} setValue={setStart} placeholder={"Start"} width={minWidth} />}
+				{selectStart && (
+					<DropdownInput values={startValues} value={start || ""} setValue={setStart} placeholder={"Select"} width={minWidth} />
+				)}
 			</div>
 		</>
 	);
