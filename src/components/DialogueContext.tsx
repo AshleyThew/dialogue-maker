@@ -11,6 +11,7 @@ import { skills } from "./sources/skills";
 import characterStats from "./sources/character_stat.json";
 import basicActions from "./sources/basic_actions.json";
 import basicConditions from "./sources/basic_conditions.json";
+import sounds from "./sources/sounds.json";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
@@ -142,6 +143,14 @@ const actions = [
 		action: "basicAction",
 		variables: [{ source: "basicActions", type: "list", placeholder: "action" }],
 	},
+	{
+		action: "showAdvancement",
+		variables: [
+			{ type: "text", placeholder: "message" },
+			{ source: "items", type: "list", placeholder: "item" },
+			{ source: "sounds", type: "list", placeholder: "sound" },
+		],
+	},
 ] as ActionProps[];
 
 const sourcesKeys = {};
@@ -194,6 +203,7 @@ export const DialogueContextProvider = (props) => {
 			characterStats,
 			basicActions,
 			basicConditions,
+			sounds,
 			// QUESTS
 			...quests,
 		});
