@@ -27,6 +27,9 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 			conditions: defaultConditions || new Conditions(),
 			...options,
 		});
+	}
+
+	setupPorts(): void {
 		this.addOutPort("true", 0);
 		this.addOutPort("false", 1);
 	}

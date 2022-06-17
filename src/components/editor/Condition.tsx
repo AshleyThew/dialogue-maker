@@ -94,9 +94,6 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								const setValue = (value: string) => {
 									const val = option.args[cindex];
 									val[vindex] = value;
-									for (var i = vindex + 1; i < val.length; i++) {
-										val[i] = "";
-									}
 									forceUpdate();
 								};
 
