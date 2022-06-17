@@ -123,6 +123,11 @@ const addModel = (app: Application) => {
 							if (value.length > 0 && !app.getTrees()[value]) {
 								const newModel = new DiagramModel();
 								app.getDiagramEngine().setModel(newModel);
+								const node = StartFactory.generateModel(undefined);
+								node.setPosition(50, 50);
+								node.getOptions().editableTitle = false;
+								node.setupPorts();
+								newModel.addNode(node);
 								app.getTrees()[value] = newModel;
 								app.forceUpdate();
 								onClose();

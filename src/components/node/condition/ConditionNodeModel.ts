@@ -1,4 +1,3 @@
-import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
 import { ConditionProps, Conditions } from "../../editor/Condition";
@@ -30,6 +29,7 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 	}
 
 	setupPorts(): void {
+		super.setupPorts();
 		this.addOutPort("true", 0);
 		this.addOutPort("false", 1);
 	}
@@ -50,14 +50,6 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 			...super.serialize(),
 			conditions: this.options.conditions.serialize(),
 		};
-	}
-
-	getInPorts(): DefaultPortModel[] {
-		return this.portsIn;
-	}
-
-	getOutPorts(): DefaultPortModel[] {
-		return this.portsOut;
 	}
 
 	fix(context: DialogueContextInterface) {
