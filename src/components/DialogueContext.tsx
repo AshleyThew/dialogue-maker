@@ -125,6 +125,13 @@ const actions = [
 		variables: [{ source: "shops", type: "list", placeholder: "shop" }],
 	},
 	{
+		action: "setCharacterStat",
+		variables: [
+			{ source: "characterStats", type: "list", placeholder: "stat" },
+			{ type: "number", placeholder: "value" },
+		],
+	},
+	{
 		action: "npcText",
 		variables: [{ type: "text", placeholder: "text" }],
 	},
