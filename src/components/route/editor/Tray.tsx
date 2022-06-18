@@ -80,7 +80,7 @@ namespace S {
 	`;
 
 	export const HiddenText = styled.span`
-		color: rgba(0, 0, 0, 0);
+		color: rgba(0, 0, 0, 0) !important;
 		cursor: no-drop;
 	`;
 }
@@ -126,25 +126,26 @@ type SpanProps = {
 	children: any;
 	onClick: React.MouseEventHandler<HTMLSpanElement>;
 	title?: string;
+	style?: React.CSSProperties;
 };
 
-const SpanLeft = ({ hidden, children, onClick, title }: SpanProps) => {
+const SpanLeft = ({ hidden, children, onClick, title, style }: SpanProps) => {
 	if (hidden) {
-		return <S.HiddenText style={{ float: "left", marginLeft: "5px" }}>{children}</S.HiddenText>;
+		return <S.HiddenText style={{ ...style, float: "left", marginLeft: "5px" }}>{children}</S.HiddenText>;
 	}
 	return (
-		<span onClick={onClick} style={{ float: "left", marginLeft: "5px", cursor: "pointer" }} title={title}>
+		<span onClick={onClick} style={{ ...style, float: "left", marginLeft: "5px", cursor: "pointer" }} title={title}>
 			{children}
 		</span>
 	);
 };
 
-const SpanRight = ({ hidden, children, onClick, title }: SpanProps) => {
+const SpanRight = ({ hidden, children, onClick, title, style }: SpanProps) => {
 	if (hidden) {
-		return <S.HiddenText style={{ float: "right", marginRight: "5px" }}>{children}</S.HiddenText>;
+		return <S.HiddenText style={{ ...style, float: "right", marginRight: "5px" }}>{children}</S.HiddenText>;
 	}
 	return (
-		<span onClick={onClick} style={{ float: "right", marginRight: "5px", cursor: "pointer" }} title={title}>
+		<span onClick={onClick} style={{ ...style, float: "right", marginRight: "5px", cursor: "pointer" }} title={title}>
 			{children}
 		</span>
 	);
@@ -341,6 +342,7 @@ export const Tray = (props: { app: Application }) => {
 														&#x2191;
 													</SpanLeft>
 													<SpanLeft
+														style={{ color: "dodgerblue", marginRight: "5px" }}
 														hidden={idx < 1 || idx === arr.length - 1}
 														onClick={(e) => {
 															e.preventDefault();
@@ -364,8 +366,9 @@ export const Tray = (props: { app: Application }) => {
 													>
 														&#x2193;
 													</SpanLeft>
-													{key}
+													{<span title="Open">{key}</span>}
 													<SpanRight
+														style={{ color: "indianred" }}
 														hidden={key === "default"}
 														onClick={(e) => {
 															e.preventDefault();
@@ -377,6 +380,7 @@ export const Tray = (props: { app: Application }) => {
 														&#x2716;
 													</SpanRight>
 													<SpanRight
+														style={{ color: "seagreen" }}
 														onClick={(e) => {
 															e.preventDefault();
 															e.stopPropagation();
@@ -387,6 +391,7 @@ export const Tray = (props: { app: Application }) => {
 														&#x2702;
 													</SpanRight>
 													<SpanRight
+														style={{ color: "dodgerblue", marginLeft: "5px" }}
 														hidden={key === "default"}
 														onClick={(e) => {
 															e.preventDefault();
@@ -403,9 +408,16 @@ export const Tray = (props: { app: Application }) => {
 									</div>
 								);
 							})}
-							<div style={{ margin: "0 10px" }}>
+							<div style={{ margin: "10px 20px" }}>
 								<span
-									style={{ float: "right", marginRight: "5px", cursor: "pointer" }}
+									style={{
+										cursor: "pointer",
+										width: "100%",
+										color: "yellowgreen",
+										display: "block",
+										border: "solid 1px yellowgreen",
+										borderRadius: "5px",
+									}}
 									onClick={(e) => {
 										addModel(props.app);
 									}}
