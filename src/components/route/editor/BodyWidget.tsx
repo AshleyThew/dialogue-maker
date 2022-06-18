@@ -223,7 +223,6 @@ export class BodyWidget extends React.Component {
 							const factory = AllNodeFactories.find((factory) => factory.options.id === data.id);
 							node = factory.generateModel(undefined);
 							node.setupPorts();
-							console.log(node.getOptions().inputs);
 							if (data.extra) {
 								Object.entries(data.extra).forEach((entry) => {
 									const [key, value] = entry;

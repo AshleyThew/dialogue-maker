@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useReducer, useRef } from "react";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { Application } from "../../../Application";
 import { NodeFactories } from "../../node";
@@ -78,56 +78,35 @@ namespace S {
 			font-size: 14px;
 		}
 	`;
+
+	export const HiddenText = styled.span`
+		color: rgba(0, 0, 0, 0);
+		cursor: no-drop;
+	`;
 }
 
-const deleteModel = (app: Application, key: string) => {
-	confirmAlert({
-		customUI: ({ onClose }) => {
-			return (
-				<S.CustomUI>
-					<h1>Are you sure?</h1>
-					<p>You want to delete this tree?</p>
-
-					<button
-						onClick={() => {
-							const value = app.getTrees()[key];
-							delete app.getTrees()[key];
-							if (app.getDiagramEngine().getModel() === value) {
-								app.getDiagramEngine().setModel(app.getModel());
-							}
-							app.forceUpdate();
-							onClose();
-						}}
-					>
-						Yes, Delete it!
-					</button>
-					<button onClick={onClose}>No, Hug it!</button>
-				</S.CustomUI>
-			);
-		},
-	});
-};
-
-const addModel = (app: Application) => {
+const copyModel = (app: Application, key: string) => {
 	confirmAlert({
 		customUI: ({ onClose }) => {
 			let value = "";
 
 			return (
 				<S.CustomUI>
-					<h1>Add tree</h1>
+					<h1>Copy tree</h1>
 					<EditableInput value={value} setValue={(e) => (value = e)} style={{ background: "gray" }} autoFocus />
 					<div />
 					<button
 						onClick={() => {
 							if (value.length > 0 && !app.getTrees()[value]) {
-								const newModel = new DiagramModel();
+								var tree;
+								if (key === "default") {
+									tree = app.getModel();
+								} else {
+									tree = app.getTrees()[key];
+								}
+								var newModel = new DiagramModel();
+								newModel.deserializeModel(tree.serialize(), app.getDiagramEngine());
 								app.getDiagramEngine().setModel(newModel);
-								const node = StartFactory.generateModel(undefined);
-								node.setPosition(50, 50);
-								node.getOptions().editableTitle = false;
-								node.setupPorts();
-								newModel.addNode(node);
 								app.getTrees()[value] = newModel;
 								app.forceUpdate();
 								onClose();
@@ -142,6 +121,35 @@ const addModel = (app: Application) => {
 	});
 };
 
+type SpanProps = {
+	hidden?: boolean;
+	children: any;
+	onClick: React.MouseEventHandler<HTMLSpanElement>;
+	title?: string;
+};
+
+const SpanLeft = ({ hidden, children, onClick, title }: SpanProps) => {
+	if (hidden) {
+		return <S.HiddenText style={{ float: "left", marginLeft: "5px" }}>{children}</S.HiddenText>;
+	}
+	return (
+		<span onClick={onClick} style={{ float: "left", marginLeft: "5px", cursor: "pointer" }} title={title}>
+			{children}
+		</span>
+	);
+};
+
+const SpanRight = ({ hidden, children, onClick, title }: SpanProps) => {
+	if (hidden) {
+		return <S.HiddenText style={{ float: "right", marginRight: "5px" }}>{children}</S.HiddenText>;
+	}
+	return (
+		<span onClick={onClick} style={{ float: "right", marginRight: "5px", cursor: "pointer" }} title={title}>
+			{children}
+		</span>
+	);
+};
+
 export const Tray = (props: { app: Application }) => {
 	const starts = props.app
 		.getDiagramEngine()
@@ -151,9 +159,117 @@ export const Tray = (props: { app: Application }) => {
 	const hasStart = starts.filter((val) => val.getOptions().title === "Start").length !== 0;
 	const size = starts.length;
 	const trees = { default: props.app.getModel(), ...props.app.getTrees() };
+	const ref = useRef(null);
+	const [, forceUpdate] = useReducer((x) => x + 1, 0);
+
+	const update = () => {
+		setTimeout(forceUpdate, 20);
+	};
+
+	const addModel = (app: Application) => {
+		confirmAlert({
+			customUI: ({ onClose }) => {
+				let value = "";
+
+				return (
+					<S.CustomUI>
+						<h1>Add tree</h1>
+						<EditableInput value={value} setValue={(e) => (value = e)} style={{ background: "gray" }} autoFocus />
+						<div />
+						<button
+							onClick={() => {
+								if (value.length > 0 && !app.getTrees()[value]) {
+									const newModel = new DiagramModel();
+									app.getDiagramEngine().setModel(newModel);
+									const node = StartFactory.generateModel(undefined);
+									node.setPosition(50, 50);
+									node.getOptions().editableTitle = false;
+									node.setupPorts();
+									newModel.addNode(node);
+									app.getTrees()[value] = newModel;
+									app.forceUpdate();
+									update();
+									onClose();
+								}
+							}}
+						>
+							Add
+						</button>
+					</S.CustomUI>
+				);
+			},
+		});
+	};
+
+	const deleteModel = (app: Application, key: string) => {
+		confirmAlert({
+			customUI: ({ onClose }) => {
+				return (
+					<S.CustomUI>
+						<h1>Are you sure?</h1>
+						<p>You want to delete this tree?</p>
+
+						<button
+							onClick={() => {
+								const value = app.getTrees()[key];
+								delete app.getTrees()[key];
+								if (app.getDiagramEngine().getModel() === value) {
+									app.getDiagramEngine().setModel(app.getModel());
+								}
+								app.forceUpdate();
+								update();
+								onClose();
+							}}
+						>
+							Yes, Delete it!
+						</button>
+						<button onClick={onClose}>No, Hug it!</button>
+					</S.CustomUI>
+				);
+			},
+		});
+	};
+
+	const renameModel = (app: Application, key: string) => {
+		confirmAlert({
+			customUI: ({ onClose }) => {
+				let value = key;
+
+				return (
+					<S.CustomUI>
+						<h1>Rename tree</h1>
+						<EditableInput value={value} setValue={(e) => (value = e)} style={{ background: "gray" }} autoFocus />
+						<div />
+						<button
+							onClick={() => {
+								if (value.length > 0 && !app.getTrees()[value]) {
+									const model = app.getTrees()[key];
+									delete app.getTrees()[key];
+									app.getTrees()[value] = model;
+									app.forceUpdate();
+									onClose();
+								}
+							}}
+						>
+							Add
+						</button>
+					</S.CustomUI>
+				);
+			},
+		});
+	};
+
+	window.addEventListener("resize", forceUpdate);
 	return (
 		<>
-			<S.Tray focusTabOnClick={false}>
+			<S.Tray
+				focusTabOnClick={false}
+				onSelect={(e) => {
+					update();
+					return true;
+				}}
+			>
+				<div ref={ref} style={{ width: "100%" }}></div>
 				<TabList>
 					<Tab>Nodes</Tab>
 					<Tab>Trees</Tab>
@@ -183,7 +299,7 @@ export const Tray = (props: { app: Application }) => {
 					</TabPanel>
 					<TabPanel>
 						<div style={{ color: "#ffffff" }}>
-							{Object.entries(trees).map((entry, idx) => {
+							{Object.entries(trees).map((entry, idx, arr) => {
 								const [key, value] = entry;
 								const selected = props.app.getDiagramEngine().getModel() === value;
 								return (
@@ -198,18 +314,91 @@ export const Tray = (props: { app: Application }) => {
 												}
 											}}
 										>
-											{key}
-											{key !== "default" && (
-												<span
-													style={{ float: "right", marginRight: "5px", cursor: "pointer" }}
-													onClick={(e) => {
-														e.preventDefault();
-														deleteModel(props.app, key);
-													}}
-												>
-													X
-												</span>
-											)}
+											{
+												<>
+													<SpanLeft
+														hidden={idx <= 1}
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															const trees = props.app.getTrees();
+															const keys = Object.keys(trees);
+
+															keys.splice(idx - 1, 1);
+															keys.splice(idx - 2, 0, key);
+
+															const clone = { ...trees };
+															keys.forEach((key) => {
+																delete trees[key];
+															});
+															keys.forEach((key) => {
+																trees[key] = clone[key];
+															});
+															update();
+														}}
+														title={"Shift Up"}
+													>
+														&#x2191;
+													</SpanLeft>
+													<SpanLeft
+														hidden={idx < 1 || idx === arr.length - 1}
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															const trees = props.app.getTrees();
+															const keys = Object.keys(trees);
+
+															keys.splice(idx - 1, 1);
+															keys.splice(idx, 0, key);
+
+															const clone = { ...trees };
+															keys.forEach((key) => {
+																delete trees[key];
+															});
+															keys.forEach((key) => {
+																trees[key] = clone[key];
+															});
+															update();
+														}}
+														title={"Shift Down"}
+													>
+														&#x2193;
+													</SpanLeft>
+													{key}
+													<SpanRight
+														hidden={key === "default"}
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															deleteModel(props.app, key);
+														}}
+														title={"Delete"}
+													>
+														&#x2716;
+													</SpanRight>
+													<SpanRight
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															copyModel(props.app, key);
+														}}
+														title={"Copy"}
+													>
+														&#x2702;
+													</SpanRight>
+													<SpanRight
+														hidden={key === "default"}
+														onClick={(e) => {
+															e.preventDefault();
+															e.stopPropagation();
+															renameModel(props.app, key);
+														}}
+														title={"Edit"}
+													>
+														&#x270E;
+													</SpanRight>
+												</>
+											}
 										</S.Tree>
 									</div>
 								);
@@ -221,12 +410,12 @@ export const Tray = (props: { app: Application }) => {
 										addModel(props.app);
 									}}
 								>
-									+
+									&#x271A;
 								</span>
 							</div>
 						</div>
 					</TabPanel>
-					<div style={{ position: "absolute", bottom: "0", width: "clamp(134px, 20vw, 200px)" }}>
+					<div style={{ position: "absolute", bottom: "0", width: `clamp(134px, 20vw, ${ref.current?.offsetWidth || 200}px)` }}>
 						<div style={{ color: "#ffffff", width: "100%" }}>
 							<p style={{ color: "#23f0e5" }}>Shortcuts:</p>
 							<p>

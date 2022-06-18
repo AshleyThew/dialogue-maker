@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import { components, GroupBase, OptionProps } from "react-select";
 import styled from "@emotion/styled";
 import Select, { createFilter } from "react-select";
 import TextareaAutosize from "react-textarea-autosize";
 import { CustomMenuList } from "./CustomMenu";
+import { DialogueContext } from "../DialogueContext";
 
 namespace S {
 	export const Input = styled.input`
@@ -91,6 +92,7 @@ export const EditableInput = (props: EditableInputProps) => {
 					}
 				}
 				e.target.size = getSize(e.target.value);
+				e.target.style.width = e.target.size + "ch";
 				e.target.style.maxWidth = e.target.size + "ch";
 			}}
 			onBlur={(e) => {
@@ -109,6 +111,7 @@ interface EditableTextProps {
 }
 
 export const EditableText = (props: EditableTextProps) => {
+	const { app } = useContext(DialogueContext);
 	return (
 		<S.TextArea
 			data-no-drag
@@ -124,6 +127,7 @@ export const EditableText = (props: EditableTextProps) => {
 			}}
 			onBlur={(e) => {
 				props.setValue(e.target.value);
+				app.getDiagramEngine().repaintCanvas();
 			}}
 		/>
 	);

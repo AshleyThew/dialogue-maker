@@ -42,7 +42,7 @@ export class Application {
 		const eventBus = this.diagramEngine.getActionEventBus();
 		eventBus.registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 		eventBus.registerAction(new DeleteItemsAction({ keyCodes: [46], modifiers: { shiftKey: true } }));
-		eventBus.registerAction(new CloneItemsAction({ offset: { x: 50, y: 50 } }));
+		eventBus.registerAction(new CloneItemsAction({ offset: { x: 0, y: 50 } }));
 	}
 
 	public getModel(): DiagramModel {
