@@ -87,6 +87,10 @@ const conditions = [
 		condition: "basicCondition",
 		variables: [{ source: "basicConditions", type: "list", placeholder: "condition" }],
 	},
+	{
+		condition: "isRespawn",
+		variables: [{ source: "respawns", type: "list", placeholder: "region" }],
+	},
 ] as ConditionProps[];
 
 const actions = [
@@ -166,6 +170,10 @@ const actions = [
 			{ source: "farming", type: "list", placeholder: "patch" },
 		],
 	},
+	{
+		action: "setRespawn",
+		variables: [{ source: "respawns", type: "list", placeholder: "region" }],
+	},
 ] as ActionProps[];
 
 const sourcesKeys = {};
@@ -180,9 +188,15 @@ export const DialogueContextProvider = (props) => {
 
 	const defaultDialogueContext: DialogueContextInterface = {
 		conditions,
-		conditionKeys: conditions.sort().map((cond) => ({ label: cond.condition, value: cond.condition })),
+		conditionKeys: conditions
+			.map((cond) => cond.condition)
+			.sort()
+			.map((cond) => ({ label: cond, value: cond })),
 		actions,
-		actionKeys: actions.sort().map((act) => ({ label: act.action, value: act.action })),
+		actionKeys: actions
+			.map((act) => act.action)
+			.sort()
+			.map((act) => ({ label: act, value: act })),
 		switchs,
 		switchsKeys: Object.keys(switchs)
 			.sort()
@@ -210,6 +224,7 @@ export const DialogueContextProvider = (props) => {
 			compare: ["<", "<=", "==", ">=", ">"],
 			equipmentSlot: ["HEAD", "CAPE", "NECK", "AMMUNITION", "BODY", "SHIELD", "LEGS", "HANDS", "FEET", "RING", "WEAPON"],
 			boolean: ["true", "false"],
+			respawns: ["Lumbridge", "Edgeville"],
 			skills,
 			items,
 			quest,
