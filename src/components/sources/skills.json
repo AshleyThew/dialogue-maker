@@ -1,4 +1,4 @@
-export const skills = [
+[
 	"ATTACK",
 	"STRENGTH",
 	"DEFENCE",
@@ -21,5 +21,5 @@ export const skills = [
 	"COOKING",
 	"FIREMAKING",
 	"WOODCUTTING",
-	"FARMING",
-];
+	"FARMING"
+]

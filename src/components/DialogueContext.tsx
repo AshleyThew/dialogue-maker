@@ -3,16 +3,20 @@ import { Application } from "../Application";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
 import items from "./sources/items.json";
-import { npcInteraction } from "./sources/npcInteraction";
+import npc_interaction from "./sources/npc_interaction.json";
 import quest from "./sources/quest.json";
 import quests from "./sources/quests.json";
 import shops from "./sources/shops.json";
-import { skills } from "./sources/skills";
+import skills from "./sources/skills.json";
 import characterStats from "./sources/character_stat.json";
-import basicActions from "./sources/basic_actions.json";
-import basicConditions from "./sources/basic_conditions.json";
+import basic_actions from "./sources/basic_actions.json";
+import basic_conditions from "./sources/basic_conditions.json";
 import sounds from "./sources/sounds.json";
 import farming from "./sources/farming.json";
+import compare from "./sources/compare.json";
+import boolean from "./sources/boolean.json";
+import equipment_slot from "./sources/equipment_slot.json";
+import respawns from "./sources/respawns.json";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
@@ -42,7 +46,7 @@ const conditions = [
 	{
 		condition: "hasEquipped",
 		variables: [
-			{ source: "equipmentSlot", type: "list", placeholder: "slot" },
+			{ source: "equipment_slot", type: "list", placeholder: "slot" },
 			{ source: "items", type: "list", placeholder: "item" },
 		],
 	},
@@ -73,19 +77,19 @@ const conditions = [
 	},
 	{
 		condition: "npcInteraction",
-		variables: [{ source: "npcInteraction", type: "list", placeholder: "interaction" }],
+		variables: [{ source: "npc_interaction", type: "list", placeholder: "interaction" }],
 	},
 	{
 		condition: "characterStat",
 		variables: [
-			{ source: "characterStats", type: "list", placeholder: "stat" },
+			{ source: "character_stat", type: "list", placeholder: "stat" },
 			{ source: "compare", type: "list", placeholder: "?" },
 			{ type: "number", placeholder: "value" },
 		],
 	},
 	{
 		condition: "basicCondition",
-		variables: [{ source: "basicConditions", type: "list", placeholder: "condition" }],
+		variables: [{ source: "basic_conditions", type: "list", placeholder: "condition" }],
 	},
 	{
 		condition: "isRespawn",
@@ -131,7 +135,7 @@ const actions = [
 	{
 		action: "setCharacterStat",
 		variables: [
-			{ source: "characterStats", type: "list", placeholder: "stat" },
+			{ source: "character_stat", type: "list", placeholder: "stat" },
 			{ type: "number", placeholder: "value" },
 		],
 	},
@@ -153,7 +157,7 @@ const actions = [
 	},
 	{
 		action: "basicAction",
-		variables: [{ source: "basicActions", type: "list", placeholder: "action" }],
+		variables: [{ source: "basic_actions", type: "list", placeholder: "action" }],
 	},
 	{
 		action: "showAdvancement",
@@ -221,18 +225,18 @@ export const DialogueContextProvider = (props) => {
 
 	React.useEffect(() => {
 		setSources({
-			compare: ["<", "<=", "==", ">=", ">"],
-			equipmentSlot: ["HEAD", "CAPE", "NECK", "AMMUNITION", "BODY", "SHIELD", "LEGS", "HANDS", "FEET", "RING", "WEAPON"],
-			boolean: ["true", "false"],
-			respawns: ["Lumbridge", "Edgeville"],
+			compare,
+			equipment_slot,
+			boolean,
+			respawns,
 			skills,
 			items,
 			quest,
 			shops,
-			npcInteraction,
+			npc_interaction,
 			characterStats,
-			basicActions,
-			basicConditions,
+			basic_actions,
+			basic_conditions,
 			sounds,
 			farming,
 			// QUESTS
