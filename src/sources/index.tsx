@@ -1,5 +1,4 @@
 export { default as basic_actions } from "./basic_actions.json";
-
 export { default as basic_conditions } from "./basic_conditions.json";
 export { default as boolean } from "./boolean.json";
 export { default as character_stats } from "./character_stats.json";
