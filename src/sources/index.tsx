@@ -2,7 +2,7 @@ export { default as basic_actions } from "./basic_actions.json";
 
 export { default as basic_conditions } from "./basic_conditions.json";
 export { default as boolean } from "./boolean.json";
-export { default as character_stats } from "./character_stat.json";
+export { default as character_stats } from "./character_stats.json";
 export { default as compare } from "./compare.json";
 export { default as equipment_slot } from "./equipment_slot.json";
 export { default as farming } from "./farming.json";
