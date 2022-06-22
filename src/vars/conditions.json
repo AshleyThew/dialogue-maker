@@ -47,7 +47,7 @@
 	{
 		"condition": "characterStat",
 		"variables": [
-			{ "source": "character_stat", "type": "list", "placeholder": "stat" },
+			{ "source": "character_stats", "type": "list", "placeholder": "stat" },
 			{ "source": "compare", "type": "list", "placeholder": "?" },
 			{ "type": "number", "placeholder": "value" }
 		]
