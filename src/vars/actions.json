@@ -1,0 +1,82 @@
+[
+	{ "action": "", "variables": [] },
+	{
+		"action": "takeItem",
+		"variables": [
+			{ "source": "items", "type": "list", "placeholder": "item" },
+			{ "type": "number", "placeholder": "amount" },
+			{ "source": "boolean", "type": "list", "placeholder": "noted" }
+		]
+	},
+	{
+		"action": "giveItem",
+		"variables": [
+			{ "source": "items", "type": "list", "placeholder": "item" },
+			{ "type": "number", "placeholder": "amount" }
+		]
+	},
+	{
+		"action": "setQuest",
+		"variables": [
+			{ "source": "quest", "type": "list", "placeholder": "quest" },
+			{ "source": "quest[-1]", "type": "list", "placeholder": "value" }
+		]
+	},
+	{
+		"action": "giveExp",
+		"variables": [
+			{ "source": "skills", "type": "list", "placeholder": "skill" },
+			{ "type": "number", "placeholder": "exp" }
+		]
+	},
+	{
+		"action": "openShop",
+		"variables": [{ "source": "shops", "type": "list", "placeholder": "shop" }]
+	},
+	{
+		"action": "setCharacterStat",
+		"variables": [
+			{ "source": "character_stat", "type": "list", "placeholder": "stat" },
+			{ "type": "number", "placeholder": "value" }
+		]
+	},
+	{
+		"action": "npcText",
+		"variables": [{ "type": "text", "placeholder": "text" }]
+	},
+	{
+		"action": "playerText",
+		"variables": [{ "type": "text", "placeholder": "text" }]
+	},
+	{
+		"action": "message",
+		"variables": [{ "type": "text", "placeholder": "message" }]
+	},
+	{
+		"action": "openDialogue",
+		"variables": [{ "source": "dialogues", "type": "list", "placeholder": "dialogue" }]
+	},
+	{
+		"action": "basicAction",
+		"variables": [{ "source": "basic_actions", "type": "list", "placeholder": "action" }]
+	},
+	{
+		"action": "showAdvancement",
+		"variables": [
+			{ "type": "text", "placeholder": "message" },
+			{ "source": "items", "type": "list", "placeholder": "item" },
+			{ "source": "sounds", "type": "list", "placeholder": "sound" }
+		]
+	},
+	{
+		"action": "dialogueFarmPatch",
+		"variables": [
+			{ "type": "text", "placeholder": "name" },
+			{ "source": "farming", "type": "list", "placeholder": "patch" }
+		]
+	},
+	{
+		"action": "setRespawn",
+		"variables": [{ "source": "respawns", "type": "list", "placeholder": "region" }]
+	}
+]

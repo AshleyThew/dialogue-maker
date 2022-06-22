@@ -3,6 +3,7 @@ import { Application } from "../Application";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
 import * as Sources from "../sources/";
+import * as vars from "../vars";
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
 	conditionKeys: any[];
@@ -18,156 +19,11 @@ export interface DialogueContextInterface {
 
 export const DialogueContext = React.createContext<DialogueContextInterface | null>(null);
 
-const conditions = [
-	{ condition: "", variables: [] },
-	{
-		condition: "hasItem",
-		variables: [
-			{ source: "items", type: "list", placeholder: "item" },
-			{ type: "number", placeholder: "amount" },
-			{ source: "boolean", type: "list", placeholder: "noted" },
-		],
-	},
-	{
-		condition: "hasEquipped",
-		variables: [
-			{ source: "equipment_slot", type: "list", placeholder: "slot" },
-			{ source: "items", type: "list", placeholder: "item" },
-		],
-	},
-	{
-		condition: "skillLevel",
-		variables: [
-			{ source: "skills", type: "list", placeholder: "skill" },
-			{ source: "compare", type: "list", placeholder: "?" },
-			{ type: "number", placeholder: "level" },
-		],
-		actionable: true,
-	},
-	{
-		condition: "questStage",
-		variables: [
-			{ source: "quest", type: "list", placeholder: "quest" },
-			{ source: "compare", type: "list", placeholder: "?" },
-			{ source: "quest[-2]", type: "list", placeholder: "value" },
-		],
-	},
-	{
-		condition: "hasQuestCompleted",
-		variables: [{ source: "quest", type: "list", placeholder: "quest" }],
-	},
-	{
-		condition: "hasQuestPoints",
-		variables: [{ type: "number", placeholder: "points" }],
-	},
-	{
-		condition: "npcInteraction",
-		variables: [{ source: "npc_interaction", type: "list", placeholder: "interaction" }],
-	},
-	{
-		condition: "characterStat",
-		variables: [
-			{ source: "character_stat", type: "list", placeholder: "stat" },
-			{ source: "compare", type: "list", placeholder: "?" },
-			{ type: "number", placeholder: "value" },
-		],
-	},
-	{
-		condition: "basicCondition",
-		variables: [{ source: "basic_conditions", type: "list", placeholder: "condition" }],
-	},
-	{
-		condition: "isRespawn",
-		variables: [{ source: "respawns", type: "list", placeholder: "region" }],
-	},
-] as ConditionProps[];
-
-const actions = [
-	{ action: "", variables: [] },
-	{
-		action: "takeItem",
-		variables: [
-			{ source: "items", type: "list", placeholder: "item" },
-			{ type: "number", placeholder: "amount" },
-			{ source: "boolean", type: "list", placeholder: "noted" },
-		],
-	},
-	{
-		action: "giveItem",
-		variables: [
-			{ source: "items", type: "list", placeholder: "item" },
-			{ type: "number", placeholder: "amount" },
-		],
-	},
-	{
-		action: "setQuest",
-		variables: [
-			{ source: "quest", type: "list", placeholder: "quest" },
-			{ source: "quest[-1]", type: "list", placeholder: "value" },
-		],
-	},
-	{
-		action: "giveExp",
-		variables: [
-			{ source: "skills", type: "list", placeholder: "skill" },
-			{ type: "number", placeholder: "exp" },
-		],
-	},
-	{
-		action: "openShop",
-		variables: [{ source: "shops", type: "list", placeholder: "shop" }],
-	},
-	{
-		action: "setCharacterStat",
-		variables: [
-			{ source: "character_stat", type: "list", placeholder: "stat" },
-			{ type: "number", placeholder: "value" },
-		],
-	},
-	{
-		action: "npcText",
-		variables: [{ type: "text", placeholder: "text" }],
-	},
-	{
-		action: "playerText",
-		variables: [{ type: "text", placeholder: "text" }],
-	},
-	{
-		action: "message",
-		variables: [{ type: "text", placeholder: "message" }],
-	},
-	{
-		action: "openDialogue",
-		variables: [{ source: "dialogues", type: "list", placeholder: "dialogue" }],
-	},
-	{
-		action: "basicAction",
-		variables: [{ source: "basic_actions", type: "list", placeholder: "action" }],
-	},
-	{
-		action: "showAdvancement",
-		variables: [
-			{ type: "text", placeholder: "message" },
-			{ source: "items", type: "list", placeholder: "item" },
-			{ source: "sounds", type: "list", placeholder: "sound" },
-		],
-	},
-	{
-		action: "dialogueFarmPatch",
-		variables: [
-			{ type: "text", placeholder: "name" },
-			{ source: "farming", type: "list", placeholder: "patch" },
-		],
-	},
-	{
-		action: "setRespawn",
-		variables: [{ source: "respawns", type: "list", placeholder: "region" }],
-	},
-] as ActionProps[];
-
 const sourcesKeys = {};
 const switchs = { "": [] };
 const { quests, ...other } = Sources;
+const conditions = vars.conditions as ConditionProps[];
+const actions = vars.actions as ActionProps[];
 
 Object.entries(quests).forEach(([key, value]) => (switchs[key] = ["null", ...value]));
 
