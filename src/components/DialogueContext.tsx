@@ -2,22 +2,23 @@ import * as React from "react";
 import { Application } from "../Application";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
-import items from "./sources/items.json";
-import npc_interaction from "./sources/npc_interaction.json";
-import quest from "./sources/quest.json";
-import quests from "./sources/quests.json";
-import shops from "./sources/shops.json";
-import skills from "./sources/skills.json";
-import characterStats from "./sources/character_stat.json";
-import basic_actions from "./sources/basic_actions.json";
-import basic_conditions from "./sources/basic_conditions.json";
-import sounds from "./sources/sounds.json";
-import farming from "./sources/farming.json";
-import compare from "./sources/compare.json";
-import boolean from "./sources/boolean.json";
-import equipment_slot from "./sources/equipment_slot.json";
-import respawns from "./sources/respawns.json";
-
+import {
+	basic_actions,
+	basic_conditions,
+	boolean,
+	character_stats,
+	compare,
+	equipment_slot,
+	farming,
+	items,
+	npc_interaction,
+	quest,
+	quests,
+	respawns,
+	shops,
+	skills,
+	sounds,
+} from "../sources/";
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
 	conditionKeys: any[];
@@ -234,7 +235,7 @@ export const DialogueContextProvider = (props) => {
 			quest,
 			shops,
 			npc_interaction,
-			characterStats,
+			character_stats,
 			basic_actions,
 			basic_conditions,
 			sounds,
