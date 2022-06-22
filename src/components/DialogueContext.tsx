@@ -2,23 +2,7 @@ import * as React from "react";
 import { Application } from "../Application";
 import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
-import {
-	basic_actions,
-	basic_conditions,
-	boolean,
-	character_stats,
-	compare,
-	equipment_slot,
-	farming,
-	items,
-	npc_interaction,
-	quest,
-	quests,
-	respawns,
-	shops,
-	skills,
-	sounds,
-} from "../sources/";
+import * as Sources from "../sources/";
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
 	conditionKeys: any[];
@@ -183,6 +167,7 @@ const actions = [
 
 const sourcesKeys = {};
 const switchs = { "": [] };
+const { quests, ...other } = Sources;
 
 Object.entries(quests).forEach(([key, value]) => (switchs[key] = ["null", ...value]));
 
@@ -226,20 +211,7 @@ export const DialogueContextProvider = (props) => {
 
 	React.useEffect(() => {
 		setSources({
-			compare,
-			equipment_slot,
-			boolean,
-			respawns,
-			skills,
-			items,
-			quest,
-			shops,
-			npc_interaction,
-			character_stats,
-			basic_actions,
-			basic_conditions,
-			sounds,
-			farming,
+			...other,
 			// QUESTS
 			...quests,
 		});
