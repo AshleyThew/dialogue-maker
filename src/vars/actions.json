@@ -63,9 +63,9 @@
 	{
 		"action": "showAdvancement",
 		"variables": [
-			{ "type": "text", "placeholder": "message" },
-			{ "source": "items", "type": "list", "placeholder": "item" },
-			{ "source": "sounds", "type": "list", "placeholder": "sound" }
+			{ "type": "text", "placeholder": "message", "notRequired": true },
+			{ "source": "items", "type": "list", "placeholder": "item", "notRequired": true },
+			{ "source": "sounds", "type": "list", "placeholder": "sound", "notRequired": true }
 		]
 	},
 	{
