@@ -133,7 +133,7 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 					var color = "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));";
 
 					if (required && _.size(port.getLinks()) === 0) {
-						color = "linear-gradient(rgba(170, 14, 14, 0.3), rgba(170, 14, 14, 0.4))";
+						color = "linear-gradient(rgb(248, 8, 8), rgb(248, 8, 8))";
 					}
 					return (
 						<S.PortIn key={index} color={color}>
@@ -152,7 +152,7 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 					var color = "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));";
 
 					if (required && _.size(port.getLinks()) === 0) {
-						color = "linear-gradient(rgba(170, 14, 14, 0.3), rgba(170, 14, 14, 0.4))";
+						color = "linear-gradient(rgb(248, 8, 8), rgb(248, 8, 8))";
 					}
 					return (
 						<S.PortOut key={index} color={color}>

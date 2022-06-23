@@ -19,7 +19,7 @@ export class SwitchNodeWidget extends BaseNodeWidget<SwitchNodeProps> {
 						var color = "linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));";
 
 						if (_.size(port.getLinks()) === 0) {
-							color = "linear-gradient(rgba(170, 14, 14, 0.3), rgba(170, 14, 14, 0.4))";
+							color = "linear-gradient(rgb(248, 8, 8), rgb(248, 8, 8))";
 						}
 						return (
 							<div key={`p${index}`} style={{ color: "black", display: "flex", justifyContent: "flex-end" }}>
