@@ -23,6 +23,13 @@
 		]
 	},
 	{
+		"action": "finishQuest",
+		"variables": [
+			{ "source": "quest", "type": "list", "placeholder": "quest" },
+			{ "source": "quest[-1]", "type": "list", "placeholder": "value" }
+		]
+	},
+	{
 		"action": "giveExp",
 		"variables": [
 			{ "source": "skills", "type": "list", "placeholder": "skill" },
