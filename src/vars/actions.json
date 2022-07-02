@@ -54,8 +54,10 @@
 	},
 	{
 		"action": "openDialogue",
-		"variables": [{ "source": "dialogues", "type": "list", "placeholder": "dialogue" }],
-		"title": [{ "type": "text", "placeholder": "title", "optional": true }]
+		"variables": [
+			{ "source": "dialogues", "type": "list", "placeholder": "dialogue" },
+			{ "type": "text", "placeholder": "title", "optional": true }
+		]
 	},
 	{
 		"action": "basicAction",
