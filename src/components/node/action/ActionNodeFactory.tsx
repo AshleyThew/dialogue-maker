@@ -16,4 +16,4 @@ export class ActionNodeFactory extends BaseNodeFactory<ActionNodeModel> {
 	}
 }
 
-export const AcitonFactory = new ActionNodeFactory();
+export const ActionFactory = new ActionNodeFactory();

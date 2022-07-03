@@ -4,6 +4,7 @@ import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
 import { Conditions, ConditionalProps, ConditionProps } from "../../editor/Condition";
 import { DialogueContextInterface } from "../../DialogueContext";
+import { OptionFactory } from "./OptionNodeFactory";
 
 export interface OptionProps extends ConditionalProps {
 	text: string;
@@ -61,6 +62,7 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 		this.options.options = event.data.options.map((option) => {
 			return new Option(option.conditions, option.args, option.text);
 		});
+		this.options.color = OptionFactory.options.color;
 	}
 
 	serialize(): any {

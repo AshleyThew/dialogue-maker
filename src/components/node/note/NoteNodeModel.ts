@@ -1,6 +1,7 @@
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
+import { NoteFactory } from "./NoteNodeFactory";
 
 export interface NoteNodeModelOptions extends BaseNodeModelOptions {
 	text?: string;
@@ -35,6 +36,7 @@ export class NoteNodeModel extends BaseNodeModel<NoteNodeModelGenerics> {
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
 		this.options.text = event.data.text;
+		this.options.color = NoteFactory.options.color;
 	}
 
 	serialize(): any {

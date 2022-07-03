@@ -2,6 +2,7 @@ import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
 import { ConditionProps, Conditions } from "../../editor/Condition";
 import { DialogueContextInterface } from "../../DialogueContext";
+import { ConditionFactory } from "./ConditionNodeFactory";
 
 export interface ConditionNodeModelOptions extends BaseNodeModelOptions {
 	conditions?: Conditions;
@@ -43,6 +44,7 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
 		this.options.conditions = new Conditions(event.data.conditions.conditions, event.data.conditions.args);
+		this.options.color = ConditionFactory.options.color;
 	}
 
 	serialize(): any {

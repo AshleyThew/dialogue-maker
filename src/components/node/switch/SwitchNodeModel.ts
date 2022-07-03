@@ -1,5 +1,6 @@
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
+import { SwitchFactory } from "./SwitchNodeFactory";
 
 export interface SwitchNodeModelOptions extends BaseNodeModelOptions {
 	switch?: string;
@@ -30,6 +31,7 @@ export class SwitchNodeModel extends BaseNodeModel<SwitchNodeModelGenerics> {
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
 		this.options.switch = event.data.switch;
+		this.options.color = SwitchFactory.options.color;
 	}
 
 	serialize(): any {

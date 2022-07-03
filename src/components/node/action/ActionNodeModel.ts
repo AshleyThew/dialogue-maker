@@ -4,6 +4,7 @@ import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../b
 import { Conditions } from "../../editor/Condition";
 import { ActionProps, Actions } from "../../editor/Action";
 import { DialogueContextInterface } from "../../DialogueContext";
+import { ActionFactory } from "./ActionNodeFactory";
 
 export interface ActionNodeModelOptions extends BaseNodeModelOptions {
 	actions?: Actions;
@@ -40,6 +41,7 @@ export class ActionNodeModel extends BaseNodeModel<ActionNodeModelGenerics> {
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
 		this.options.actions = new Actions(event.data.actions.actions, event.data.actions.args);
+		this.options.color = ActionFactory.options.color;
 	}
 
 	serialize(): any {

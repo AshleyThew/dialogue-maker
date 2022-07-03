@@ -1,5 +1,6 @@
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
+import { TreeFactory, TreeNodeFactory } from "./TreeNodeFactory";
 
 export interface TreeNodeModelOptions extends BaseNodeModelOptions {
 	tree?: string;
@@ -34,6 +35,7 @@ export class TreeNodeModel extends BaseNodeModel<TreeNodeModelGenerics> {
 		super.deserialize(event);
 		this.options.tree = event.data.tree;
 		this.options.start = event.data.start;
+		this.options.color = TreeFactory.options.color;
 	}
 
 	serialize(): any {

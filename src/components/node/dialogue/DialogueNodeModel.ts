@@ -1,6 +1,7 @@
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
+import { DialogueFactory } from "./DialogueNodeFactory";
 
 export interface DialogueNodeModelOptions extends BaseNodeModelOptions {
 	text?: string;
@@ -35,6 +36,7 @@ export class DialogueNodeModel extends BaseNodeModel<DialogueNodeModelGenerics> 
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
 		this.options.text = event.data.text;
+		this.options.color = DialogueFactory.options.color;
 	}
 
 	serialize(): any {

@@ -1,6 +1,7 @@
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { DefaultPortModel } from "@projectstorm/react-diagrams";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
+import { StartFactory } from "./StartNodeFactory";
 
 export interface StartNodeModelOptions extends BaseNodeModelOptions {}
 
@@ -27,6 +28,7 @@ export class StartNodeModel extends BaseNodeModel<StartNodeModelGenerics> {
 	deserialize(event: DeserializeEvent<this>): void {
 		super.deserialize(event);
 		this.options.editableTitle = event.data.title !== "Start";
+		this.options.color = StartFactory.options.color;
 	}
 
 	clone(lookupTable?: { [s: string]: any }) {

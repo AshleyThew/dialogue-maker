@@ -1,4 +1,4 @@
-import { AcitonFactory as ActionFactory } from "./action/ActionNodeFactory";
+import { ActionFactory as ActionFactory } from "./action/ActionNodeFactory";
 import { BaseNodeFactory, BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "./base";
 import { ConditionFactory } from "./condition/ConditionNodeFactory";
 import { DialogueFactory } from "./dialogue/DialogueNodeFactory";
