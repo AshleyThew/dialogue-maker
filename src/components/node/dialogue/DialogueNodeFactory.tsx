@@ -4,7 +4,7 @@ import { BaseNodeFactory } from "../base/";
 
 export class DialogueNodeFactory extends BaseNodeFactory<DialogueNodeModel> {
 	constructor() {
-		super("dialogue", "Dialogue", "#dd341e");
+		super("dialogue", "Dialogue", "#dd341ee6");
 	}
 
 	generateReactWidget(event): JSX.Element {

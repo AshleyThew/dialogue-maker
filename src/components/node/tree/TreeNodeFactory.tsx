@@ -4,7 +4,7 @@ import { BaseNodeFactory } from "../base";
 
 export class TreeNodeFactory extends BaseNodeFactory<TreeNodeModel> {
 	constructor() {
-		super("tree", "Tree", "#e02e87");
+		super("tree", "Tree", "#e02e87e6");
 	}
 
 	generateReactWidget(event): JSX.Element {

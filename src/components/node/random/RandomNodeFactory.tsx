@@ -4,7 +4,7 @@ import { BaseNodeFactory } from "../base";
 
 export class RandomNodeFactory extends BaseNodeFactory<RandomNodeModel> {
 	constructor() {
-		super("random", "Random", "#bdce26");
+		super("random", "Random", "#bdce26e6");
 	}
 
 	generateReactWidget(event): JSX.Element {

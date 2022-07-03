@@ -4,7 +4,7 @@ import { BaseNodeFactory } from "../base/";
 
 export class OptionNodeFactory extends BaseNodeFactory<OptionNodeModel> {
 	constructor() {
-		super("option", "Option", "#0756b1");
+		super("option", "Option", "#0756b1e6");
 	}
 
 	generateReactWidget(event): JSX.Element {

@@ -4,7 +4,7 @@ import { BaseNodeFactory } from "../base";
 
 export class ConditionNodeFactory extends BaseNodeFactory<ConditionNodeModel> {
 	constructor() {
-		super("condition", "Condition", "#02630a");
+		super("condition", "Condition", "#02630ae6");
 	}
 
 	generateReactWidget(event): JSX.Element {
