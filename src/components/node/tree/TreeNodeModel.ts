@@ -1,6 +1,6 @@
 import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../base";
-import { TreeFactory, TreeNodeFactory } from "./TreeNodeFactory";
+import { TreeFactory } from "./TreeNodeFactory";
 
 export interface TreeNodeModelOptions extends BaseNodeModelOptions {
 	tree?: string;
