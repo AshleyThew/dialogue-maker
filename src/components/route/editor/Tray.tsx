@@ -9,6 +9,7 @@ import { TrayItemWidget } from "./TrayItemWidget";
 import { confirmAlert } from "react-confirm-alert"; // Import
 import { EditableInput } from "../../editor/Inputs";
 import { DiagramModel } from "@projectstorm/react-diagrams";
+import { Toolkit } from "@projectstorm/react-canvas-core";
 
 namespace S {
 	export const Tray = styled(Tabs)`
@@ -98,14 +99,33 @@ const copyModel = (app: Application, key: string) => {
 					<button
 						onClick={() => {
 							if (value.length > 0 && !app.getTrees()[value]) {
-								var tree;
+								var tree: DiagramModel;
 								if (key === "default") {
 									tree = app.getModel();
 								} else {
 									tree = app.getTrees()[key];
 								}
 								var newModel = new DiagramModel();
-								newModel.deserializeModel(tree.serialize(), app.getDiagramEngine());
+
+								var serialString = JSON.stringify(tree.serialize());
+
+								const oldIds = tree.getNodes().map((node) => node.getOptions().id);
+
+								const newIds = [];
+
+								while (newIds.length < oldIds.length) {
+									const id = Toolkit.UID();
+									if (id in oldIds || id in newIds) {
+										continue;
+									}
+									newIds.push(id);
+								}
+
+								oldIds.forEach((v, k) => {
+									serialString = serialString.replaceAll(v, newIds[k]);
+								});
+
+								newModel.deserializeModel(JSON.parse(serialString), app.getDiagramEngine());
 								app.getDiagramEngine().setModel(newModel);
 								app.getTrees()[value] = newModel;
 								app.forceUpdate();
