@@ -5,6 +5,8 @@ import { NodeFactories } from "./components/node/";
 import { ZoomCanvasAction } from "./components/state/ZoomCanvasAction";
 import { StartFactory } from "./components/node/start/StartNodeFactory";
 import { CloneItemsAction } from "./components/state/CloneItemsAction";
+import { CopyItemsAction } from "./components/state/CopyItemsAction";
+import { PasteItemsAction } from "./components/state/PasteItemsAction";
 
 export class Application {
 	protected model: DiagramModel;
@@ -43,6 +45,8 @@ export class Application {
 		eventBus.registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 		eventBus.registerAction(new DeleteItemsAction({ keyCodes: [46], modifiers: { shiftKey: true } }));
 		eventBus.registerAction(new CloneItemsAction({ offset: { x: 0, y: 50 } }));
+		eventBus.registerAction(new CopyItemsAction());
+		eventBus.registerAction(new PasteItemsAction());
 	}
 
 	public getModel(): DiagramModel {
