@@ -13,3 +13,5 @@ export { default as respawns } from "./respawns.json";
 export { default as shops } from "./shops.json";
 export { default as skills } from "./skills.json";
 export { default as sounds } from "./sounds.json";
+export { default as simple_compare } from "./simple_compare.json";
+export { default as account_types } from "./account_types.json";

@@ -59,5 +59,12 @@
 	{
 		"condition": "isRespawn",
 		"variables": [{ "source": "respawns", "type": "list", "placeholder": "region" }]
+	},
+	{
+		"condition": "accountType",
+		"variables": [
+			{ "source": "simple_compare", "type": "list", "placeholder": "compare" },
+			{ "source": "account_types", "type": "list", "placeholder": "account" }
+		]
 	}
 ]
