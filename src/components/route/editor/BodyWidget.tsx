@@ -10,6 +10,7 @@ import { DiagramModel } from "@projectstorm/react-diagrams";
 import { DialogueContext, DialogueContextInterface } from "../../DialogueContext";
 import { DropdownInput } from "../../editor/Inputs";
 import { Tray } from "./Tray";
+import { StartFactory } from "../../node/start/StartNodeFactory";
 
 namespace S {
 	export const Body = styled.div`
@@ -145,6 +146,12 @@ const saveFile = async (app: Application) => {
 
 const clear = async (app: Application, context: DialogueContextInterface) => {
 	var newModel = new DiagramModel();
+	const node = StartFactory.generateModel(undefined);
+	node.setPosition(50, 50);
+	node.setPosition(50, 50);
+	node.getOptions().editableTitle = false;
+	node.setupPorts();
+	newModel.addNode(node);
 	app.setModel(newModel, {});
 	context.setApp(app);
 };

@@ -44,13 +44,15 @@ export class CloneItemsAction extends Action<DiagramEngine> {
 					let model = this.engine.getModel();
 					let itemMap = {};
 					const entities = model.getSelectedEntities();
+					const filtered = entities.filter((entity) => entity instanceof BaseNodeModel).map((entity) => entity as BaseNodeModel<any>);
+					filtered.sort((node1, node2) => node2.getPosition().y - node1.getPosition().y);
 
 					var y = offset.y;
-					if (entities.length && y === undefined) {
-						const entity = entities[0];
-						if (entity instanceof BaseNodeModel) {
-							y = entity.getBoundingBox().getHeight() + 5;
-						}
+					if (filtered.length && y === undefined) {
+						y = filtered[0].getBoundingBox().getHeight() + 7;
+						y += filtered[0].getPosition().y - filtered[filtered.length - 1].getPosition().y;
+					} else {
+						y = 50;
 					}
 					_.forEach(model.getSelectedEntities(), (item: BaseModel<any>) => {
 						let newItem = item.clone(itemMap);

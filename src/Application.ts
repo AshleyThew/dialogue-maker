@@ -29,6 +29,13 @@ export class Application {
 		this.diagramEngine.getNodeFactories().registerFactory(StartFactory);
 		NodeFactories.forEach((factory) => this.diagramEngine.getNodeFactories().registerFactory(factory));
 
+		const node = StartFactory.generateModel(undefined);
+		node.setPosition(50, 50);
+		node.setPosition(50, 50);
+		node.getOptions().editableTitle = false;
+		node.setupPorts();
+		this.model.addNode(node);
+
 		const state = new DialogueDiagramState();
 
 		this.diagramEngine.getStateMachine().registerListener({
