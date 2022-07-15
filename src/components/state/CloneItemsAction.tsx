@@ -49,7 +49,7 @@ export class CloneItemsAction extends Action<DiagramEngine> {
 					if (entities.length && y === undefined) {
 						const entity = entities[0];
 						if (entity instanceof BaseNodeModel) {
-							y = entity.getBoundingBox().getHeight() + 10;
+							y = entity.getBoundingBox().getHeight() + 5;
 						}
 					}
 					_.forEach(model.getSelectedEntities(), (item: BaseModel<any>) => {

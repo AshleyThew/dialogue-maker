@@ -2,6 +2,7 @@ import { AbstractDisplacementStateEvent, Action, ActionEvent, InputType, State }
 import { DiagramEngine, LinkModel, PortModel } from "@projectstorm/react-diagrams";
 import { MouseEvent } from "react";
 import * as _ from "lodash";
+import { BaseNodeModel } from "../node/base";
 
 export class DialogueDragNewLinkState extends State<DiagramEngine> {
 	port: PortModel;
@@ -67,15 +68,24 @@ export class DialogueDragNewLinkState extends State<DiagramEngine> {
 				fire: (event: ActionEvent<MouseEvent>) => {
 					const model = this.engine.getMouseElement(event.event);
 					// check to see if we connected to a new port
+					var attemptConnect: PortModel;
 					if (model instanceof PortModel) {
-						if (this.port.canLinkToPort(model)) {
+						attemptConnect = model;
+					} else if (model instanceof BaseNodeModel) {
+						var ports = model.getInPorts();
+						if (ports.length === 1) {
+							attemptConnect = ports[0];
+						}
+					}
+					if (attemptConnect) {
+						if (this.port.canLinkToPort(attemptConnect)) {
 							_.forEach(this.link.getSourcePort().getLinks(), (link) => {
 								if (link !== this.link) {
 									link.remove();
 								}
 							});
-							this.link.setTargetPort(model);
-							model.reportPosition();
+							this.link.setTargetPort(attemptConnect);
+							attemptConnect.reportPosition();
 							this.engine.repaintCanvas();
 							this.engine.getModel().clearSelection();
 							this.eject();
