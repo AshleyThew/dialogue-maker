@@ -2,6 +2,7 @@ import { KeyboardEvent } from "react";
 import * as _ from "lodash";
 import { Action, ActionEvent, BaseModel, InputType } from "@projectstorm/react-canvas-core";
 import { DiagramEngine, NodeModel } from "@projectstorm/react-diagrams";
+import { BaseNodeModel } from "../node/base";
 
 export interface CloneItemsActionOptions {
 	keyCodes?: number[];
@@ -28,8 +29,8 @@ export class CloneItemsAction extends Action<DiagramEngine> {
 			...options.modifiers,
 		};
 		const offset = {
-			x: 100,
-			y: 100,
+			x: 0,
+			y: undefined,
 			...options.offset,
 		};
 
@@ -42,6 +43,15 @@ export class CloneItemsAction extends Action<DiagramEngine> {
 					event.event.preventDefault();
 					let model = this.engine.getModel();
 					let itemMap = {};
+					const entities = model.getSelectedEntities();
+
+					var y = offset.y;
+					if (entities.length && y === undefined) {
+						const entity = entities[0];
+						if (entity instanceof BaseNodeModel) {
+							y = entity.getBoundingBox().getHeight() + 10;
+						}
+					}
 					_.forEach(model.getSelectedEntities(), (item: BaseModel<any>) => {
 						let newItem = item.clone(itemMap);
 						if (!newItem) {
@@ -50,8 +60,9 @@ export class CloneItemsAction extends Action<DiagramEngine> {
 						item.setSelected(false);
 
 						// offset the nodes slightly
+
 						if (newItem instanceof NodeModel) {
-							newItem.setPosition(newItem.getX() + offset.x, newItem.getY() + offset.y);
+							newItem.setPosition(newItem.getX() + offset.x, newItem.getY() + y);
 							model.addNode(newItem);
 						}
 					});

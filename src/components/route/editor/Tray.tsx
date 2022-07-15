@@ -293,7 +293,7 @@ export const Tray = (props: { app: Application }) => {
 				<div ref={ref} style={{ width: "100%" }}></div>
 				<TabList>
 					<Tab>Nodes</Tab>
-					<Tab>{`Trees(${Object.keys(props.app.getTrees()).length})`}</Tab>
+					<Tab>{`Trees(${Object.keys(props.app.getTrees()).length + 1})`}</Tab>
 				</TabList>
 				<div
 					style={{
