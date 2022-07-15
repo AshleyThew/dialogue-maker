@@ -31,7 +31,11 @@ export class CopyItemsAction extends Action<DiagramEngine> {
 
 				if (keyCodes.indexOf(keyCode) !== -1 && _.isEqual({ ctrlKey, shiftKey, altKey, metaKey }, modifiers)) {
 					let model = this.engine.getModel();
-					console.log(model.getSelectedEntities());
+					const active = document.activeElement;
+					console.log(active);
+					if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
+						return;
+					}
 					if (model.getSelectedEntities().length) {
 						event.event.preventDefault();
 
