@@ -1,6 +1,6 @@
 import { KeyboardEvent } from "react";
 import * as _ from "lodash";
-import { Action, ActionEvent, BaseModel, InputType } from "@projectstorm/react-canvas-core";
+import { Action, ActionEvent, BaseModel, InputType, Toolkit } from "@projectstorm/react-canvas-core";
 import { DiagramEngine, DiagramModel, LinkModel, NodeModel } from "@projectstorm/react-diagrams";
 
 export interface CopyItemsActionOptions {
@@ -32,7 +32,6 @@ export class CopyItemsAction extends Action<DiagramEngine> {
 				if (keyCodes.indexOf(keyCode) !== -1 && _.isEqual({ ctrlKey, shiftKey, altKey, metaKey }, modifiers)) {
 					let model = this.engine.getModel();
 					const active = document.activeElement;
-					console.log(active);
 					if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
 						return;
 					}
@@ -70,7 +69,25 @@ export class CopyItemsAction extends Action<DiagramEngine> {
 							}
 						});
 
-						navigator.clipboard.writeText(JSON.stringify(newModel.serialize()));
+						var serialString = JSON.stringify(newModel.serialize());
+
+						const oldIds = newModel.getNodes().map((node) => node.getOptions().id);
+
+						const newIds = [];
+
+						while (newIds.length < oldIds.length) {
+							const id = Toolkit.UID();
+							if (id in oldIds || id in newIds) {
+								continue;
+							}
+							newIds.push(id);
+						}
+
+						oldIds.forEach((v, k) => {
+							serialString = serialString.replaceAll(v, newIds[k]);
+						});
+
+						navigator.clipboard.writeText(serialString);
 						this.engine.repaintCanvas();
 					}
 				}

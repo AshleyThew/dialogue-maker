@@ -54,7 +54,7 @@ export class PasteItemsAction extends Action<DiagramEngine> {
 									var newModel = new DiagramModel();
 									newModel.deserializeModel(dialogue, this.engine);
 
-									var serialString = JSON.stringify(newModel.serialize());
+									var serialString = data;
 
 									const oldIds = newModel.getNodes().map((node) => node.getOptions().id);
 
@@ -82,6 +82,10 @@ export class PasteItemsAction extends Action<DiagramEngine> {
 											model.addNode(node);
 										}
 									});
+									newModel.getLinks().forEach((link) => {
+										model.addLink(link);
+									});
+
 									this.engine.repaintCanvas();
 								}
 							} catch (error) {}
