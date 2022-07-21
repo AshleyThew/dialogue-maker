@@ -236,11 +236,12 @@ export class BodyWidget extends React.Component {
 									node.getOptions()[key] = value;
 								});
 							}
+							sessionStorage.setItem("latest-node", node.getID());
 
 							var point = this.state.app.getDiagramEngine().getRelativeMousePoint(event);
 							node.setPosition(point);
 							this.state.app.getDiagramEngine().getModel().addNode(node);
-							this.forceUpdate();
+							this.state.app.forceUpdate();
 						}}
 						onDragOver={(event) => {
 							event.preventDefault();

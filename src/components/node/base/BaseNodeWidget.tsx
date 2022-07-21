@@ -89,8 +89,10 @@ export abstract class BaseNodeWidget<T extends BaseNodeProps<BaseNodeModel<BaseN
 	};
 
 	construct(children): React.ReactNode {
+		const latest = !this.props.node.isSelected() && this.props.node.getOptions().id === sessionStorage.getItem("latest-node");
 		return (
 			<S.Node
+				className={latest ? "node-previous" : ""}
 				data-default-node-name={this.props.node.getOptions().title}
 				selected={this.props.node.isSelected()}
 				background={this.props.node.getOptions().color}

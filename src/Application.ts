@@ -51,7 +51,7 @@ export class Application {
 		const eventBus = this.diagramEngine.getActionEventBus();
 		eventBus.registerAction(new ZoomCanvasAction({ inverseZoom: true }));
 		eventBus.registerAction(new DeleteItemsAction({ keyCodes: [46], modifiers: { shiftKey: true } }));
-		eventBus.registerAction(new CloneItemsAction({ offset: { x: 0 } }));
+		eventBus.registerAction(new CloneItemsAction({ app: this, offset: { x: 0 } }));
 		eventBus.registerAction(new CopyItemsAction());
 		eventBus.registerAction(new PasteItemsAction());
 	}
