@@ -88,5 +88,9 @@
 	{
 		"action": "setRespawn",
 		"variables": [{ "source": "respawns", "type": "list", "placeholder": "region" }]
+	},
+	{
+		"action": "teleport",
+		"variables": [{ "source": "teleports", "type": "list", "placeholder": "teleport" }]
 	}
 ]
