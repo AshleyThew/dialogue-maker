@@ -9,6 +9,13 @@
 		]
 	},
 	{
+		"condition": "bankHasItem",
+		"variables": [
+			{ "source": "items", "type": "list", "placeholder": "item" },
+			{ "type": "number", "placeholder": "amount" }
+		]
+	},
+	{
 		"condition": "hasEquipped",
 		"variables": [
 			{ "source": "equipment_slot", "type": "list", "placeholder": "slot" },
