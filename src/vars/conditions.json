@@ -73,5 +73,11 @@
 			{ "source": "simple_compare", "type": "list", "placeholder": "compare" },
 			{ "source": "account_types", "type": "list", "placeholder": "account" }
 		]
+	},
+	{
+		"condition": "hasInventorySpace",
+		"variables": [
+			{ "source": "space", "type": "number", "placeholder": "space" }
+		]
 	}
 ]

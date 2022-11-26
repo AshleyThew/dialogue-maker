@@ -92,5 +92,11 @@
 	{
 		"action": "teleport",
 		"variables": [{ "source": "teleports", "type": "list", "placeholder": "teleport" }]
+	},
+	{
+		"action": "bossBar",
+		"variables": [
+			{ "type": "text", "placeholder": "text" }
+		]
 	}
 ]
