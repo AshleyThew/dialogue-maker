@@ -67,6 +67,12 @@
 		]
 	},
 	{
+		"action": "refreshNpc",
+		"variables": [
+			{ "source": "dialogues", "type": "list", "placeholder": "dialogue", "optional": true }
+		]
+	},
+	{
 		"action": "basicAction",
 		"variables": [{ "source": "basic_actions", "type": "list", "placeholder": "action" }]
 	},
