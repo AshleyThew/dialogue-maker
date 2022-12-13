@@ -13,7 +13,6 @@ import { Tray } from "./Tray";
 import { StartFactory } from "../../node/start/StartNodeFactory";
 import { confirmAlert } from "react-confirm-alert"; // Import
 import { EditableInput } from "../../editor/Inputs";
-import App from "../../../App";
 
 namespace S {
 	export const Body = styled.div`
