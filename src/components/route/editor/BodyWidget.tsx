@@ -11,6 +11,9 @@ import { DialogueContext, DialogueContextInterface } from "../../DialogueContext
 import { DropdownInput } from "../../editor/Inputs";
 import { Tray } from "./Tray";
 import { StartFactory } from "../../node/start/StartNodeFactory";
+import { confirmAlert } from "react-confirm-alert"; // Import
+import { EditableInput } from "../../editor/Inputs";
+import App from "../../../App";
 
 namespace S {
 	export const Body = styled.div`
@@ -63,6 +66,31 @@ namespace S {
 			background: ${(props) => props.hover || "rgb(0, 192, 255)"};
 		}
 	`;
+
+	export const CustomUI = styled.div`
+		text-align: center;
+		width: fit-content;
+		min-width: 40vw;
+		padding: 40px;
+		background: #28bae6;
+		box-shadow: 0 20px 75px rgba(0, 0, 0, 0.23);
+		color: #fff;
+
+		> h1 {
+			margin-top: 0;
+		}
+
+		> button {
+			width: 160px;
+			padding: 10px;
+			border: 1px solid #fff;
+			margin: 10px;
+			cursor: pointer;
+			background: none;
+			color: #fff;
+			font-size: 14px;
+		}
+	`;
 }
 
 const loadFile = async (app: Application, context: DialogueContextInterface) => {
@@ -84,7 +112,7 @@ const loadFile = async (app: Application, context: DialogueContextInterface) => 
 };
 
 const loadGithub = async (app: Application, location: string, context: DialogueContextInterface) => {
-	fetch(`https://raw.githubusercontent.com/MineScape-me/MineScape/main/dialogue/regions/${location}.json`)
+	fetch(`https://raw.githubusercontent.com/${context.repo}dialogue/regions/${location}.json`)
 		.then((data) => data.text())
 		.then((data) => loadData(app, data, context))
 		.catch((err) => {
@@ -157,15 +185,39 @@ const clear = async (app: Application, context: DialogueContextInterface) => {
 };
 
 const Buttons = (props): JSX.Element => {
+	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const context = React.useContext(DialogueContext);
-	const { sourcesKeys } = context;
 	const [github, setGithub] = React.useState("");
-
-	const keys = sourcesKeys["dialogues"];
+	
 
 	const clearLocal = () => {
 		clear(props.app, context);
 		setGithub("");
+	};
+
+	const changeGithub = () => {
+		confirmAlert({
+			customUI: ({ onClose }) => {
+				let value = context.repo;
+
+				return (
+					<S.CustomUI>
+						<h1>Change Github</h1>
+						<EditableInput value={value} setValue={(e) => (value = e)} style={{ background: "gray" }} autoFocus />
+						<div />
+						<button
+							onClick={() => {
+								context.setRepo(value);
+								onClose();
+								forceUpdate();
+							}}
+						>
+							Set
+						</button>
+					</S.CustomUI>
+				);
+			},
+		});
 	};
 
 	return (
@@ -178,17 +230,21 @@ const Buttons = (props): JSX.Element => {
 				Clear
 			</S.DemoButton>
 			<div style={{ marginLeft: "auto" }} />
+
 			<DropdownInput
-				values={keys}
+				values={context.sourcesKeys.dialogues}
 				value={github}
 				setValue={(e) => {
 					setGithub(e);
 					loadGithub(props.app, e, context);
 				}}
-				placeholder={"Github"}
+				placeholder={`Github (${context.sourcesKeys.dialogues?.length})`}
 				width={"200px"}
 				right={0}
 			/>
+			<S.DemoButton hover="rgb(214, 248, 19)" onClick={changeGithub}>
+				Change
+			</S.DemoButton>
 			;
 		</>
 	);

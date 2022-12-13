@@ -15,20 +15,20 @@ export interface DialogueContextInterface {
 	sourcesKeys: { [key: string]: any[] };
 	app: Application;
 	setApp: Function;
+	repo: string;
+	setRepo: (repo: string) => void;
 }
 
 export const DialogueContext = React.createContext<DialogueContextInterface | null>(null);
 
 const sourcesKeys = {};
-const switchs = { "": [] };
-const { quests, ...other } = Sources;
+const { quests, switchs, ...other } = Sources;
 const conditions = vars.conditions as ConditionProps[];
 const actions = vars.actions as ActionProps[];
 
-Object.entries(quests).forEach(([key, value]) => (switchs[key] = ["null", ...value]));
-
 export const DialogueContextProvider = (props) => {
 	const [sources, setSources] = React.useState({});
+	const [repo, setRepo] = React.useState(localStorage.getItem("minescape.repo") || "MineScape-me/MineScape/main")
 	const [app, setApp] = React.useState<Application>(null);
 	//const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
@@ -51,6 +51,8 @@ export const DialogueContextProvider = (props) => {
 		sourcesKeys: sourcesKeys,
 		app,
 		setApp,
+		repo,
+		setRepo
 	};
 
 	React.useEffect(() => {
@@ -71,7 +73,10 @@ export const DialogueContextProvider = (props) => {
 			// QUESTS
 			...quests,
 		});
-		fetch("https://raw.githubusercontent.com/MineScape-me/MineScape/main/dialogue/paths.txt")
+	}, []);
+
+	React.useEffect(() => {
+		fetch(`https://raw.githubusercontent.com/${repo}/dialogue/paths.txt`)
 			.then((data) => data.text())
 			.then((data) => {
 				var github = data
@@ -85,7 +90,10 @@ export const DialogueContextProvider = (props) => {
 			.catch((e) => {
 				console.log(e);
 			});
-	}, []);
+			if(repo){
+				localStorage.setItem("minescape.repo", repo);
+			}
+	}, [repo]);
 
 	return <DialogueContext.Provider value={defaultDialogueContext}>{props.children}</DialogueContext.Provider>;
 };
