@@ -69,7 +69,7 @@
 	{
 		"action": "refreshNpc",
 		"variables": [
-			{ "source": "dialogues", "type": "list", "placeholder": "dialogue", "optional": true }
+			{ "source": "dialogues", "type": "list", "placeholder": "dialogue" }
 		]
 	},
 	{
@@ -104,5 +104,9 @@
 		"variables": [
 			{ "type": "text", "placeholder": "text" }
 		]
+	},
+	{
+		"action": "openInventory",
+		"variables": [{ "source": "inventories", "type": "list", "placeholder": "inventory" }]
 	}
 ]
