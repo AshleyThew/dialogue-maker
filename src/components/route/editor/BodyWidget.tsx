@@ -111,7 +111,7 @@ const loadFile = async (app: Application, context: DialogueContextInterface) => 
 };
 
 const loadGithub = async (app: Application, location: string, context: DialogueContextInterface) => {
-	fetch(`https://raw.githubusercontent.com/${context.repo}dialogue/regions/${location}.json`)
+	fetch(`https://raw.githubusercontent.com/${context.repo}/dialogue/regions/${location}.json`)
 		.then((data) => data.text())
 		.then((data) => loadData(app, data, context))
 		.catch((err) => {
