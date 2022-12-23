@@ -117,7 +117,7 @@ export class Application {
 		});
 		node.getOptions().options = mapped;
 		for (let i = 1; i < options.length; i++) {
-			node.addOutPort("❯");
+			node.addOutPort("❯", i);
 		}
 		node.setupPorts();
 
