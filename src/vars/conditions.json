@@ -32,6 +32,14 @@
 		"actionable": true
 	},
 	{
+		"condition": "combatLevel",
+		"variables": [
+			{ "source": "compare", "type": "list", "placeholder": "?" },
+			{ "type": "number", "placeholder": "level" }
+		],
+		"actionable": true
+	},
+	{
 		"condition": "questStage",
 		"variables": [
 			{ "source": "quest", "type": "list", "placeholder": "quest" },
