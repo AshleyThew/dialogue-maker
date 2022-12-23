@@ -7,6 +7,7 @@ import { StartFactory } from "./components/node/start/StartNodeFactory";
 import { CloneItemsAction } from "./components/state/CloneItemsAction";
 import { CopyItemsAction } from "./components/state/CopyItemsAction";
 import { PasteItemsAction } from "./components/state/PasteItemsAction";
+import { BaseNodeModel } from "./components/node/base";
 
 export class Application {
 	protected model: DiagramModel;
@@ -91,24 +92,19 @@ export class Application {
 		}
 	}
 
-	public addDialogue(title: string, dialogue: string): void {
+	public addDialogue(title: string, dialogue: string, link: boolean): void {
 		var node = DialogueFactory.generateModel(undefined);
 		node.getOptions().title = title;
 		node.getOptions().text = dialogue;
 		node.setupPorts();
 
-		const latest = sessionStorage.getItem("latest-node");
-		if (latest) {
-			const lnode = this.model.getNode(latest);
-			if (lnode ) {
-				node.setPosition(lnode.getX(), lnode.getY() + lnode.getBoundingBox().getHeight() + 7);
-			}
-		}
+		this.linkLatest(node, link);
+		
 		this.model.addNode(node);
 		sessionStorage.setItem("latest-node", node.getID());
 	}
 
-	public addOption(options: string[]): void {
+	public addOption(options: string[], link: boolean): void {
 		var node = OptionFactory.generateModel(undefined)
 		var mapped = options.map(option => {
 			var opt = new Option()
@@ -121,15 +117,29 @@ export class Application {
 		}
 		node.setupPorts();
 
+		this.linkLatest(node, link);
 
+		this.model.addNode(node);
+		sessionStorage.setItem("latest-node", node.getID());
+	}
+
+	private linkLatest(node: BaseNodeModel<any>, link: boolean): void{
 		const latest = sessionStorage.getItem("latest-node");
 		if (latest) {
 			const lnode = this.model.getNode(latest);
-			if (lnode ) {
+			if (lnode) {
+				if (link && lnode instanceof BaseNodeModel && lnode.getOutPorts().length === 1) {
+					const outPort = lnode.getOutPorts()[0];
+					const inPort = node.getInPorts()[0];
+					if (inPort.canLinkToPort(outPort)) {
+						const link = outPort.createLinkModel();
+						link.setSourcePort(outPort);
+						link.setTargetPort(inPort);
+						this.model.addLink(link);
+					}
+				}
 				node.setPosition(lnode.getX(), lnode.getY() + lnode.getBoundingBox().getHeight() + 7);
 			}
 		}
-		this.model.addNode(node);
-		sessionStorage.setItem("latest-node", node.getID());
 	}
 }

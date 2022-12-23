@@ -81,10 +81,10 @@ export const DialogueContextProvider = (props) => {
 						console.log(data.message);
 						break;
 					case "dialogue":
-						app.addDialogue(data.title, data.dialogue);
+						app.addDialogue(data.title, data.dialogue, data.link);
 						break;
 					case "option":
-						app.addOption(data.options);
+						app.addOption(data.options, data.link);
 						break;
 				}
 			};
