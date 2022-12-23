@@ -50,8 +50,8 @@ namespace S {
 		flex-shrink: 0;
 	`;
 
-	export const DemoButton = styled.button<{ hover? }>`
-		background: rgb(60, 60, 60);
+	export const DemoButton = styled.button<{ hover?; background? }>`
+		background: ${(props) => props.background || "rgb(60, 60, 60)"};
 		font-size: 14px;
 		padding: 5px 10px;
 		border: none;
@@ -187,7 +187,6 @@ const Buttons = (props): JSX.Element => {
 	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const context = React.useContext(DialogueContext);
 	const [github, setGithub] = React.useState("");
-	
 
 	const clearLocal = () => {
 		clear(props.app, context);
@@ -229,7 +228,6 @@ const Buttons = (props): JSX.Element => {
 				Clear
 			</S.DemoButton>
 			<div style={{ marginLeft: "auto" }} />
-
 			<DropdownInput
 				values={context.sourcesKeys.dialogues}
 				value={github}
@@ -241,9 +239,16 @@ const Buttons = (props): JSX.Element => {
 				width={"200px"}
 				right={0}
 			/>
-			<S.DemoButton hover="rgb(214, 248, 19)" onClick={changeGithub}>
-				Change
-			</S.DemoButton>
+			<S.DemoButton onClick={changeGithub}>Change</S.DemoButton>
+			{context.sync ? (
+				<S.DemoButton background="rgb(214, 248, 19)" hover="rgb(60, 60, 60)" onClick={context.toggleSync}>
+					Sync
+				</S.DemoButton>
+			) : (
+				<S.DemoButton background="rgb(60, 60, 60)" hover="rgb(214, 248, 19)" onClick={context.toggleSync}>
+					Sync
+				</S.DemoButton>
+			)}
 			;
 		</>
 	);

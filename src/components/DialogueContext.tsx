@@ -4,6 +4,7 @@ import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
 import * as Sources from "../sources/";
 import * as vars from "../vars";
+
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
 	conditionKeys: any[];
@@ -17,6 +18,8 @@ export interface DialogueContextInterface {
 	setApp: Function;
 	repo: string;
 	setRepo: (repo: string) => void;
+	sync: boolean,
+	toggleSync: () => void;
 }
 
 export const DialogueContext = React.createContext<DialogueContextInterface | null>(null);
@@ -28,8 +31,10 @@ const actions = vars.actions as ActionProps[];
 
 export const DialogueContextProvider = (props) => {
 	const [sources, setSources] = React.useState({});
-	const [repo, setRepo] = React.useState(localStorage.getItem("minescape.repo") || "MineScape-me/MineScape/main")
+	const [repo, setRepo] = React.useState(localStorage.getItem("minescape.repo") || "MineScape-me/MineScape/main");
 	const [app, setApp] = React.useState<Application>(null);
+	const [webSocket, setWebSocket] = React.useState<WebSocket>(null);
+	const [sync, setSync] = React.useState(true);
 	//const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 
 	const defaultDialogueContext: DialogueContextInterface = {
@@ -52,8 +57,55 @@ export const DialogueContextProvider = (props) => {
 		app,
 		setApp,
 		repo,
-		setRepo
+		setRepo,
+		sync,
+		toggleSync: () => {setSync((value) => !value)}
 	};
+
+	const connectToWebsocket = async () => {
+		if(app && sync){
+			webSocket?.close();
+			const ws = new WebSocket("ws://localhost:21902/");
+			setWebSocket(ws);
+			const timer = setInterval(() => {
+				if (ws.readyState === 1) {
+					clearInterval(timer);
+					console.log("WebSocket connected.");
+				}
+			}, 10);
+			ws.onmessage = (message) => {
+				var data = JSON.parse(message.data);
+				console.log(data);
+				switch (data.type) {
+					case "join":
+						console.log(data.message);
+						break;
+					case "dialogue":
+						app.addDialogue(data.title, data.dialogue);
+						break;
+					case "option":
+						app.addOption(data.options);
+						break;
+				}
+			};
+			ws.onclose = () => {
+				clearInterval(timer);
+				setSync(false);
+				console.log("WebSocket closed.");
+			};
+			ws.onerror = (event) => {
+				ws.close();
+			};
+		}else{
+			webSocket?.close();
+		}
+	}
+
+	React.useEffect(() => {
+		connectToWebsocket();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [sync, app]);
+
 
 	React.useEffect(() => {
 		if (app) {
@@ -90,9 +142,9 @@ export const DialogueContextProvider = (props) => {
 			.catch((e) => {
 				console.log(e);
 			});
-			if(repo){
-				localStorage.setItem("minescape.repo", repo);
-			}
+		if (repo) {
+			localStorage.setItem("minescape.repo", repo);
+		}
 	}, [repo]);
 
 	return <DialogueContext.Provider value={defaultDialogueContext}>{props.children}</DialogueContext.Provider>;
