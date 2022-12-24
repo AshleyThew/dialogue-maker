@@ -17,4 +17,5 @@ export { default as simple_compare } from "./simple_compare.json";
 export { default as switchs } from "./switchs.json";
 export { default as account_types } from "./account_types.json";
 export { default as inventories } from "./inventories.json";
+export { default as servants } from "./servants.json";
 export { default as teleports } from "./teleports.json";

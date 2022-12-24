@@ -108,5 +108,9 @@
 	{
 		"action": "openInventory",
 		"variables": [{ "source": "inventories", "type": "list", "placeholder": "inventory" }]
+	},
+	{
+		"action": "hireServant",
+		"variables": [{ "source": "servants", "type": "list", "placeholder": "servant" }]
 	}
 ]
