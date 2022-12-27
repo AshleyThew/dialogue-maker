@@ -7,63 +7,79 @@ import * as vars from "../vars";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
-	conditionKeys: any[];
 	actions: ActionProps[];
-	actionKeys: any[];
 	switchs: { [key: string]: string[] };
-	switchsKeys: { label: string; value: string }[];
 	sources?: { [key: string]: string[] };
-	sourcesKeys: { [key: string]: any[] };
 	app: Application;
 	setApp: Function;
 	repo: string;
 	setRepo: (repo: string) => void;
-	sync: boolean,
+	sync: boolean;
 	toggleSync: () => void;
 }
 
-export const DialogueContext = React.createContext<DialogueContextInterface | null>(null);
+export interface DialogueContextExtraInterface {
+	extra: {};
+	setExtra: (extra: {}) => void;
+	def: {};
+}
 
-const sourcesKeys = {};
+export interface DialogueContextCombined extends DialogueContextInterface, DialogueContextExtraInterface {}
+
+export const DialogueContext = React.createContext<DialogueContextCombined | null>(null);
+
 const { quests, switchs, ...other } = Sources;
 const conditions = vars.conditions as ConditionProps[];
 const actions = vars.actions as ActionProps[];
 
 export const DialogueContextProvider = (props) => {
-	const [sources, setSources] = React.useState({});
+	const [sources, setSources] = React.useState({
+		...other,
+		// QUESTS
+		...quests,
+	});
 	const [repo, setRepo] = React.useState(localStorage.getItem("minescape.repo") || "MineScape-me/MineScape/main");
 	const [app, setApp] = React.useState<Application>(null);
 	const [webSocket, setWebSocket] = React.useState<WebSocket>(null);
-	const [sync, setSync] = React.useState(true);
-	//const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
+	const [sync, setSync] = React.useState(false);
+	const [def, setDefault] = React.useState({});
 
-	const defaultDialogueContext: DialogueContextInterface = {
+	var stored = JSON.parse(localStorage.getItem("minescape-extra"));
+	if (!stored) {
+		stored = {};
+	}
+	const [extra, setExtra] = React.useState<DialogueContextCombined>(stored);
+
+	const context: DialogueContextCombined = {
 		conditions,
-		conditionKeys: conditions
-			.map((cond) => cond.condition)
-			.sort()
-			.map((cond) => ({ label: cond, value: cond })),
 		actions,
-		actionKeys: actions
-			.map((act) => act.action)
-			.sort()
-			.map((act) => ({ label: act, value: act })),
 		switchs,
-		switchsKeys: Object.keys(switchs)
-			.sort()
-			.map((sw) => ({ label: sw, value: sw })),
-		sources: sources,
-		sourcesKeys: sourcesKeys,
+		sources,
 		app,
 		setApp,
 		repo,
 		setRepo,
 		sync,
-		toggleSync: () => {setSync((value) => !value)}
+		toggleSync: () => {
+			setSync((value) => !value);
+		},
+		extra,
+		setExtra: (extra) => {
+			localStorage.setItem("minescape-extra", JSON.stringify(extra));
+			setExtra(extra as DialogueContextCombined);
+		},
+		def,
 	};
 
+	React.useEffect(() => {
+		setDefault(
+			JSON.parse(JSON.stringify(context))
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	const connectToWebsocket = async () => {
-		if(app && sync){
+		if (app && sync) {
 			webSocket?.close();
 			const ws = new WebSocket("ws://localhost:21902/");
 			setWebSocket(ws);
@@ -96,36 +112,57 @@ export const DialogueContextProvider = (props) => {
 			ws.onerror = (event) => {
 				ws.close();
 			};
-		}else{
+		} else {
 			webSocket?.close();
 		}
-	}
+	};
 
 	React.useEffect(() => {
 		connectToWebsocket();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sync, app]);
 
-
-	React.useEffect(() => {
-		if (app) {
-			Object.entries(sources)
-				.sort()
-				.forEach(([key, value]) => {
-					const val = value as [];
-					sourcesKeys[key] = val.map((val) => ({ label: val, value: val }));
-				});
-			app.forceUpdate();
-		}
-	}, [app, sources]);
-
-	React.useEffect(() => {
-		setSources({
-			...other,
-			// QUESTS
-			...quests,
+	const mergeMap = (merge: {}, extra: {}) => {
+		Object.keys(merge).forEach((key) => {
+			const val = merge[key];
+			const add = extra[key];
+			if (typeof val !== "undefined" && typeof add === "undefined") {
+				if (Array.isArray(val)) {
+					extra[key] = [];
+				} else if (typeof val === "object") {
+					extra[key] = {};
+				}
+			}
+			if (typeof add !== "undefined" && typeof val !== "undefined") {
+				if (Array.isArray(val) && add.length) {
+					var set = new Set([...val, ...add]);
+					merge[key] = [...set];
+				} else if (val instanceof Object && val.constructor === Object) {
+					merge[key] = mergeMap(val, add);
+				}
+			}
 		});
-	}, []);
+		Object.keys(extra).forEach((key) => {
+			if (typeof extra[key] !== "undefined" && typeof merge[key] === "undefined") {
+				merge[key] = extra[key];
+			}
+		});
+		return merge;
+	};
+
+	React.useEffect(() => {
+		var stored = JSON.parse(localStorage.getItem("minescape-extra"));
+		if (!stored) {
+			stored = {};
+		}
+		const { extra: ignore, ...merge } = context;
+		mergeMap(merge, stored);
+		if (Object.keys(extra).length === 0) {
+			setExtra(stored);
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [extra, sources, Object.keys(sources).length]);
 
 	React.useEffect(() => {
 		fetch(`https://raw.githubusercontent.com/${repo}/dialogue/paths.txt`)
@@ -138,6 +175,11 @@ export const DialogueContextProvider = (props) => {
 					.sort();
 				var files = [...new Set([...github])];
 				setSources((sources) => ({ ...sources, dialogues: files, github: github }));
+				setDefault((def: any) => {
+					def.sources.dialogues = files;
+					def.sources.github = github;
+					return def;
+				})
 			})
 			.catch((e) => {
 				console.log(e);
@@ -147,5 +189,5 @@ export const DialogueContextProvider = (props) => {
 		}
 	}, [repo]);
 
-	return <DialogueContext.Provider value={defaultDialogueContext}>{props.children}</DialogueContext.Provider>;
+	return <DialogueContext.Provider value={context}>{props.children}</DialogueContext.Provider>;
 };

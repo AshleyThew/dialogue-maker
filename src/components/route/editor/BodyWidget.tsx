@@ -13,6 +13,8 @@ import { Tray } from "./Tray";
 import { StartFactory } from "../../node/start/StartNodeFactory";
 import { confirmAlert } from "react-confirm-alert"; // Import
 import { EditableInput } from "../../editor/Inputs";
+import { Editor } from "./Editor";
+import { createLabels } from "../../../utils/Utils";
 
 namespace S {
 	export const Body = styled.div`
@@ -193,14 +195,34 @@ const Buttons = (props): JSX.Element => {
 		setGithub("");
 	};
 
+	const openEditor = () => {
+		const alert = {
+			customUI: ({ onClose }) => {
+				return (
+					<S.CustomUI>
+						<Editor context={context} ret={alert}/>
+						<button
+							onClick={() => {
+								onClose();
+								forceUpdate();
+							}}
+						>
+							Close
+						</button>
+					</S.CustomUI>
+				);
+			},
+		}
+		confirmAlert(alert);
+	};
+
 	const changeGithub = () => {
 		confirmAlert({
 			customUI: ({ onClose }) => {
 				let value = context.repo;
-
 				return (
 					<S.CustomUI>
-						<h1>Change Github</h1>
+						<h1>Change Values</h1>
 						<EditableInput value={value} setValue={(e) => (value = e)} style={{ background: "gray" }} autoFocus />
 						<div />
 						<button
@@ -227,15 +249,18 @@ const Buttons = (props): JSX.Element => {
 			<S.DemoButton hover="rgb(248, 19, 19)" onClick={clearLocal}>
 				Clear
 			</S.DemoButton>
+			<S.DemoButton hover="rgb(224, 186, 15)" onClick={openEditor}>
+				Edit
+			</S.DemoButton>
 			<div style={{ marginLeft: "auto" }} />
 			<DropdownInput
-				values={context.sourcesKeys.dialogues}
+				values={createLabels(context.sources.dialogues)}
 				value={github}
 				setValue={(e) => {
 					setGithub(e);
 					loadGithub(props.app, e, context);
 				}}
-				placeholder={`Github (${context.sourcesKeys.dialogues?.length})`}
+				placeholder={`Github (${context.sources.dialogues?.length})`}
 				width={"200px"}
 				right={0}
 			/>

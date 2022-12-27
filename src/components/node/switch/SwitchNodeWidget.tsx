@@ -5,6 +5,7 @@ import { SwitchNodeModel } from "./SwitchNodeModel";
 import { DialogueContext } from "../../DialogueContext";
 import React from "react";
 import { DropdownInput } from "../../editor/Inputs";
+import { createLabels } from "../../../utils/Utils";
 
 export interface SwitchNodeProps extends BaseNodeProps<SwitchNodeModel> {}
 
@@ -42,7 +43,7 @@ export class SwitchNodeWidget extends BaseNodeWidget<SwitchNodeProps> {
 }
 
 export const SwitchBlock = (props: { switch: SwitchNodeProps }): JSX.Element => {
-	const { switchs, switchsKeys } = React.useContext(DialogueContext);
+	const { switchs } = React.useContext(DialogueContext);
 	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const setValue = (e) => {
 		props.switch.node.getOptions().switch = e;
@@ -59,12 +60,12 @@ export const SwitchBlock = (props: { switch: SwitchNodeProps }): JSX.Element => 
 		forceUpdate();
 	};
 
-	const minWidth = Math.max(...switchsKeys.map((sw) => sw.value.length + 5)) + "ch";
+	const minWidth = Math.max(...Object.keys(switchs).map((sw) => sw.length + 5)) + "ch";
 	return (
 		<>
 			<div style={{ color: "black", display: "flex", justifyContent: "space-between" }}>
 				<DropdownInput
-					values={switchsKeys}
+					values={createLabels(switchs)}
 					value={props.switch.node.getOptions().switch || ""}
 					setValue={setValue}
 					placeholder={"Switch"}

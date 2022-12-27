@@ -1,6 +1,7 @@
 import React from "react";
 import { DialogueContext } from "../DialogueContext";
 import { DropdownInput, EditableInput } from "./Inputs";
+import { createLabels } from "../../utils/Utils";
 
 export interface VariableProps {
 	source?: string;
@@ -10,7 +11,7 @@ export interface VariableProps {
 }
 
 export const VariableEditor = (props: { variable: VariableProps; setValue: Function; index: number; args: string[] }): JSX.Element => {
-	const { sourcesKeys } = React.useContext(DialogueContext);
+	const { sources } = React.useContext(DialogueContext);
 	const { variable, setValue, index, args } = props;
 	var pattern = undefined;
 	var number = false;
@@ -39,8 +40,7 @@ export const VariableEditor = (props: { variable: VariableProps; setValue: Funct
 				const number = Number(matches[1]);
 				source = source.replace(matches[1], args[index + number]);
 			}
-			const keys = sourcesKeys[source];
-			return <DropdownInput values={keys} value={args[index]} setValue={setValue} placeholder={variable.placeholder} />;
+			return <DropdownInput values={createLabels(sources[source])} value={args[index]} setValue={setValue} placeholder={variable.placeholder} />;
 		}
 		default: {
 			return <div />;

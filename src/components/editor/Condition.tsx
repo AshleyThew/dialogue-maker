@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import { DialogueContext } from "../DialogueContext";
 import { DropdownInput } from "./Inputs";
 import { VariableEditor, VariableProps } from "./Variables";
+import { createLabels } from "../../utils/Utils";
 
 export interface ConditionProps {
 	condition: string;
@@ -56,7 +57,7 @@ export namespace C {
 }
 
 export const ConditionBlock = (props: { option: ConditionalProps; remove: Function; allowActionable: boolean }): JSX.Element => {
-	const { conditionKeys, conditions } = React.useContext(DialogueContext);
+	const { conditions } = React.useContext(DialogueContext);
 	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const { option } = props;
 	return (
@@ -79,7 +80,7 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 							</C.DeleteLine>
 						)}
 						<DropdownInput
-							values={conditionKeys}
+							values={createLabels(conditions, "condition")}
 							value={option.conditions[cindex]}
 							placeholder="If"
 							setValue={(value: string) => {

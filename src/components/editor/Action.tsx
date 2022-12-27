@@ -3,6 +3,7 @@ import { DialogueContext } from "../DialogueContext";
 import { VariableEditor, VariableProps } from "./Variables";
 import { C } from "./Condition";
 import { DropdownInput } from "./Inputs";
+import { createLabels } from "../../utils/Utils";
 
 export interface ActionProps {
 	action: string;
@@ -32,7 +33,7 @@ export class Actions implements ActionsProps {
 }
 
 export const ActionBlock = (props: { option: ActionsProps; remove: Function }): JSX.Element => {
-	const { actionKeys, actions } = React.useContext(DialogueContext);
+	const { actions } = React.useContext(DialogueContext);
 	const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
 	const { option } = props;
 
@@ -56,7 +57,7 @@ export const ActionBlock = (props: { option: ActionsProps; remove: Function }): 
 							</C.DeleteLine>
 						)}
 						<DropdownInput
-							values={actionKeys}
+							values={createLabels(actions, "action")}
 							value={option.actions[cindex]}
 							placeholder="Action"
 							setValue={(value: string) => {
