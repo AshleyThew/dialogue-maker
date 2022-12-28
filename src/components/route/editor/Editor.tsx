@@ -232,8 +232,6 @@ const open = (element: JSX.Element, ret: ReactConfirmAlertProps) => {
 
 export const Editor = (props: { context: DialogueContextCombined; ret: ReactConfirmAlertProps }): JSX.Element => {
 	const update = () => {
-		console.log("Update");
-		console.log(props.context.extra);
 		props.context.setExtra(props.context.extra);
 	};
 	return (
@@ -246,7 +244,6 @@ export const Editor = (props: { context: DialogueContextCombined; ret: ReactConf
 							current={props.context.extra["sources"] || {}}
 							def={props.context.def["sources"] || []}
 							set={update}
-							filter={true}
 						/>,
 						props.ret
 					)
