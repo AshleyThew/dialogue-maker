@@ -100,7 +100,7 @@ export class Application {
 
 		this.linkLatest(node, link);
 		
-		this.model.addNode(node);
+		this.diagramEngine.getModel().addNode(node);
 		sessionStorage.setItem("latest-node", node.getID());
 	}
 
@@ -119,14 +119,14 @@ export class Application {
 
 		this.linkLatest(node, link);
 
-		this.model.addNode(node);
+		this.diagramEngine.getModel().addNode(node);
 		sessionStorage.setItem("latest-node", node.getID());
 	}
 
 	private linkLatest(node: BaseNodeModel<any>, link: boolean): void{
 		const latest = sessionStorage.getItem("latest-node");
 		if (latest) {
-			const lnode = this.model.getNode(latest);
+			const lnode = this.diagramEngine.getModel().getNode(latest);
 			if (lnode) {
 				if (link && lnode instanceof BaseNodeModel && lnode.getOutPorts().length === 1) {
 					const outPort = lnode.getOutPorts()[0];
