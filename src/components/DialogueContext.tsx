@@ -91,7 +91,6 @@ export const DialogueContextProvider = (props) => {
 			}, 10);
 			ws.onmessage = (message) => {
 				var data = JSON.parse(message.data);
-				console.log(data);
 				switch (data.type) {
 					case "join":
 						console.log(data.message);
