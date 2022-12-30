@@ -135,7 +135,7 @@ export class Application {
 						const link = outPort.createLinkModel();
 						link.setSourcePort(outPort);
 						link.setTargetPort(inPort);
-						this.model.addLink(link);
+						this.diagramEngine.getModel().addLink(link);
 					}
 				}
 				node.setPosition(lnode.getX(), lnode.getY() + lnode.getBoundingBox().getHeight() + 7);
