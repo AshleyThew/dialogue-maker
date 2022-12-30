@@ -102,6 +102,7 @@ export class Application {
 		
 		this.diagramEngine.getModel().addNode(node);
 		sessionStorage.setItem("latest-node", node.getID());
+		this.forceUpdate();
 	}
 
 	public addOption(options: string[], link: boolean): void {
@@ -121,6 +122,7 @@ export class Application {
 
 		this.diagramEngine.getModel().addNode(node);
 		sessionStorage.setItem("latest-node", node.getID());
+		this.forceUpdate();
 	}
 
 	private linkLatest(node: BaseNodeModel<any>, link: boolean): void{
