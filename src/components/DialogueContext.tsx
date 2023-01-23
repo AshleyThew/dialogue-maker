@@ -4,6 +4,7 @@ import { ActionProps } from "./editor/Action";
 import { ConditionProps } from "./editor/Condition";
 import * as Sources from "../sources/";
 import * as vars from "../vars";
+import { parse } from "secure-json-parse";
 
 export interface DialogueContextInterface {
 	conditions: ConditionProps[];
@@ -44,7 +45,7 @@ export const DialogueContextProvider = (props) => {
 	const [sync, setSync] = React.useState(false);
 	const [def, setDefault] = React.useState({});
 
-	var stored = JSON.parse(localStorage.getItem("minescape-extra"));
+	var stored = parse(localStorage.getItem("minescape-extra"));
 	if (!stored) {
 		stored = {};
 	}
@@ -73,7 +74,7 @@ export const DialogueContextProvider = (props) => {
 
 	React.useEffect(() => {
 		setDefault(
-			JSON.parse(JSON.stringify(context))
+			parse(JSON.stringify(context))
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -90,7 +91,7 @@ export const DialogueContextProvider = (props) => {
 				}
 			}, 10);
 			ws.onmessage = (message) => {
-				var data = JSON.parse(message.data);
+				var data = parse(message.data);
 				switch (data.type) {
 					case "join":
 						console.log(data.message);
@@ -150,7 +151,7 @@ export const DialogueContextProvider = (props) => {
 	};
 
 	React.useEffect(() => {
-		var stored = JSON.parse(localStorage.getItem("minescape-extra"));
+		var stored = parse(localStorage.getItem("minescape-extra"));
 		if (!stored) {
 			stored = {};
 		}

@@ -10,6 +10,7 @@ import { confirmAlert } from "react-confirm-alert"; // Import
 import { EditableInput } from "../../editor/Inputs";
 import { DiagramModel } from "@projectstorm/react-diagrams";
 import { Toolkit } from "@projectstorm/react-canvas-core";
+import { parse } from "secure-json-parse";
 
 namespace S {
 	export const Tray = styled(Tabs)`
@@ -125,7 +126,7 @@ const copyModel = (app: Application, key: string) => {
 									serialString = serialString.replaceAll(v, newIds[k]);
 								});
 
-								newModel.deserializeModel(JSON.parse(serialString), app.getDiagramEngine());
+								newModel.deserializeModel(parse(serialString), app.getDiagramEngine());
 								app.getDiagramEngine().setModel(newModel);
 								app.getTrees()[value] = newModel;
 								app.forceUpdate();

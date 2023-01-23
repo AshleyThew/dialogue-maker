@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import { Action, ActionEvent, InputType, Toolkit } from "@projectstorm/react-canvas-core";
 import { DiagramEngine, DiagramModel } from "@projectstorm/react-diagrams";
 import { BaseNodeModel } from "../node/base";
+import { parse } from "secure-json-parse";
 
 export interface PasteItemsActionOptions {
 	keyCodes?: number[];
@@ -47,7 +48,7 @@ export class PasteItemsAction extends Action<DiagramEngine> {
 						entities.forEach((entity) => entity.setSelected(false));
 						await navigator.clipboard.readText().then((data) => {
 							try {
-								const dialogue = JSON.parse(data);
+								const dialogue = parse(data);
 								if (dialogue?.layers.length === 2) {
 									event.event.preventDefault();
 									const model = this.engine.getModel();
@@ -73,7 +74,7 @@ export class PasteItemsAction extends Action<DiagramEngine> {
 									});
 
 									newModel = new DiagramModel();
-									newModel.deserializeModel(JSON.parse(serialString), this.engine);
+									newModel.deserializeModel(parse(serialString), this.engine);
 
 									newModel.getNodes().forEach((node) => {
 										if (node instanceof BaseNodeModel) {

@@ -5,6 +5,7 @@ import { Conditions } from "../../editor/Condition";
 import { ActionProps, Actions } from "../../editor/Action";
 import { DialogueContextInterface } from "../../DialogueContext";
 import { ActionFactory } from "./ActionNodeFactory";
+import { parse } from "secure-json-parse";
 
 export interface ActionNodeModelOptions extends BaseNodeModelOptions {
 	actions?: Actions;
@@ -34,7 +35,7 @@ export class ActionNodeModel extends BaseNodeModel<ActionNodeModelGenerics> {
 
 	doClone(lookupTable: {}, clone: any): void {
 		super.doClone(lookupTable, clone);
-		const data = JSON.parse(JSON.stringify(clone.options.actions));
+		const data = parse(JSON.stringify(clone.options.actions));
 		clone.options.actions = new Actions(data.actions, data.args);
 	}
 

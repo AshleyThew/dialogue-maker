@@ -5,6 +5,7 @@ import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../b
 import { Conditions, ConditionalProps, ConditionProps } from "../../editor/Condition";
 import { DialogueContextInterface } from "../../DialogueContext";
 import { OptionFactory } from "./OptionNodeFactory";
+import { parse } from "secure-json-parse";
 
 export interface OptionProps extends ConditionalProps {
 	text: string;
@@ -51,7 +52,7 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 
 	doClone(lookupTable: {}, clone: any): void {
 		super.doClone(lookupTable, clone);
-		const data = JSON.parse(JSON.stringify(this.options.options));
+		const data = parse(JSON.stringify(this.options.options));
 		clone.options.options = data.map((option) => {
 			return new Option(option.conditions, option.args, option.text);
 		});

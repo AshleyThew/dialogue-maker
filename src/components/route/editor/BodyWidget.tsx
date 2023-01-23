@@ -15,6 +15,7 @@ import { confirmAlert } from "react-confirm-alert"; // Import
 import { EditableInput } from "../../editor/Inputs";
 import { Editor } from "./Editor";
 import { createLabels } from "../../../utils/Utils";
+import { parse } from "secure-json-parse";
 
 namespace S {
 	export const Body = styled.div`
@@ -135,7 +136,7 @@ const deserializeModel = (app: Application, model: any, context: DialogueContext
 const loadData = (app: Application, data: string, context: DialogueContextInterface): void => {
 	clear(app, context);
 	setTimeout(() => {
-		const model = JSON.parse(data);
+		const model = parse(data);
 
 		let trees = {};
 		if (model.trees) {
@@ -309,7 +310,7 @@ export class BodyWidget extends React.Component {
 					<Tray app={this.state.app} />
 					<S.Layer
 						onDrop={(event) => {
-							var data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
+							var data = parse(event.dataTransfer.getData("storm-diagram-node"));
 
 							var node: BaseNodeModel<BaseNodeModelGenerics<BaseNodeModelOptions>> = null!;
 							const factory = AllNodeFactories.find((factory) => factory.options.id === data.id);

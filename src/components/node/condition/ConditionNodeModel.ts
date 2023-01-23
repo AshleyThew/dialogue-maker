@@ -3,6 +3,7 @@ import { BaseNodeModel, BaseNodeModelGenerics, BaseNodeModelOptions } from "../b
 import { ConditionProps, Conditions } from "../../editor/Condition";
 import { DialogueContextInterface } from "../../DialogueContext";
 import { ConditionFactory } from "./ConditionNodeFactory";
+import { parse } from "secure-json-parse";
 
 export interface ConditionNodeModelOptions extends BaseNodeModelOptions {
 	conditions?: Conditions;
@@ -37,7 +38,7 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 
 	doClone(lookupTable: {}, clone: any): void {
 		super.doClone(lookupTable, clone);
-		const data = JSON.parse(JSON.stringify(clone.options.conditions));
+		const data = parse(JSON.stringify(clone.options.conditions));
 		clone.options.conditions = new Conditions(data.conditions, data.args);
 	}
 
