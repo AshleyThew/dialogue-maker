@@ -104,7 +104,8 @@ export const DialogueContextProvider = (props) => {
 						break;
 				}
 			};
-			ws.onclose = () => {
+			ws.onclose = (ev) => {
+				console.log(ev);
 				clearInterval(timer);
 				setSync(false);
 				console.log("WebSocket closed.");
