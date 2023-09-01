@@ -109,6 +109,7 @@ const loadFile = async (app: Application, context: DialogueContextInterface) => 
 	fileHandle[0].getFile().then((file) => {
 		file.text().then((data) => {
 			loadData(app, data, context);
+			document.title = `${file.name.replace(".json", "")} - Dialogue Maker`
 		});
 	});
 };
@@ -117,6 +118,11 @@ const loadGithub = async (app: Application, location: string, context: DialogueC
 	fetch(`https://raw.githubusercontent.com/${context.repo}/dialogue/regions/${location}.json`)
 		.then((data) => data.text())
 		.then((data) => loadData(app, data, context))
+		.then(() => {
+			var names = location.split("/");
+			var name = names[names.length-1];
+			document.title = `${name} - Dialogue Maker`
+		})
 		.catch((err) => {
 			console.log(err);
 		});
