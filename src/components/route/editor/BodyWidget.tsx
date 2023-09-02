@@ -197,6 +197,8 @@ const Buttons = (props): JSX.Element => {
 	const context = React.useContext(DialogueContext);
 	const [github, setGithub] = React.useState("");
 
+	const show = {refresh: true};
+
 	const clearLocal = () => {
 		clear(props.app, context);
 		setGithub("");
@@ -208,8 +210,20 @@ const Buttons = (props): JSX.Element => {
 				return (
 					<S.CustomUI>
 						<Editor context={context} ret={alert}/>
+						{ show.refresh &&
 						<button
 							onClick={() => {
+								context.refreshStored();
+								show.refresh = false;
+								openEditor();
+							}}
+						>
+							Refresh
+						</button>
+						}
+						<button
+							onClick={() => {
+								show.refresh = true;
 								onClose();
 								forceUpdate();
 							}}

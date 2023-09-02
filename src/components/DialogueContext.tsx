@@ -17,6 +17,7 @@ export interface DialogueContextInterface {
 	setRepo: (repo: string) => void;
 	sync: boolean;
 	toggleSync: () => void;
+	refreshStored: () => void;
 }
 
 export interface DialogueContextExtraInterface {
@@ -63,6 +64,13 @@ export const DialogueContextProvider = (props) => {
 		sync,
 		toggleSync: () => {
 			setSync((value) => !value);
+		},
+		refreshStored: () =>{
+			var stored = parse(localStorage.getItem("minescape-extra"));
+			if (!stored) {
+				stored = {};
+			}
+			setExtra(stored);
 		},
 		extra,
 		setExtra: (extra) => {
