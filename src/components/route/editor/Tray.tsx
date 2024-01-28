@@ -200,6 +200,7 @@ export const Tray = (props: { app: Application }) => {
 						<div />
 						<button
 							onClick={() => {
+								value = value.toLowerCase();
 								if (value.length > 0 && !app.getTrees()[value]) {
 									const newModel = new DiagramModel();
 									app.getDiagramEngine().setModel(newModel);
@@ -252,7 +253,7 @@ export const Tray = (props: { app: Application }) => {
 		});
 	};
 
-	const renameModel = (app: Application, key: string) => {
+	const renameModel = (app: Application, key: string, index: number) => {
 		confirmAlert({
 			customUI: ({ onClose }) => {
 				let value = key;
@@ -266,8 +267,24 @@ export const Tray = (props: { app: Application }) => {
 							onClick={() => {
 								if (value.length > 0 && !app.getTrees()[value]) {
 									const model = app.getTrees()[key];
-									delete app.getTrees()[key];
 									app.getTrees()[value] = model;
+
+									const trees = props.app.getTrees();
+									const keys = Object.keys(trees);
+
+									keys.splice(index - 1, 1);
+									keys.splice(index - 2, 0, value);
+
+									const clone = { ...trees };
+									delete clone[key];
+									keys.forEach((key) => {
+										delete trees[key];
+									});
+									keys.forEach((key) => {
+										trees[key] = clone[key];
+									});
+									update();
+
 									app.forceUpdate();
 									onClose();
 								}
@@ -417,7 +434,7 @@ export const Tray = (props: { app: Application }) => {
 														onClick={(e) => {
 															e.preventDefault();
 															e.stopPropagation();
-															renameModel(props.app, key);
+															renameModel(props.app, key, idx);
 														}}
 														title={"Edit"}
 													>
