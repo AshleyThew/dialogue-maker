@@ -266,17 +266,18 @@ export const Tray = (props: { app: Application }) => {
 						<button
 							onClick={() => {
 								if (value.length > 0 && !app.getTrees()[value]) {
-									const model = app.getTrees()[key];
-									app.getTrees()[value] = model;
+									const trees = app.getTrees();
+									delete trees[key];
+									const model = trees[key];
+									trees[value] = model;
 
-									const trees = props.app.getTrees();
 									const keys = Object.keys(trees);
 
-									keys.splice(index - 1, 1);
+									keys.splice(index - 2, 1);
 									keys.splice(index - 2, 0, value);
 
 									const clone = { ...trees };
-									delete clone[key];
+									
 									keys.forEach((key) => {
 										delete trees[key];
 									});

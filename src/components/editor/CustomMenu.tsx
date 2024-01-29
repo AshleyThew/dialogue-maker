@@ -19,7 +19,7 @@ export class CustomMenuList extends React.Component<MenuListProps<any, boolean, 
 		if (Array.isArray(children)) {
 			return (
 				<li style={{ ...props.style }} key={props.index}>
-					{children[props.index]}
+					{children[Number(props.index)]}
 				</li>
 			);
 		}
