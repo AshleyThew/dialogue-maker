@@ -267,8 +267,8 @@ export const Tray = (props: { app: Application }) => {
 							onClick={() => {
 								if (value.length > 0 && !app.getTrees()[value]) {
 									const trees = app.getTrees();
-									delete trees[key];
 									const model = trees[key];
+									delete trees[key];
 									trees[value] = model;
 
 									const keys = Object.keys(trees);
