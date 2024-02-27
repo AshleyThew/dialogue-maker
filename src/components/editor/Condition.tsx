@@ -13,21 +13,29 @@ export interface ConditionProps {
 export interface ConditionalProps {
 	conditions?: string[];
 	args?: [string[]];
+	ors?: boolean[];
+	negates?: boolean[];
 }
 
 export class Conditions implements ConditionalProps {
 	conditions?: string[];
 	args?: [string[]];
+	ors?: boolean[];
+	negates?: boolean[];
 
-	constructor(conditions?: any, args?: any) {
+	constructor(conditions?: any, args?: any, ors?: boolean[], negates?: boolean[]) {
 		this.conditions = conditions || [""];
 		this.args = args || [];
+		this.ors = ors || this.conditions.map(() => false);
+		this.negates = negates || this.conditions.map(() => false);
 	}
 
 	serialize(): any {
 		return {
 			conditions: this.conditions,
 			args: this.args,
+			ors: this.ors,
+			negates: this.negates,
 		};
 	}
 }
@@ -35,6 +43,18 @@ export class Conditions implements ConditionalProps {
 export namespace C {
 	export const Plus = styled.span`
 		color: #02ff02;
+		margin-right: 2px;
+
+		cursor: pointer;
+	`;
+	export const Or = styled.span`
+		color: #02a2ff;
+		margin-right: 2px;
+
+		cursor: pointer;
+	`;
+	export const Negate = styled.span`
+		color: #e71195;
 		margin-right: 2px;
 
 		cursor: pointer;
@@ -79,6 +99,8 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								&#x268B;
 							</C.DeleteLine>
 						)}
+						{props.option.ors[cindex] && <span style={{ margin: "0px 5px" }}>OR</span>}
+						{props.option.negates[cindex] && <span style={{ margin: "0px 5px" }}>!</span>}
 						<DropdownInput
 							values={createLabels(conditions, "condition")}
 							value={option.conditions[cindex]}
@@ -109,11 +131,40 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								onClick={(e) => {
 									option.conditions.push("");
 									option.args.push([]);
+									option.ors.push(false);
+									option.negates.push(false);
 									forceUpdate();
 								}}
 							>
 								&#x271A;
 							</C.Plus>
+						)}
+						{cond.length > 0 && cindex === option.conditions.length - 1 && (
+							<C.Or
+								data-no-drag
+								title="Or condition"
+								onClick={(e) => {
+									option.conditions.push("");
+									option.args.push([]);
+									option.ors.push(true);
+									option.negates.push(false);
+									forceUpdate();
+								}}
+							>
+								&#x2228;
+							</C.Or>
+						)}
+						{option.conditions[0].length > 0 && (
+							<C.Negate
+								data-no-drag
+								title="Negate condition"
+								onClick={() => {
+									option.negates[cindex] = !option.negates[cindex];
+									forceUpdate();
+								}}
+							>
+								!!
+							</C.Negate>
 						)}
 						{option.conditions[0].length > 0 && (
 							<C.DeleteRow
@@ -122,9 +173,13 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								onClick={() => {
 									option.conditions.splice(cindex, 1);
 									option.args.splice(cindex, 1);
+									option.ors.splice(cindex, 1);
+									option.negates.splice(cindex, 1);
 									if (option.conditions.length === 0) {
 										option.conditions.push("");
 										option.args.push([]);
+										option.ors.push(false);
+										option.negates.push(false);
 									}
 									forceUpdate();
 								}}
