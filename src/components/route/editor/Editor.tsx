@@ -8,7 +8,7 @@ namespace S {
 	export const DemoButton = styled.button<{ hover?; background? }>`
 		background: ${(props) => props.background || "rgb(60, 60, 60)"} !important;
 		font-size: 14px;
-		padding: 5px 10px;
+		padding: 0px 2px;
 		border: none;
 		color: white;
 		outline: none;
@@ -18,6 +18,26 @@ namespace S {
 
 		&:hover {
 			background: ${(props) => props.hover || "rgb(255, 217, 0)"} !important;
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+		}
+	`;
+
+	export const MoveButton = styled.button<{ hover?; background? }>`
+		background: ${(props) => props.background || "rgb(60, 60, 60)"} !important;
+		font-size: 14px;
+		padding: 5px 10px;
+		border: none;
+		color: white;
+		outline: none;
+		cursor: pointer;
+		margin: 2px;
+		border-radius: 3px;
+
+		&:hover {
+			background: ${(props) => props.hover || "rgb(9, 111, 207)"} !important;
 		}
 
 		&:disabled {
@@ -162,13 +182,34 @@ const ArrayEditor = (props: {
 }): JSX.Element => {
 	const [value, setValue] = React.useState("");
 
+	const moveUp = (index: number) => {
+        if (index !== 0) {
+            const temp = props.values[index];
+            props.values[index] = props.values[index - 1];
+            props.values[index - 1] = temp;
+            props.set();
+            props.refresh();
+        }
+    };
+
+    const moveDown = (index: number) => {
+        if (index !== props.values.length - 1) {
+            const temp = props.values[index];
+            props.values[index] = props.values[index + 1];
+            props.values[index + 1] = temp;
+            props.set();
+            props.refresh();
+        }
+    };
+
 	return (
 		<>
-			{props.values.map((value) => {
+			{props.values.map((value, index) => {
 				const remove = props.current?.length && props.current.indexOf(value) !== -1;
 				return (
 					<div key={value} style={{ display: "inline-block" }}>
 						<S.Element title={value}>
+							<S.MoveButton onClick={() => moveUp(index)}>&lt;</S.MoveButton>
 							{remove === true && (
 								<span
 									style={{ color: "indianred", cursor: "pointer" }}
@@ -184,6 +225,7 @@ const ArrayEditor = (props: {
 								</span>
 							)}
 							{value}
+                            <S.MoveButton onClick={() => moveDown(index)}>&gt;</S.MoveButton>
 						</S.Element>
 					</div>
 				);
