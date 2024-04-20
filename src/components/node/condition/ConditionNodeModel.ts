@@ -39,12 +39,12 @@ export class ConditionNodeModel extends BaseNodeModel<ConditionNodeModelGenerics
 	doClone(lookupTable: {}, clone: any): void {
 		super.doClone(lookupTable, clone);
 		const data = parse(JSON.stringify(clone.options.conditions));
-		clone.options.conditions = new Conditions(data.conditions, data.args);
+		clone.options.conditions = new Conditions(data.conditions, data.args, data.ors, data.negates);
 	}
 
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
-		this.options.conditions = new Conditions(event.data.conditions.conditions, event.data.conditions.args);
+		this.options.conditions = new Conditions(event.data.conditions.conditions, event.data.conditions.args, event.data.conditions.ors, event.data.conditions.negates);
 		this.options.color = ConditionFactory.options.color;
 	}
 
