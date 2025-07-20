@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { components, GroupBase, OptionProps } from 'react-select';
 import styled from '@emotion/styled';
 import Select, { createFilter } from 'react-select';
-import TextareaAutosize from 'react-textarea-autosize';
+import TextareaAutosize, {
+  TextareaAutosizeProps,
+} from 'react-textarea-autosize';
 import { CustomMenuList } from './CustomMenu';
 import { DialogueContext } from '../DialogueContext';
 
@@ -114,7 +116,7 @@ export const EditableInput = (props: EditableInputProps) => {
 interface EditableTextProps {
   value: string;
   setValue: any;
-  style?: React.CSSProperties;
+  style?: TextareaAutosizeProps['style'];
   minLength?: number;
   placeholder?: string;
 }
@@ -127,6 +129,7 @@ export const EditableText = (props: EditableTextProps) => {
       defaultValue={props.value}
       placeholder={props.placeholder}
       style={{
+        ...props.style,
         resize: 'none',
         width:
           Math.max(

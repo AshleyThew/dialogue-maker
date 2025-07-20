@@ -1,91 +1,115 @@
 [
-	{ "condition": "", "variables": [] },
-	{
-		"condition": "hasItem",
-		"variables": [
-			{ "source": "items", "type": "list", "placeholder": "item" },
-			{ "type": "number", "placeholder": "amount" },
-			{ "source": "boolean", "type": "list", "placeholder": "noted" }
-		]
-	},
-	{
-		"condition": "bankHasItem",
-		"variables": [
-			{ "source": "items", "type": "list", "placeholder": "item" },
-			{ "type": "number", "placeholder": "amount" }
-		]
-	},
-	{
-		"condition": "hasEquipped",
-		"variables": [
-			{ "source": "equipment_slot", "type": "list", "placeholder": "slot" },
-			{ "source": "items", "type": "list", "placeholder": "item" }
-		]
-	},
-	{
-		"condition": "skillLevel",
-		"variables": [
-			{ "source": "skills", "type": "list", "placeholder": "skill" },
-			{ "source": "compare", "type": "list", "placeholder": "?" },
-			{ "type": "number", "placeholder": "level" }
-		],
-		"actionable": true
-	},
-	{
-		"condition": "combatLevel",
-		"variables": [
-			{ "source": "compare", "type": "list", "placeholder": "?" },
-			{ "type": "number", "placeholder": "level" }
-		],
-		"actionable": true
-	},
-	{
-		"condition": "questStage",
-		"variables": [
-			{ "source": "quest", "type": "list", "placeholder": "quest" },
-			{ "source": "compare", "type": "list", "placeholder": "?" },
-			{ "source": "quest[-2]", "type": "list", "placeholder": "value" }
-		]
-	},
-	{
-		"condition": "hasQuestCompleted",
-		"variables": [{ "source": "quest", "type": "list", "placeholder": "quest" }]
-	},
-	{
-		"condition": "hasQuestPoints",
-		"variables": [{ "type": "number", "placeholder": "points" }]
-	},
-	{
-		"condition": "npcInteraction",
-		"variables": [{ "source": "npc_interaction", "type": "list", "placeholder": "interaction" }]
-	},
-	{
-		"condition": "characterStat",
-		"variables": [
-			{ "source": "character_stats", "type": "list", "placeholder": "stat" },
-			{ "source": "compare", "type": "list", "placeholder": "?" },
-			{ "type": "number", "placeholder": "value" }
-		]
-	},
-	{
-		"condition": "basicCondition",
-		"variables": [{ "source": "basic_conditions", "type": "list", "placeholder": "condition" }]
-	},
-	{
-		"condition": "isRespawn",
-		"variables": [{ "source": "respawns", "type": "list", "placeholder": "region" }]
-	},
-	{
-		"condition": "accountType",
-		"variables": [
-			{ "source": "simple_compare", "type": "list", "placeholder": "compare" },
-			{ "source": "account_types", "type": "list", "placeholder": "account" }
-		]
-	},
-	{
-		"condition": "hasInventorySpace",
-		"variables": [
-			{ "source": "space", "type": "number", "placeholder": "space" }
-		]
-	}
+  { "condition": "", "variables": [] },
+  {
+    "condition": "hasItem",
+    "variables": [
+      { "source": "items", "type": "list", "placeholder": "item" },
+      { "type": "number", "placeholder": "amount" },
+      { "source": "boolean", "type": "list", "placeholder": "noted" }
+    ]
+  },
+  {
+    "condition": "bankHasItem",
+    "variables": [
+      { "source": "items", "type": "list", "placeholder": "item" },
+      { "type": "number", "placeholder": "amount" }
+    ]
+  },
+  {
+    "condition": "hasEquipped",
+    "variables": [
+      { "source": "equipment_slot", "type": "list", "placeholder": "slot" },
+      { "source": "items", "type": "list", "placeholder": "item" }
+    ]
+  },
+  {
+    "condition": "skillLevel",
+    "variables": [
+      { "source": "skills", "type": "list", "placeholder": "skill" },
+      { "source": "compare", "type": "list", "placeholder": "?" },
+      { "type": "number", "placeholder": "level" }
+    ],
+    "actionable": true
+  },
+  {
+    "condition": "combatLevel",
+    "variables": [
+      { "source": "compare", "type": "list", "placeholder": "?" },
+      { "type": "number", "placeholder": "level" }
+    ],
+    "actionable": true
+  },
+  {
+    "condition": "questStage",
+    "variables": [
+      { "source": "quest", "type": "list", "placeholder": "quest" },
+      { "source": "compare", "type": "list", "placeholder": "?" },
+      { "source": "quest[-2]", "type": "list", "placeholder": "value" }
+    ]
+  },
+  {
+    "condition": "hasQuestCompleted",
+    "variables": [{ "source": "quest", "type": "list", "placeholder": "quest" }]
+  },
+  {
+    "condition": "hasQuestPoints",
+    "variables": [{ "type": "number", "placeholder": "points" }]
+  },
+  {
+    "condition": "npcInteraction",
+    "variables": [
+      {
+        "source": "npc_interaction",
+        "type": "list",
+        "placeholder": "interaction"
+      }
+    ]
+  },
+  {
+    "condition": "characterStat",
+    "variables": [
+      { "source": "character_stats", "type": "list", "placeholder": "stat" },
+      { "source": "compare", "type": "list", "placeholder": "?" },
+      { "type": "number", "placeholder": "value" }
+    ]
+  },
+  {
+    "condition": "basicCondition",
+    "variables": [
+      {
+        "source": "basic_conditions",
+        "type": "list",
+        "placeholder": "condition"
+      }
+    ]
+  },
+  {
+    "condition": "isRespawn",
+    "variables": [
+      { "source": "respawns", "type": "list", "placeholder": "region" }
+    ]
+  },
+  {
+    "condition": "accountType",
+    "variables": [
+      { "source": "simple_compare", "type": "list", "placeholder": "compare" },
+      { "source": "account_types", "type": "list", "placeholder": "account" }
+    ]
+  },
+  {
+    "condition": "hasInventorySpace",
+    "variables": [
+      { "source": "space", "type": "number", "placeholder": "space" }
+    ]
+  },
+  {
+    "condition": "isInSpecialRegion",
+    "variables": [
+      {
+        "source": "special_regions",
+        "type": "list",
+        "placeholder": "special_region"
+      }
+    ]
+  }
 ]
