@@ -29,6 +29,9 @@ export class LocationNodeModel extends BaseNodeModel<
 
   doClone(lookupTable: {}, clone: any): void {
     super.doClone(lookupTable, clone);
+    const data = JSON.parse(JSON.stringify(clone.options));
+    clone.options.locationType = data.locationType || 'area';
+    clone.options.locations = data.locations || ['0, 0, 0, 0, 0'];
   }
 
   deserialize(event: DeserializeEvent<this>) {
