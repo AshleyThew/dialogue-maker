@@ -46,7 +46,10 @@ export class LocationNodeWidget extends BaseNodeWidget<LocationNodeProps> {
         <div>
           <label>Type: </label>
           <DropdownInput
-            values={[{ label: 'Area', value: 'area' }]}
+            values={[
+              { label: 'Area', value: 'area' },
+              { label: 'Location', value: 'location' },
+            ]}
             value={node.getLocationType()}
             placeholder="Type"
             setValue={(value: string) => {
