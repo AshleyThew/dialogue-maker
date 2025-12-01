@@ -91,7 +91,54 @@ export const SwitchBlock = (props: {
     expectedSwitchs.length !== currentPorts.length ||
     !expectedSwitchs.every((sw, idx) => sw === currentPorts[idx]);
 
-  return (
+  const updateSwitchOutputs = () => {
+    const currentOutPorts = [...props.switch.node.getOutPorts()];
+    const expectedLabels = new Set(expectedSwitchs);
+    const linksByLabel = new Map();
+
+    // Store target ports for each label (before removing anything)
+    currentOutPorts.forEach((port) => {
+      const label = port.getOptions().label;
+      if (expectedLabels.has(label)) {
+        const targetPorts = [];
+        _.forEach(port.getLinks(), (link) => {
+          const targetPort = link.getTargetPort();
+          if (targetPort) {
+            targetPorts.push(targetPort);
+          }
+        });
+        if (targetPorts.length > 0) {
+          linksByLabel.set(label, targetPorts);
+        }
+      }
+    });
+
+    // Remove all current ports
+    currentOutPorts.forEach((port) => {
+      _.forEach(port.getLinks(), (link) => {
+        link.remove();
+      });
+      props.switch.node.removePort(port);
+    });
+
+    // Add ports in the correct order
+    expectedSwitchs.forEach((sw, index) => {
+      const newPort = props.switch.node.addOutPort(sw, index);
+      
+      // Restore links if this port had them
+      if (linksByLabel.has(sw)) {
+        const targetPorts = linksByLabel.get(sw);
+        targetPorts.forEach((targetPort) => {
+          // Create a new link instead of reusing the old one
+          const link = newPort.link(targetPort);
+          props.switch.engine.getModel().addLink(link);
+        });
+      }
+    });
+
+    props.switch.engine.repaintCanvas();
+    forceUpdate();
+  };  return (
     <>
       <div
         style={{
@@ -111,6 +158,21 @@ export const SwitchBlock = (props: {
         {mismatch && (
           <div style={{ color: 'red', fontWeight: 'bold' }}>
             Error: Switch outputs do not match context definition.
+            <br />
+            <button
+              onClick={updateSwitchOutputs}
+              style={{
+                marginTop: '5px',
+                padding: '5px 10px',
+                backgroundColor: '#4CAF50',
+                color: 'white',
+                border: 'none',
+                borderRadius: '3px',
+                cursor: 'pointer',
+              }}
+            >
+              Update Outputs
+            </button>
           </div>
         )}
       </div>
