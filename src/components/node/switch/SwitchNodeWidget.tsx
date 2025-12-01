@@ -124,7 +124,7 @@ export const SwitchBlock = (props: {
     // Add ports in the correct order
     expectedSwitchs.forEach((sw, index) => {
       const newPort = props.switch.node.addOutPort(sw, index);
-      
+
       // Restore links if this port had them
       if (linksByLabel.has(sw)) {
         const targetPorts = linksByLabel.get(sw);
@@ -138,7 +138,8 @@ export const SwitchBlock = (props: {
 
     props.switch.engine.repaintCanvas();
     forceUpdate();
-  };  return (
+  };
+  return (
     <>
       <div
         style={{
