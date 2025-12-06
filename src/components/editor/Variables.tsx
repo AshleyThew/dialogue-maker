@@ -21,7 +21,7 @@ export const VariableEditor = (props: {
   var pattern = undefined;
   switch (variable.type) {
     case 'number':
-      pattern = /^[0-9]*$/;
+      pattern = /^[0-9]$/;
       return (
         <EditableInput
           style={{ margin: '5px 2px', alignSelf: 'flex-end' }}
@@ -34,7 +34,7 @@ export const VariableEditor = (props: {
         />
       );
     case 'modifier':
-      pattern = /^[+-]?[0-9]+$/;
+      pattern = /^[+\-0-9]$/;
       return (
         <EditableInput
           style={{ margin: '5px 2px', alignSelf: 'flex-end' }}
