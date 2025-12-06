@@ -19,10 +19,8 @@ export const VariableEditor = (props: {
   const { sources } = React.useContext(DialogueContext);
   const { variable, setValue, index, args } = props;
   var pattern = undefined;
-  var number = false;
   switch (variable.type) {
     case 'number':
-      number = true;
       pattern = /^[0-9]*$/;
       return (
         <EditableInput
@@ -32,12 +30,11 @@ export const VariableEditor = (props: {
           minLength={2}
           placeholder={variable.placeholder}
           pattern={pattern}
-          number={number}
+          number={true}
         />
       );
     case 'modifier':
       pattern = /^[+-]?[0-9]+$/;
-      number = true;
       return (
         <EditableInput
           style={{ margin: '5px 2px', alignSelf: 'flex-end' }}
@@ -46,7 +43,6 @@ export const VariableEditor = (props: {
           minLength={2}
           placeholder={variable.placeholder}
           pattern={pattern}
-          number={number}
         />
       );
     case 'text': {
@@ -58,7 +54,6 @@ export const VariableEditor = (props: {
           minLength={2}
           placeholder={variable.placeholder}
           pattern={pattern}
-          number={number}
         />
       );
     }
