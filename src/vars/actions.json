@@ -51,7 +51,7 @@
     "action": "setCharacterStat",
     "variables": [
       { "source": "character_stats", "type": "list", "placeholder": "stat" },
-      { "type": "number", "placeholder": "value" }
+      { "type": "modifier", "placeholder": "value" }
     ]
   },
   {
