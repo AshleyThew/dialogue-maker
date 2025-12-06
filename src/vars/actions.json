@@ -1,116 +1,141 @@
 [
-	{ "action": "", "variables": [] },
-	{
-		"action": "takeItem",
-		"variables": [
-			{ "source": "items", "type": "list", "placeholder": "item" },
-			{ "type": "number", "placeholder": "amount" },
-			{ "source": "boolean", "type": "list", "placeholder": "noted" }
-		]
-	},
-	{
-		"action": "giveItem",
-		"variables": [
-			{ "source": "items", "type": "list", "placeholder": "item" },
-			{ "type": "number", "placeholder": "amount" }
-		]
-	},
-	{
-		"action": "setQuest",
-		"variables": [
-			{ "source": "quest", "type": "list", "placeholder": "quest" },
-			{ "source": "quest[-1]", "type": "list", "placeholder": "value" }
-		]
-	},
-	{
-		"action": "finishQuest",
-		"variables": [
-			{ "source": "quest", "type": "list", "placeholder": "quest" },
-			{ "source": "quest[-1]", "type": "list", "placeholder": "value" }
-		]
-	},
-	{
-		"action": "giveExp",
-		"variables": [
-			{ "source": "skills", "type": "list", "placeholder": "skill" },
-			{ "type": "number", "placeholder": "exp" }
-		]
-	},
-	{
-		"action": "openShop",
-		"variables": [{ "source": "shops", "type": "list", "placeholder": "shop" }]
-	},
-	{
-		"action": "setCharacterStat",
-		"variables": [
-			{ "source": "character_stats", "type": "list", "placeholder": "stat" },
-			{ "type": "number", "placeholder": "value" }
-		]
-	},
-	{
-		"action": "npcText",
-		"variables": [{ "type": "text", "placeholder": "text" }]
-	},
-	{
-		"action": "playerText",
-		"variables": [{ "type": "text", "placeholder": "text" }]
-	},
-	{
-		"action": "message",
-		"variables": [{ "type": "text", "placeholder": "message" }]
-	},
-	{
-		"action": "openDialogue",
-		"variables": [
-			{ "source": "dialogues", "type": "list", "placeholder": "dialogue" },
-			{ "type": "text", "placeholder": "title", "optional": true }
-		]
-	},
-	{
-		"action": "refreshNpc",
-		"variables": [
-			{ "source": "dialogues", "type": "list", "placeholder": "dialogue" }
-		]
-	},
-	{
-		"action": "basicAction",
-		"variables": [{ "source": "basic_actions", "type": "list", "placeholder": "action" }]
-	},
-	{
-		"action": "showAdvancement",
-		"variables": [
-			{ "type": "text", "placeholder": "message", "optional": true },
-			{ "source": "items", "type": "list", "placeholder": "item", "optional": true },
-			{ "source": "sounds", "type": "list", "placeholder": "sound", "optional": true }
-		]
-	},
-	{
-		"action": "dialogueFarmPatch",
-		"variables": [
-			{ "type": "text", "placeholder": "name" },
-			{ "source": "farming", "type": "list", "placeholder": "patch" }
-		]
-	},
-	{
-		"action": "setRespawn",
-		"variables": [{ "source": "respawns", "type": "list", "placeholder": "region" }]
-	},
-	{
-		"action": "teleport",
-		"variables": [{ "source": "teleports", "type": "list", "placeholder": "teleport" }]
-	},
-	{
-		"action": "bossBar",
-		"variables": [
-			{ "type": "text", "placeholder": "text" }
-		]
-	},
-	{
-		"action": "openInventory",
-		"variables": [{ "source": "inventories", "type": "list", "placeholder": "inventory" }]
-	},
-	{
-		"action": "hireServant",
-		"variables": [{ "source": "servants", "type": "list", "placeholder": "servant" }]
-	}
+  { "action": "", "variables": [] },
+  {
+    "action": "takeItem",
+    "variables": [
+      { "source": "items", "type": "list", "placeholder": "item" },
+      { "type": "number", "placeholder": "amount" },
+      { "source": "boolean", "type": "list", "placeholder": "noted" }
+    ]
+  },
+  {
+    "action": "giveItem",
+    "variables": [
+      { "source": "items", "type": "list", "placeholder": "item" },
+      { "type": "number", "placeholder": "amount" }
+    ]
+  },
+  {
+    "action": "replaceItem",
+    "variables": [
+      { "source": "items", "type": "list", "placeholder": "replace" },
+      { "source": "items", "type": "list", "placeholder": "with" }
+    ]
+  },
+  {
+    "action": "setQuest",
+    "variables": [
+      { "source": "quest", "type": "list", "placeholder": "quest" },
+      { "source": "quest[-1]", "type": "list", "placeholder": "value" }
+    ]
+  },
+  {
+    "action": "finishQuest",
+    "variables": [
+      { "source": "quest", "type": "list", "placeholder": "quest" },
+      { "source": "quest[-1]", "type": "list", "placeholder": "value" }
+    ]
+  },
+  {
+    "action": "giveExp",
+    "variables": [
+      { "source": "skills", "type": "list", "placeholder": "skill" },
+      { "type": "number", "placeholder": "exp" }
+    ]
+  },
+  {
+    "action": "openShop",
+    "variables": [{ "source": "shops", "type": "list", "placeholder": "shop" }]
+  },
+  {
+    "action": "setCharacterStat",
+    "variables": [
+      { "source": "character_stats", "type": "list", "placeholder": "stat" },
+      { "type": "number", "placeholder": "value" }
+    ]
+  },
+  {
+    "action": "npcText",
+    "variables": [{ "type": "text", "placeholder": "text" }]
+  },
+  {
+    "action": "playerText",
+    "variables": [{ "type": "text", "placeholder": "text" }]
+  },
+  {
+    "action": "message",
+    "variables": [{ "type": "text", "placeholder": "message" }]
+  },
+  {
+    "action": "openDialogue",
+    "variables": [
+      { "source": "dialogues", "type": "list", "placeholder": "dialogue" },
+      { "type": "text", "placeholder": "title", "optional": true }
+    ]
+  },
+  {
+    "action": "refreshNpc",
+    "variables": [
+      { "source": "dialogues", "type": "list", "placeholder": "dialogue" }
+    ]
+  },
+  {
+    "action": "basicAction",
+    "variables": [
+      { "source": "basic_actions", "type": "list", "placeholder": "action" }
+    ]
+  },
+  {
+    "action": "showAdvancement",
+    "variables": [
+      { "type": "text", "placeholder": "message", "optional": true },
+      {
+        "source": "items",
+        "type": "list",
+        "placeholder": "item",
+        "optional": true
+      },
+      {
+        "source": "sounds",
+        "type": "list",
+        "placeholder": "sound",
+        "optional": true
+      }
+    ]
+  },
+  {
+    "action": "dialogueFarmPatch",
+    "variables": [
+      { "type": "text", "placeholder": "name" },
+      { "source": "farming", "type": "list", "placeholder": "patch" }
+    ]
+  },
+  {
+    "action": "setRespawn",
+    "variables": [
+      { "source": "respawns", "type": "list", "placeholder": "region" }
+    ]
+  },
+  {
+    "action": "teleport",
+    "variables": [
+      { "source": "teleports", "type": "list", "placeholder": "teleport" }
+    ]
+  },
+  {
+    "action": "bossBar",
+    "variables": [{ "type": "text", "placeholder": "text" }]
+  },
+  {
+    "action": "openInventory",
+    "variables": [
+      { "source": "inventories", "type": "list", "placeholder": "inventory" }
+    ]
+  },
+  {
+    "action": "hireServant",
+    "variables": [
+      { "source": "servants", "type": "list", "placeholder": "servant" }
+    ]
+  }
 ]
