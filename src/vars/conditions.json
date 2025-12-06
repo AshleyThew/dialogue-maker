@@ -23,6 +23,10 @@
     ]
   },
   {
+    "condition": "handItem",
+    "variables": [{ "source": "items", "type": "list", "placeholder": "item" }]
+  },
+  {
     "condition": "skillLevel",
     "variables": [
       { "source": "skills", "type": "list", "placeholder": "skill" },
