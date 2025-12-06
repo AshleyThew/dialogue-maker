@@ -24,12 +24,31 @@ export const VariableEditor = (props: {
     case 'number':
       number = true;
       pattern = /^[0-9]*$/;
-      break;
+      return (
+        <EditableInput
+          style={{ margin: '5px 2px', alignSelf: 'flex-end' }}
+          value={args[index]}
+          setValue={setValue}
+          minLength={2}
+          placeholder={variable.placeholder}
+          pattern={pattern}
+          number={number}
+        />
+      );
     case 'modifier':
       pattern = /^[+-]?[0-9]+$/;
       number = true;
-      break;
-    // eslint-disable-next-line no-fallthrough
+      return (
+        <EditableInput
+          style={{ margin: '5px 2px', alignSelf: 'flex-end' }}
+          value={args[index]}
+          setValue={setValue}
+          minLength={2}
+          placeholder={variable.placeholder}
+          pattern={pattern}
+          number={number}
+        />
+      );
     case 'text': {
       return (
         <EditableInput
