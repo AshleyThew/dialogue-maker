@@ -20,5 +20,6 @@ export { default as inventories } from './inventories.json';
 export { default as servants } from './servants.json';
 export { default as teleports } from './teleports.json';
 export { default as skins } from './skins.json';
+export { default as directions } from './directions.json';
 export const dialogues = [];
 export const github = [];

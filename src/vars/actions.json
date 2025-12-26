@@ -123,6 +123,12 @@
     ]
   },
   {
+    "action": "teleportRelative",
+    "variables": [
+      { "source": "directions", "type": "list", "placeholder": "direction" }
+    ]
+  },
+  {
     "action": "bossBar",
     "variables": [{ "type": "text", "placeholder": "text" }]
   },
