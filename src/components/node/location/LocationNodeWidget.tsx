@@ -125,7 +125,7 @@ export class LocationNodeWidget extends BaseNodeWidget<LocationNodeProps> {
             allowActionable={true}
           />
         </div>
-      </div>
+      </div>,
     );
   }
 }

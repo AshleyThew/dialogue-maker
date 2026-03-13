@@ -40,7 +40,7 @@ export class LocationNodeModel extends BaseNodeModel<
       conditionData?.conditions,
       conditionData?.args,
       conditionData?.ors,
-      conditionData?.negates
+      conditionData?.negates,
     );
   }
 
@@ -52,7 +52,7 @@ export class LocationNodeModel extends BaseNodeModel<
       event.data.conditions?.conditions,
       event.data.conditions?.args,
       event.data.conditions?.ors,
-      event.data.conditions?.negates
+      event.data.conditions?.negates,
     );
   }
 
