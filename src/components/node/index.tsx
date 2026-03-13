@@ -15,6 +15,7 @@ import { SwitchFactory } from './switch/SwitchNodeFactory';
 import { TreeFactory } from './tree/TreeNodeFactory';
 import { NpcFactory } from './npc/NpcNodeFactory';
 import { LocationFactory } from './location/LocationNodeFactory';
+import { ActionBuilderFactory } from './actionbuilder/ActionBuilderNodeFactory';
 
 export * from './dialogue/DialogueNodeFactory';
 export * from './dialogue/DialogueNodeModel';
@@ -31,6 +32,10 @@ export * from './condition/ConditionNodeWidget';
 export * from './action/ActionNodeFactory';
 export * from './action/ActionNodeModel';
 export * from './action/ActionNodeWidget';
+
+export * from './actionbuilder/ActionBuilderNodeFactory';
+export * from './actionbuilder/ActionBuilderNodeModel';
+export * from './actionbuilder/ActionBuilderNodeWidget';
 
 export * from './random/RandomNodeFactory';
 export * from './random/RandomNodeModel';
@@ -65,6 +70,7 @@ export const NodeFactories: BaseNodeFactory<
   SwitchFactory,
   TreeFactory,
   ActionFactory,
+  ActionBuilderFactory,
   RandomFactory,
   NoteFactory,
   NpcFactory,

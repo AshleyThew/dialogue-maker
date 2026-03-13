@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { BaseNodeProps, BaseNodeWidget } from '../base';
 import { LocationNodeModel } from './LocationNodeModel';
 import { EditableText, DropdownInput } from '../../editor/Inputs';
+import { ConditionBlock } from '../../editor/Condition';
 import { validateLocationFormat } from '../../../utils/Utils';
 
 export interface LocationNodeProps extends BaseNodeProps<LocationNodeModel> {}
@@ -115,6 +116,14 @@ export class LocationNodeWidget extends BaseNodeWidget<LocationNodeProps> {
               </div>
             );
           })}
+        </div>
+        <div>
+          <strong>Condition:</strong>
+          <ConditionBlock
+            option={this.props.node.getOptions().conditions}
+            remove={undefined}
+            allowActionable={true}
+          />
         </div>
       </div>
     );
