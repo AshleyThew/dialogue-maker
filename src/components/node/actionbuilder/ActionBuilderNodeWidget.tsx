@@ -26,6 +26,12 @@ const rowControlStyle: React.CSSProperties = {
   marginRight: '2px',
 };
 
+const footerStyle: React.CSSProperties = {
+  borderTop: '1px solid rgba(0,0,0,0.2)',
+  paddingTop: '6px',
+  marginTop: '4px',
+};
+
 const rowTypeOptions = createLabels([
   'track',
   'debug',
@@ -286,17 +292,18 @@ const ActionBuilderBlock = (props: {
         </div>
       ))}
 
-      <div>
-        <C.Plus
-          data-no-drag
-          title="Add row"
-          onClick={() => {
-            builder.rows.push(new ActionBuilderRow({ type: 'track' }));
+      <div style={{ ...rowStyle, ...footerStyle }}>
+        <span>start</span>
+        <EditableInput
+          value={String(builder.start || 0)}
+          setValue={(value) => {
+            builder.start = Number(value || 0);
             update();
           }}
-        >
-          &#x271A;
-        </C.Plus>
+          placeholder="0"
+          minLength={3}
+          number
+        />
       </div>
     </div>
   );

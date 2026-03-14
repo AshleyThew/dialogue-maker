@@ -108,15 +108,18 @@ export class ActionBuilderRow implements ActionBuilderRowProps {
 
 export interface ActionBuilderConfigProps {
   rows?: ActionBuilderRowProps[];
+  start?: number;
 }
 
 export class ActionBuilderConfig implements ActionBuilderConfigProps {
   rows?: ActionBuilderRow[];
+  start?: number;
 
   constructor(config: ActionBuilderConfigProps = {}) {
     this.rows = (config.rows || []).map((row) =>
       row instanceof ActionBuilderRow ? row : new ActionBuilderRow(row),
     );
+    this.start = Number(config.start || 0);
 
     if (this.rows.length === 0) {
       this.rows.push(new ActionBuilderRow({ type: 'track' }));
@@ -126,6 +129,7 @@ export class ActionBuilderConfig implements ActionBuilderConfigProps {
   serialize() {
     return {
       rows: this.rows.map((row) => row.serialize()),
+      start: this.start,
     };
   }
 }
