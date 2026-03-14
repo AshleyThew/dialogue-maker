@@ -104,6 +104,14 @@
     ]
   },
   {
+    "action": "playSound",
+    "variables": [
+      { "source": "sounds", "type": "list", "placeholder": "sound" },
+      { "type": "number", "placeholder": "volume", "optional": true },
+      { "type": "number", "placeholder": "pitch", "optional": true }
+    ]
+  },
+  {
     "action": "dialogueFarmPatch",
     "variables": [
       { "type": "text", "placeholder": "name" },
