@@ -8,6 +8,7 @@ import { createLabels } from "../../utils/Utils";
 export interface ConditionProps {
 	condition: string;
 	variables: VariableProps[];
+	actionable?: boolean;
 }
 
 export interface ConditionalProps {

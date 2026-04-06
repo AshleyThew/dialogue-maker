@@ -61,6 +61,41 @@ const { quests, switchs, ...other } = Sources;
 const conditions = vars.conditions as ConditionProps[];
 const actions = vars.actions as ActionProps[];
 
+const getCustomActions = (extra: any): ActionProps[] => {
+  if (!extra || !Array.isArray(extra.customActions)) {
+    return [];
+  }
+  return extra.customActions;
+};
+
+const getCustomConditions = (extra: any): ConditionProps[] => {
+  if (!extra || !Array.isArray(extra.customConditions)) {
+    return [];
+  }
+  return extra.customConditions;
+};
+
+const mergeDefinitionsByKey = (base: any[], custom: any[], key: string) => {
+  const merged = [...base];
+  custom.forEach((entry) => {
+    if (!entry || typeof entry[key] !== 'string' || entry[key].length === 0) {
+      return;
+    }
+
+    const normalized = {
+      ...entry,
+      variables: Array.isArray(entry.variables) ? entry.variables : [],
+    };
+    const index = merged.findIndex((value) => value[key] === normalized[key]);
+    if (index === -1) {
+      merged.push(normalized);
+    } else {
+      merged[index] = normalized;
+    }
+  });
+  return merged;
+};
+
 export const DialogueContextProvider = (props) => {
   const [sources, setSources] = React.useState({
     ...other,
@@ -82,6 +117,19 @@ export const DialogueContextProvider = (props) => {
     stored = {};
   }
   const [extra, setExtra] = React.useState<DialogueContextCombined>(stored);
+  const runtimeActions = React.useMemo(
+    () => mergeDefinitionsByKey(actions, getCustomActions(extra), 'action'),
+    [extra]
+  );
+  const runtimeConditions = React.useMemo(
+    () =>
+      mergeDefinitionsByKey(
+        conditions,
+        getCustomConditions(extra),
+        'condition'
+      ),
+    [extra]
+  );
 
   // Tab management functions
   const addTab = (
@@ -186,8 +234,8 @@ export const DialogueContextProvider = (props) => {
   };
 
   const context: DialogueContextCombined = {
-    conditions,
-    actions,
+    conditions: runtimeConditions,
+    actions: runtimeActions,
     switchs,
     sources,
     app,
@@ -305,7 +353,12 @@ export const DialogueContextProvider = (props) => {
     if (!stored) {
       stored = {};
     }
-    const { extra: ignore, ...merge } = context;
+    const {
+      extra: ignore,
+      actions: ignoreActions,
+      conditions: ignoreConditions,
+      ...merge
+    } = context;
     mergeMap(merge, stored);
     if (Object.keys(extra).length === 0) {
       setExtra(stored);

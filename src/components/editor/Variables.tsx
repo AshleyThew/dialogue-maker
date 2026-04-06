@@ -8,6 +8,7 @@ export interface VariableProps {
   type?: 'text' | 'number' | 'list' | 'modifier' | undefined;
   placeholder?: string;
   required?: boolean;
+  optional?: boolean;
 }
 
 export const VariableEditor = (props: {
