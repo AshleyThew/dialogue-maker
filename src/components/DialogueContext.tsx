@@ -75,24 +75,35 @@ const getCustomConditions = (extra: any): ConditionProps[] => {
   return extra.customConditions;
 };
 
+const normalizeDefinitionsByKey = (
+  values: any[],
+  key: string,
+  allowEmptyKey: boolean
+) => {
+  return values
+    .filter((entry) => entry && typeof entry[key] === 'string')
+    .map((entry) => ({
+      ...entry,
+      [key]: entry[key].trim(),
+      variables: Array.isArray(entry.variables) ? entry.variables : [],
+    }))
+    .filter((entry) => allowEmptyKey || entry[key].length > 0);
+};
+
 const mergeDefinitionsByKey = (base: any[], custom: any[], key: string) => {
-  const merged = [...base];
-  custom.forEach((entry) => {
-    if (!entry || typeof entry[key] !== 'string' || entry[key].length === 0) {
+  const normalizedBase = normalizeDefinitionsByKey(base, key, true);
+  const normalizedCustom = normalizeDefinitionsByKey(custom, key, false);
+  const merged = [...normalizedBase];
+
+  normalizedCustom.forEach((entry) => {
+    const index = merged.findIndex((value) => value[key] === entry[key]);
+    if (index === -1) {
+      merged.push(entry);
       return;
     }
-
-    const normalized = {
-      ...entry,
-      variables: Array.isArray(entry.variables) ? entry.variables : [],
-    };
-    const index = merged.findIndex((value) => value[key] === normalized[key]);
-    if (index === -1) {
-      merged.push(normalized);
-    } else {
-      merged[index] = normalized;
-    }
+    merged[index] = entry;
   });
+
   return merged;
 };
 
@@ -255,8 +266,9 @@ export const DialogueContextProvider = (props) => {
     },
     extra,
     setExtra: (extra) => {
-      localStorage.setItem('minescape-extra', JSON.stringify(extra));
-      setExtra(extra as DialogueContextCombined);
+      const nextExtra = parse(JSON.stringify(extra || {}));
+      localStorage.setItem('minescape-extra', JSON.stringify(nextExtra));
+      setExtra(nextExtra as DialogueContextCombined);
     },
     def,
     // Updated tab management in context
