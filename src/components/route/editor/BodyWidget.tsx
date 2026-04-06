@@ -495,6 +495,7 @@ const Buttons = (props): JSX.Element => {
   const [localFileHandles, setLocalFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
   const [tabFileHandles, setTabFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
   const [isSaving, setIsSaving] = React.useState(false);
+  const localInputRef = React.useRef<any>(null);
 
   const show = { refresh: true };
 
@@ -608,7 +609,6 @@ const Buttons = (props): JSX.Element => {
       return;
     }
 
-    setLocalSelection(path);
     const title = path.replace('.json', '').split('/').pop() || path;
     const tabId = await loadFromFileHandle(props.app, context, handle, title);
     if (tabId) {
@@ -616,6 +616,11 @@ const Buttons = (props): JSX.Element => {
         ...current,
         [tabId]: handle,
       }));
+      // Reset dropdown after file loads and blur it.
+      setLocalSelection('');
+      if (localInputRef.current) {
+        localInputRef.current.blur();
+      }
     }
   };
 
@@ -731,6 +736,7 @@ const Buttons = (props): JSX.Element => {
       {localFolder && (
         <>
           <DropdownInput
+            ref={localInputRef}
             values={createLabels(localFiles)}
             value={localSelection}
             setValue={(e) => {
@@ -777,59 +783,17 @@ export class BodyWidget extends React.Component {
 
   triggerCreate = () => {
     const context = this.context as DialogueContextInterface;
-    confirmAlert({
-      customUI: ({ onClose }) => {
-        let input = 'New Diagram';
-        return (
-          <S.CustomUI>
-            <h1>Create Your First Diagram</h1>
-            <p>Enter a name for your diagram:</p>
-            <EditableInput
-              value={input}
-              setValue={(e) => (input = e)}
-              style={{ background: 'gray' }}
-              autoFocus
-            />
-            <div style={{ margin: '10px 0' }}>
-              <p>Or select from GitHub:</p>
-              <DropdownInput
-                values={createLabels(context.sources.dialogues)}
-                value={''}
-                setValue={(selection) => {
-                  if (selection) {
-                    loadGithub(this.state.app, selection, context);
-                    onClose();
-                  }
-                }}
-                placeholder={`GitHub (${
-                  context.sources.dialogues?.length || 0
-                })`}
-                width={'200px'}
-              />
-            </div>
-            <div />
-            <button
-              onClick={() => {
-                // Create new diagram
-                var newModel = new DiagramModel();
-                const node = StartFactory.generateModel(undefined);
-                node.setPosition(50, 50);
-                node.getOptions().editableTitle = false;
-                node.setupPorts();
-                newModel.addNode(node);
+    // Create a blank diagram without showing any popup
+    var newModel = new DiagramModel();
+    const node = StartFactory.generateModel(undefined);
+    node.setPosition(50, 50);
+    node.getOptions().editableTitle = false;
+    node.setupPorts();
+    newModel.addNode(node);
 
-                context.addTab(input, newModel.serialize(), {});
-                this.state.app.setModel(newModel, {});
-                context.setApp(this.state.app);
-                onClose();
-              }}
-            >
-              Create New
-            </button>
-          </S.CustomUI>
-        );
-      },
-    });
+    context.addTab('New Diagram', newModel.serialize(), {});
+    this.state.app.setModel(newModel, {});
+    context.setApp(this.state.app);
   };
 
   componentDidMount() {

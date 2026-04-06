@@ -153,7 +153,7 @@ export const EditableText = (props: EditableTextProps) => {
   );
 };
 
-export const DropdownInput = (props: {
+export const DropdownInput = React.forwardRef((props: {
   values: any[];
   setValue: any;
   value: string;
@@ -161,7 +161,7 @@ export const DropdownInput = (props: {
   minLength?: number;
   width?: string;
   right?: number;
-}) => {
+}, ref: React.Ref<any>) => {
   const style = {
     container: (_provided, state) => ({
       display: 'inline-block',
@@ -204,6 +204,7 @@ export const DropdownInput = (props: {
 
   return (
     <S.Dropdown
+      ref={ref}
       components={{ Option: CustomOption, MenuList: CustomMenuList }}
       filterOption={createFilter({ ignoreAccents: false })}
       styles={style}
@@ -218,4 +219,4 @@ export const DropdownInput = (props: {
       minWidth={minWidth}
     />
   );
-};
+});
