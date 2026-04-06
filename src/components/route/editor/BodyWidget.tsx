@@ -9,7 +9,7 @@ import {
   BaseNodeModelGenerics,
   BaseNodeModelOptions,
 } from '../../node/base';
-import { showOpenFilePicker } from 'file-system-access';
+import { showDirectoryPicker, showOpenFilePicker } from 'file-system-access';
 import { DiagramModel } from '@projectstorm/react-diagrams';
 import {
   DialogueContext,
@@ -75,6 +75,36 @@ namespace S {
 
     &:hover {
       background: ${(props) => props.hover || 'rgb(0, 192, 255)'};
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  `;
+
+  export const SavingIndicator = styled.div`
+    display: inline-flex;
+    align-items: center;
+    color: #fff;
+    font-size: 13px;
+    margin-left: 8px;
+
+    &::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
   `;
 
@@ -156,6 +186,126 @@ const loadFile = async (
   });
 };
 
+const loadFromFileHandle = async (
+  app: Application,
+  context: DialogueContextInterface,
+  fileHandle: FileSystemFileHandle,
+  titleOverride?: string
+) => {
+  try {
+    const file = await fileHandle.getFile();
+    const data = await file.text();
+    const model = parse(data);
+    let trees = {};
+
+    if (model.trees) {
+      Object.entries(model.trees).forEach((entry) => {
+        const [key, value] = entry;
+        trees[key] = value;
+      });
+      delete model['trees'];
+    }
+
+    const title = titleOverride || file.name.replace('.json', '');
+    const tabId = context.addTab(title, model, trees);
+    document.title = `${title} - Dialogue Maker`;
+
+    const newModel = deserializeModel(app, model, context);
+    let newTrees = {};
+
+    if (trees) {
+      Object.entries(trees).forEach((entry) => {
+        const [key, value] = entry;
+        newTrees[key] = deserializeModel(app, value, context);
+      });
+    }
+
+    app.setModel(newModel, newTrees);
+    return tabId;
+  } catch (e) {
+    console.error('Failed to parse file:', e);
+    return null;
+  }
+};
+
+const listJsonFilesInDirectory = async (
+  directoryHandle: FileSystemDirectoryHandle,
+  parent = ''
+): Promise<{ path: string; handle: FileSystemFileHandle }[]> => {
+  const files: { path: string; handle: FileSystemFileHandle }[] = [];
+
+  for await (const [name, entry] of directoryHandle.entries()) {
+    const path = parent ? `${parent}/${name}` : name;
+    if (entry.kind === 'directory') {
+      const nested = await listJsonFilesInDirectory(
+        entry as FileSystemDirectoryHandle,
+        path
+      );
+      files.push(...nested);
+      continue;
+    }
+
+    if (entry.kind === 'file' && name.toLowerCase().endsWith('.json')) {
+      files.push({ path, handle: entry as FileSystemFileHandle });
+    }
+  }
+
+  return files.sort((a, b) => a.path.localeCompare(b.path));
+};
+
+const createOutput = (app: Application) => {
+  const output = app.getModel().serialize() as any;
+  const trees = { ...app.getTrees() };
+  output.trees = {};
+
+  Object.entries(trees).forEach((entry) => {
+    const [key, value] = entry;
+    output.trees[key] = value.serialize();
+  });
+
+  return output;
+};
+
+const sanitizeFileName = (value: string) => {
+  const sanitized = value
+    .replace(/[<>:"/\\|?*]/g, '_')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return sanitized.length > 0 ? sanitized : 'dialogue';
+};
+
+const ensureReadWritePermission = async (
+  handle: FileSystemFileHandle
+): Promise<boolean> => {
+  try {
+    if (!handle.queryPermission) {
+      return true;
+    }
+
+    const options = { mode: 'readwrite' as const };
+    let permission = await handle.queryPermission(options);
+    if (permission === 'granted') {
+      return true;
+    }
+
+    if (handle.requestPermission) {
+      permission = await handle.requestPermission(options);
+      return permission === 'granted';
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+};
+
+type SaveResult = {
+  status: 'saved' | 'cancelled' | 'failed';
+  handle?: FileSystemFileHandle;
+  fileName?: string;
+};
+
 const loadGithub = async (
   app: Application,
   location: string,
@@ -221,32 +371,72 @@ const deserializeModel = (
 
 const saveFile = async (
   app: Application,
-  context: DialogueContextInterface
+  context: DialogueContextInterface,
+  existingHandle?: FileSystemFileHandle
 ) => {
-  var fileHandle: FileSystemFileHandle;
-  try {
-    fileHandle = await showSaveFilePicker({
-      types: [{ accept: { 'json/*': ['.json'] } }],
-    });
-  } catch (error) {
-    return;
+  let fileHandle = existingHandle;
+  if (!fileHandle) {
+    try {
+      fileHandle = await showSaveFilePicker({
+        types: [{ accept: { 'json/*': ['.json'] } }],
+      });
+    } catch (error) {
+      return { status: 'cancelled' } as SaveResult;
+    }
   }
-  const output = app.getModel().serialize() as any;
-  const trees = { ...app.getTrees() };
-  output.trees = {};
-  Object.entries(trees).forEach((entry) => {
-    const [key, value] = entry;
-    output.trees[key] = value.serialize();
-  });
 
-  fileHandle.createWritable().then((stream) => {
-    stream.write(JSON.stringify(output, null, 2));
-    stream.close();
-  });
+  const hasPermission = await ensureReadWritePermission(fileHandle);
+  if (!hasPermission) {
+    return { status: 'cancelled' } as SaveResult;
+  }
+
+  const output = createOutput(app);
+  try {
+    const stream = await fileHandle.createWritable();
+    await stream.write(JSON.stringify(output, null, 2));
+    await stream.close();
+  } catch (error) {
+    return { status: 'failed' } as SaveResult;
+  }
+
   const tab = context.tabs.find((tab) => tab.id === context.activeTabId);
   if (tab) {
     tab.title = fileHandle.name.replace('.json', '');
     app.forceUpdate();
+  }
+
+  return { status: 'saved', handle: fileHandle } as SaveResult;
+};
+
+const saveFileToDirectory = async (
+  app: Application,
+  context: DialogueContextInterface,
+  directoryHandle: FileSystemDirectoryHandle
+) => {
+  try {
+    const tab = context.tabs.find((entry) => entry.id === context.activeTabId);
+    const fileName = `${sanitizeFileName(tab?.title || 'dialogue')}.json`;
+    const fileHandle = await directoryHandle.getFileHandle(fileName, {
+      create: true,
+    });
+
+    const hasPermission = await ensureReadWritePermission(fileHandle);
+    if (!hasPermission) {
+      return { status: 'cancelled' } as SaveResult;
+    }
+
+    const output = createOutput(app);
+    const stream = await fileHandle.createWritable();
+    await stream.write(JSON.stringify(output, null, 2));
+    await stream.close();
+
+    return {
+      status: 'saved',
+      handle: fileHandle,
+      fileName,
+    } as SaveResult;
+  } catch (error) {
+    return { status: 'failed' } as SaveResult;
   }
 };
 
@@ -298,8 +488,40 @@ const Buttons = (props): JSX.Element => {
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
   const context = React.useContext(DialogueContext);
   const [github, setGithub] = React.useState('');
+  const [localFolder, setLocalFolder] = React.useState<FileSystemDirectoryHandle | null>(null);
+  const [localFolderName, setLocalFolderName] = React.useState('');
+  const [localFiles, setLocalFiles] = React.useState<string[]>([]);
+  const [localSelection, setLocalSelection] = React.useState('');
+  const [localFileHandles, setLocalFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
+  const [tabFileHandles, setTabFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const show = { refresh: true };
+
+  const refreshLocalFolderFiles = React.useCallback(async (directoryHandle: FileSystemDirectoryHandle) => {
+    const files = await listJsonFilesInDirectory(directoryHandle);
+    const lookup = files.reduce((result, file) => {
+      result[file.path] = file.handle;
+      return result;
+    }, {} as Record<string, FileSystemFileHandle>);
+
+    setLocalFileHandles(lookup);
+    setLocalFiles(files.map((entry) => entry.path));
+  }, []);
+
+  React.useEffect(() => {
+    const liveIds = new Set(context.tabs.map((tab) => tab.id));
+    setTabFileHandles((current) => {
+      const filtered = Object.entries(current).reduce((result, entry) => {
+        const [tabId, handle] = entry;
+        if (liveIds.has(tabId)) {
+          result[tabId] = handle;
+        }
+        return result;
+      }, {} as Record<string, FileSystemFileHandle>);
+      return filtered;
+    });
+  }, [context.tabs]);
 
   const clearLocal = () => {
     clear(props.app, context);
@@ -368,23 +590,128 @@ const Buttons = (props): JSX.Element => {
     });
   };
 
+  const selectLocalFolder = async () => {
+    try {
+      const folderHandle = await showDirectoryPicker();
+      setLocalFolder(folderHandle);
+      setLocalFolderName(folderHandle.name || 'Selected Folder');
+      await refreshLocalFolderFiles(folderHandle);
+      setLocalSelection('');
+    } catch (error) {
+      return;
+    }
+  };
+
+  const loadLocalFile = async (path: string) => {
+    const handle = localFileHandles[path];
+    if (!handle) {
+      return;
+    }
+
+    setLocalSelection(path);
+    const title = path.replace('.json', '').split('/').pop() || path;
+    const tabId = await loadFromFileHandle(props.app, context, handle, title);
+    if (tabId) {
+      setTabFileHandles((current) => ({
+        ...current,
+        [tabId]: handle,
+      }));
+    }
+  };
+
+  const saveActiveFile = async () => {
+    const activeTabId = context.activeTabId;
+    if (!activeTabId) {
+      return;
+    }
+
+    setIsSaving(true);
+    // Let React paint the spinner before doing heavier serialization/write work.
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => resolve());
+    });
+
+    try {
+      const existingHandle = tabFileHandles[activeTabId];
+
+      // First preference: save directly back to known file handle.
+      // On cancel/deny, fallback once to classic Save As.
+      if (existingHandle) {
+        const savedHandle = await saveFile(props.app, context, existingHandle);
+        if (savedHandle.status === 'saved' && savedHandle.handle) {
+          setTabFileHandles((current) => ({
+            ...current,
+            [activeTabId]: savedHandle.handle,
+          }));
+          return;
+        }
+
+        const pickedHandle = await saveFile(props.app, context);
+        if (pickedHandle.status === 'saved' && pickedHandle.handle) {
+          setTabFileHandles((current) => ({
+            ...current,
+            [activeTabId]: pickedHandle.handle,
+          }));
+        }
+        return;
+      }
+
+      // Second preference: save into selected local folder by active tab title.
+      // On cancel/deny, fallback once to classic Save As.
+      if (localFolder) {
+        const result = await saveFileToDirectory(props.app, context, localFolder);
+        if (result.status === 'saved' && result.handle) {
+          await refreshLocalFolderFiles(localFolder);
+          setLocalSelection(result.fileName || '');
+          setTabFileHandles((current) => ({
+            ...current,
+            [activeTabId]: result.handle,
+          }));
+          return;
+        }
+
+        const pickedHandle = await saveFile(props.app, context);
+        if (pickedHandle.status === 'saved' && pickedHandle.handle) {
+          setTabFileHandles((current) => ({
+            ...current,
+            [activeTabId]: pickedHandle.handle,
+          }));
+        }
+        return;
+      }
+
+      // Fallback: open the classic save file dialog.
+      const pickedHandle = await saveFile(props.app, context);
+      if (pickedHandle.status === 'saved' && pickedHandle.handle) {
+        setTabFileHandles((current) => ({
+          ...current,
+          [activeTabId]: pickedHandle.handle,
+        }));
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <>
       <S.DemoButton
         hover="rgb(29, 167, 29)"
+        disabled={isSaving}
         onClick={() => loadFile(props.app, context)}
       >
         Load
       </S.DemoButton>
-      <S.DemoButton onClick={() => saveFile(props.app, context)}>
-        Save
+      <S.DemoButton onClick={saveActiveFile} disabled={isSaving}>
+        {isSaving ? 'Saving...' : 'Save'}
       </S.DemoButton>
-      <S.DemoButton hover="rgb(248, 19, 19)" onClick={clearLocal}>
+      <S.DemoButton hover="rgb(248, 19, 19)" onClick={clearLocal} disabled={isSaving}>
         Clear
       </S.DemoButton>
-      <S.DemoButton hover="rgb(224, 186, 15)" onClick={openEditor}>
+      <S.DemoButton hover="rgb(224, 186, 15)" onClick={openEditor} disabled={isSaving}>
         Edit
       </S.DemoButton>
+      {isSaving && <S.SavingIndicator>Saving</S.SavingIndicator>}
       <div style={{ marginLeft: 'auto' }} />
       <DropdownInput
         values={createLabels(context.sources.dialogues)}
@@ -397,7 +724,24 @@ const Buttons = (props): JSX.Element => {
         width={'200px'}
         right={0}
       />
-      <S.DemoButton onClick={changeGithub}>Change</S.DemoButton>
+      <S.DemoButton onClick={changeGithub} disabled={isSaving}>Change</S.DemoButton>
+      <S.DemoButton onClick={selectLocalFolder} hover="rgb(121, 194, 60)" disabled={isSaving}>
+        {localFolderName ? `Folder: ${localFolderName}` : 'Select Folder'}
+      </S.DemoButton>
+      {localFolder && (
+        <>
+          <DropdownInput
+            values={createLabels(localFiles)}
+            value={localSelection}
+            setValue={(e) => {
+              loadLocalFile(e);
+            }}
+            placeholder={`Local (${localFiles.length})`}
+            width={'200px'}
+            right={0}
+          />
+        </>
+      )}
       {context.sync ? (
         <S.DemoButton
           background="rgb(214, 248, 19)"
