@@ -27,6 +27,17 @@
     "variables": [{ "source": "items", "type": "list", "placeholder": "item" }]
   },
   {
+    "condition": "hasUniqueItem",
+    "variables": [
+      { "source": "items", "type": "list", "placeholder": "item" },
+      { "type": "number", "placeholder": "amount" }
+    ]
+  },
+  {
+    "condition": "constructionHasItem",
+    "variables": [{ "source": "items", "type": "list", "placeholder": "item" }]
+  },
+  {
     "condition": "skillLevel",
     "variables": [
       { "source": "skills", "type": "list", "placeholder": "skill" },
