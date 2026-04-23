@@ -14,8 +14,8 @@ export interface OptionProps extends ConditionalProps {
 export class Option extends Conditions implements OptionProps {
 	text: string;
 
-	constructor(conditions?: any, args?: any, text?: any) {
-		super(conditions, args);
+	constructor(conditions?: any, args?: any, text?: any, ors?: boolean[], negates?: boolean[]) {
+		super(conditions, args, ors, negates);
 		this.text = text || "";
 	}
 
@@ -54,14 +54,14 @@ export class OptionNodeModel extends BaseNodeModel<OptionNodeModelGenerics> {
 		super.doClone(lookupTable, clone);
 		const data = parse(JSON.stringify(this.options.options));
 		clone.options.options = data.map((option) => {
-			return new Option(option.conditions, option.args, option.text);
+			return new Option(option.conditions, option.args, option.text, option.ors, option.negates);
 		});
 	}
 
 	deserialize(event: DeserializeEvent<this>) {
 		super.deserialize(event);
 		this.options.options = event.data.options.map((option) => {
-			return new Option(option.conditions, option.args, option.text);
+			return new Option(option.conditions, option.args, option.text, option.ors, option.negates);
 		});
 		this.options.color = OptionFactory.options.color;
 	}
