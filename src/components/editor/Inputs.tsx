@@ -170,9 +170,7 @@ export const DropdownInput = React.forwardRef(
       container: (_provided, state) => ({
         display: 'inline-block',
         flexGrow: '0!important',
-        flexShrink: 0,
         minWidth: state.selectProps.minWidth,
-        width: state.selectProps.minWidth,
       }),
       dropdownIndicator: () => ({ padding: '0 0' }),
       menuList: (provided) => ({ ...provided, padding: '0 0' }),
