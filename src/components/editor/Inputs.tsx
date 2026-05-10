@@ -70,7 +70,7 @@ export const EditableInput = (props: EditableInputProps) => {
   const getSize = (value) => {
     return Math.max(
       value.length + 2,
-      Math.max(props?.placeholder?.length || 0, props.minLength || 5)
+      Math.max(props?.placeholder?.length || 0, props.minLength || 5),
     );
   };
   const size = getSize(props.value);
@@ -97,7 +97,7 @@ export const EditableInput = (props: EditableInputProps) => {
           } = e;
           if (value.length > 0) {
             const formatNumber = parseInt(
-              value.replace(/,/g, '')
+              value.replace(/,/g, ''),
             ).toLocaleString();
             e.target.value = formatNumber;
           }
@@ -134,7 +134,7 @@ export const EditableText = (props: EditableTextProps) => {
         width:
           Math.max(
             ...props.value.split('\n').map((line) => line.length + 2),
-            props.minLength || 5
+            props.minLength || 5,
           ) + 'ch',
       }}
       onChange={(e) => {
@@ -142,7 +142,7 @@ export const EditableText = (props: EditableTextProps) => {
         e.target.style.width =
           Math.max(
             ...lines.map((line) => line.length + 2),
-            props.minLength || 5
+            props.minLength || 5,
           ) + 'ch';
       }}
       onBlur={(e) => {
@@ -153,70 +153,78 @@ export const EditableText = (props: EditableTextProps) => {
   );
 };
 
-export const DropdownInput = React.forwardRef((props: {
-  values: any[];
-  setValue: any;
-  value: string;
-  placeholder?: string;
-  minLength?: number;
-  width?: string;
-  right?: number;
-}, ref: React.Ref<any>) => {
-  const style = {
-    container: (_provided, state) => ({
-      display: 'inline-block',
-      flexGrow: '0!important',
-      minWidth: state.selectProps.minWidth,
-    }),
-    dropdownIndicator: () => ({ padding: '0 0' }),
-    menuList: (provided) => ({ ...provided, padding: '0 0' }),
-    menu: (provided) => ({
-      ...provided,
-      margin: '0 0',
-      top: '',
-      right: props.right,
-      width: props.width || '100%',
-      fontSize: '11px',
-    }),
-    indicatorSeparator: () => ({ display: 'none' }),
-    control: (provided) => ({ ...provided, minHeight: '0' }),
-    valueContainer: (provided) => ({ ...provided, padding: '0 0' }),
-    selectContainer: (provided) => ({ ...provided, padding: '0 0' }),
-    input: (provided) => ({
-      ...provided,
-      width: '100%',
-      minWidth:
-        Math.max(props?.placeholder?.length || 0, props.minLength || 2) + 'ch',
-    }),
-    option: (provided) => ({
-      ...provided,
-      padding: '2px 0px',
-      minHeight: '16px',
-    }),
-  };
+export const DropdownInput = React.forwardRef(
+  (
+    props: {
+      values: any[];
+      setValue: any;
+      value: string;
+      placeholder?: string;
+      minLength?: number;
+      width?: string;
+      right?: number;
+    },
+    ref: React.Ref<any>,
+  ) => {
+    const style = {
+      container: (_provided, state) => ({
+        display: 'inline-block',
+        flexGrow: '0!important',
+        flexShrink: 0,
+        minWidth: state.selectProps.minWidth,
+        width: state.selectProps.minWidth,
+      }),
+      dropdownIndicator: () => ({ padding: '0 0' }),
+      menuList: (provided) => ({ ...provided, padding: '0 0' }),
+      menu: (provided) => ({
+        ...provided,
+        margin: '0 0',
+        top: '',
+        right: props.right,
+        width: props.width || '100%',
+        fontSize: '11px',
+      }),
+      indicatorSeparator: () => ({ display: 'none' }),
+      control: (provided) => ({ ...provided, minHeight: '0' }),
+      valueContainer: (provided) => ({ ...provided, padding: '0 0' }),
+      selectContainer: (provided) => ({ ...provided, padding: '0 0' }),
+      input: (provided) => ({
+        ...provided,
+        width: '100%',
+        minWidth:
+          Math.max(props?.placeholder?.length || 0, props.minLength || 2) +
+          'ch',
+      }),
+      option: (provided) => ({
+        ...provided,
+        padding: '2px 0px',
+        minHeight: '16px',
+      }),
+    };
 
-  var minWidth =
-    Math.max(
-      props.value.length + 4,
-      props.placeholder ? props.placeholder.length + 4 : 0,
-      2
-    ) + 'ch';
+    var minWidth =
+      Math.max(
+        props.value.length + 4,
+        props.placeholder ? props.placeholder.length + 4 : 0,
+        2,
+      ) + 'ch';
 
-  return (
-    <S.Dropdown
-      ref={ref}
-      components={{ Option: CustomOption, MenuList: CustomMenuList }}
-      filterOption={createFilter({ ignoreAccents: false })}
-      styles={style}
-      value={
-        props.value ? { label: props.value, value: props.value } : props.value
-      }
-      options={props.values}
-      placeholder={props.placeholder}
-      onChange={(e) => {
-        props.setValue(e['value']);
-      }}
-      minWidth={minWidth}
-    />
-  );
-});
+    return (
+      <S.Dropdown
+        ref={ref}
+        components={{ Option: CustomOption, MenuList: CustomMenuList }}
+        filterOption={createFilter({ ignoreAccents: false })}
+        styles={style}
+        value={
+          props.value ? { label: props.value, value: props.value } : props.value
+        }
+        options={props.values}
+        placeholder={props.placeholder}
+        onChange={(e) => {
+          props.setValue(e['value']);
+        }}
+        minWidth={minWidth}
+      />
+    );
+  },
+);
