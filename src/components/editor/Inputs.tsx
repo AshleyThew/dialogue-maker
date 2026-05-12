@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { components, GroupBase, OptionProps } from 'react-select';
 import styled from '@emotion/styled';
 import Select, { createFilter } from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 import TextareaAutosize, {
   TextareaAutosizeProps,
 } from 'react-textarea-autosize';
@@ -26,6 +27,17 @@ namespace S {
   `;
 
   export const Dropdown = styled(Select)<{ minWidth: string }>`
+    flex-grow: 1;
+    padding: 5px 2px;
+    border: none;
+    border-radius: 4px;
+    color: #000;
+    svg {
+      max-width: 10px;
+    }
+  `;
+
+  export const CreatableDropdown = styled(CreatableSelect)<{ minWidth: string }>`
     flex-grow: 1;
     padding: 5px 2px;
     border: none;
@@ -163,6 +175,7 @@ export const DropdownInput = React.forwardRef(
       minLength?: number;
       width?: string;
       right?: number;
+      creatable?: boolean;
     },
     ref: React.Ref<any>,
   ) => {
@@ -206,6 +219,29 @@ export const DropdownInput = React.forwardRef(
         props.placeholder ? props.placeholder.length + 4 : 0,
         2,
       ) + 'ch';
+
+    if (props.creatable) {
+      return (
+        <S.CreatableDropdown
+          ref={ref}
+          components={{ Option: CustomOption, MenuList: CustomMenuList }}
+          filterOption={createFilter({ ignoreAccents: false })}
+          styles={style}
+          value={
+            props.value
+              ? { label: props.value, value: props.value }
+              : props.value
+          }
+          options={props.values}
+          placeholder={props.placeholder}
+          onChange={(e) => {
+            props.setValue(e['value']);
+          }}
+          formatCreateLabel={(value) => `Add "${value}"`}
+          minWidth={minWidth}
+        />
+      );
+    }
 
     return (
       <S.Dropdown

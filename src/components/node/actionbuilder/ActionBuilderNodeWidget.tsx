@@ -131,6 +131,7 @@ const ActionBuilderBlock = (props: {
               update();
             }}
             placeholder="item"
+            creatable
           />
           <EditableInput
             value={String(row.amount || 1)}
@@ -169,6 +170,7 @@ const ActionBuilderBlock = (props: {
               update();
             }}
             placeholder="required"
+            creatable
           />
           <DropdownInput
             values={items}
@@ -178,6 +180,7 @@ const ActionBuilderBlock = (props: {
               update();
             }}
             placeholder="replacement"
+            creatable
           />
           <EditableInput
             value={String(row.replacementAmount || 1)}
