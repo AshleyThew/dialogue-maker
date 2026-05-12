@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { components, GroupBase, OptionProps } from 'react-select';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Select, { createFilter } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -11,6 +12,17 @@ import { CustomMenuList } from './CustomMenu';
 import { DialogueContext } from '../DialogueContext';
 
 namespace S {
+  const dropdownStyle = css`
+    flex-grow: 1;
+    padding: 5px 2px;
+    border: none;
+    border-radius: 4px;
+    color: #000;
+    svg {
+      max-width: 10px;
+    }
+  `;
+
   export const Input = styled.input`
     background: rgba(187, 187, 187, 0.3);
     flex-grow: 1;
@@ -27,25 +39,11 @@ namespace S {
   `;
 
   export const Dropdown = styled(Select)<{ minWidth: string }>`
-    flex-grow: 1;
-    padding: 5px 2px;
-    border: none;
-    border-radius: 4px;
-    color: #000;
-    svg {
-      max-width: 10px;
-    }
+    ${dropdownStyle}
   `;
 
   export const CreatableDropdown = styled(CreatableSelect)<{ minWidth: string }>`
-    flex-grow: 1;
-    padding: 5px 2px;
-    border: none;
-    border-radius: 4px;
-    color: #000;
-    svg {
-      max-width: 10px;
-    }
+    ${dropdownStyle}
   `;
 }
 
