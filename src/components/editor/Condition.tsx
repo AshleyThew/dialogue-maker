@@ -54,6 +54,21 @@ export namespace C {
 
 		cursor: pointer;
 	`;
+	export const AndOrToggle = styled.span`
+		color: #02a2ff;
+		margin: 0 4px;
+		padding: 0 4px;
+		border: 1px solid #02a2ff;
+		border-radius: 3px;
+		font-size: 10px;
+		font-weight: bold;
+		cursor: pointer;
+		user-select: none;
+
+		&:hover {
+			background: rgba(2, 162, 255, 0.2);
+		}
+	`;
 	export const Negate = styled.span`
 		color: #e71195;
 		margin-right: 2px;
@@ -100,7 +115,18 @@ export const ConditionBlock = (props: { option: ConditionalProps; remove: Functi
 								&#x268B;
 							</C.DeleteLine>
 						)}
-						{props.option.ors[cindex] && <span style={{ margin: "0px 5px" }}>OR</span>}
+						{props.option.ors[cindex] !== undefined && cindex > 0 && (
+							<C.AndOrToggle
+								data-no-drag
+								title="Toggle AND/OR"
+								onClick={() => {
+									props.option.ors[cindex] = !props.option.ors[cindex];
+									forceUpdate();
+								}}
+							>
+								{props.option.ors[cindex] ? "OR" : "AND"}
+							</C.AndOrToggle>
+						)}
 						{props.option.negates[cindex] && <span style={{ margin: "0px 5px" }}>!</span>}
 						<DropdownInput
 							values={createLabels(conditions, "condition")}
