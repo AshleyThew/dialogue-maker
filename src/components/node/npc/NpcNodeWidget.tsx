@@ -56,6 +56,7 @@ const SkinDropdown: React.FC<{ node: NpcNodeModel }> = ({ node }) => {
       }}
       placeholder="Select skin..."
       width="100%"
+      creatable
     />
   );
 };

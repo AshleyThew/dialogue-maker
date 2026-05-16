@@ -71,6 +71,7 @@ export const VariableEditor = (props: {
           value={args[index]}
           setValue={setValue}
           placeholder={variable.placeholder}
+          creatable
         />
       );
     }
