@@ -151,5 +151,12 @@
     "variables": [
       { "source": "servants", "type": "list", "placeholder": "servant" }
     ]
+  },
+  {
+    "action": "takeDamage",
+    "variables": [
+      { "type": "number", "placeholder": "from" },
+      { "type": "number", "placeholder": "to" }
+    ]
   }
 ]
