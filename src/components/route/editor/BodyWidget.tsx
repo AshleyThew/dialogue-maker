@@ -136,7 +136,7 @@ namespace S {
 
 const loadFile = async (
   app: Application,
-  context: DialogueContextInterface
+  context: DialogueContextInterface,
 ) => {
   var fileHandle: FileSystemFileHandle[];
   try {
@@ -190,7 +190,7 @@ const loadFromFileHandle = async (
   app: Application,
   context: DialogueContextInterface,
   fileHandle: FileSystemFileHandle,
-  titleOverride?: string
+  titleOverride?: string,
 ) => {
   try {
     const file = await fileHandle.getFile();
@@ -230,7 +230,7 @@ const loadFromFileHandle = async (
 
 const listJsonFilesInDirectory = async (
   directoryHandle: FileSystemDirectoryHandle,
-  parent = ''
+  parent = '',
 ): Promise<{ path: string; handle: FileSystemFileHandle }[]> => {
   const files: { path: string; handle: FileSystemFileHandle }[] = [];
 
@@ -239,7 +239,7 @@ const listJsonFilesInDirectory = async (
     if (entry.kind === 'directory') {
       const nested = await listJsonFilesInDirectory(
         entry as FileSystemDirectoryHandle,
-        path
+        path,
       );
       files.push(...nested);
       continue;
@@ -267,7 +267,7 @@ const createOutput = (app: Application) => {
 };
 
 const ensureReadWritePermission = async (
-  handle: FileSystemFileHandle
+  handle: FileSystemFileHandle,
 ): Promise<boolean> => {
   try {
     if (!handle.queryPermission) {
@@ -294,7 +294,7 @@ const ensureReadWritePermission = async (
 const getFileHandleFromRelativePath = async (
   directoryHandle: FileSystemDirectoryHandle,
   relativePath: string,
-  create: boolean
+  create: boolean,
 ): Promise<FileSystemFileHandle> => {
   const normalizedPath = relativePath
     .split('/')
@@ -327,10 +327,10 @@ type SaveResult = {
 const loadGithub = async (
   app: Application,
   location: string,
-  context: DialogueContextInterface
+  context: DialogueContextInterface,
 ) => {
   fetch(
-    `https://raw.githubusercontent.com/${context.repo}/dialogue/regions/${location}.json`
+    `https://raw.githubusercontent.com/${context.repo}/dialogue/regions/${location}.json`,
   )
     .then((data) => data.text())
     .then((data) => {
@@ -375,7 +375,7 @@ const loadGithub = async (
 const deserializeModel = (
   app: Application,
   model: any,
-  context: DialogueContextInterface
+  context: DialogueContextInterface,
 ): DiagramModel => {
   var newModel = new DiagramModel();
   newModel.deserializeModel(model, app.getDiagramEngine());
@@ -390,7 +390,7 @@ const deserializeModel = (
 const saveFile = async (
   app: Application,
   context: DialogueContextInterface,
-  existingHandle?: FileSystemFileHandle
+  existingHandle?: FileSystemFileHandle,
 ) => {
   let fileHandle = existingHandle;
   if (!fileHandle) {
@@ -429,7 +429,7 @@ const saveFile = async (
 const clear = async (
   app: Application,
   context: DialogueContextInterface,
-  onCreate?: (tabId: string | null) => void
+  onCreate?: (tabId: string | null) => void,
 ) => {
   confirmAlert({
     customUI: ({ onClose }) => {
@@ -455,7 +455,7 @@ const clear = async (
               newModel.addNode(node);
 
               const tab = context.tabs.find(
-                (tab) => tab.id === context.activeTabId
+                (tab) => tab.id === context.activeTabId,
               );
               tab.model = newModel.serialize();
               tab.trees = {};
@@ -479,50 +479,69 @@ const Buttons = (props): JSX.Element => {
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
   const context = React.useContext(DialogueContext);
   const [github, setGithub] = React.useState('');
-  const [localFolder, setLocalFolder] = React.useState<FileSystemDirectoryHandle | null>(null);
+  const [localFolder, setLocalFolder] =
+    React.useState<FileSystemDirectoryHandle | null>(null);
   const [localFolderName, setLocalFolderName] = React.useState('');
   const [localFiles, setLocalFiles] = React.useState<string[]>([]);
   const [localSelection, setLocalSelection] = React.useState('');
-  const [localFileHandles, setLocalFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
-  const [tabFileHandles, setTabFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
-  const [tabLocalPaths, setTabLocalPaths] = React.useState<Record<string, string>>({});
+  const [localFileHandles, setLocalFileHandles] = React.useState<
+    Record<string, FileSystemFileHandle>
+  >({});
+  const [tabFileHandles, setTabFileHandles] = React.useState<
+    Record<string, FileSystemFileHandle>
+  >({});
+  const [tabLocalPaths, setTabLocalPaths] = React.useState<
+    Record<string, string>
+  >({});
   const [isSaving, setIsSaving] = React.useState(false);
   const localInputRef = React.useRef<any>(null);
 
   const show = { refresh: true };
 
-  const refreshLocalFolderFiles = React.useCallback(async (directoryHandle: FileSystemDirectoryHandle) => {
-    const files = await listJsonFilesInDirectory(directoryHandle);
-    const lookup = files.reduce((result, file) => {
-      result[file.path] = file.handle;
-      return result;
-    }, {} as Record<string, FileSystemFileHandle>);
+  const refreshLocalFolderFiles = React.useCallback(
+    async (directoryHandle: FileSystemDirectoryHandle) => {
+      const files = await listJsonFilesInDirectory(directoryHandle);
+      const lookup = files.reduce(
+        (result, file) => {
+          result[file.path] = file.handle;
+          return result;
+        },
+        {} as Record<string, FileSystemFileHandle>,
+      );
 
-    setLocalFileHandles(lookup);
-    setLocalFiles(files.map((entry) => entry.path));
-  }, []);
+      setLocalFileHandles(lookup);
+      setLocalFiles(files.map((entry) => entry.path));
+    },
+    [],
+  );
 
   React.useEffect(() => {
     const liveIds = new Set(context.tabs.map((tab) => tab.id));
     setTabFileHandles((current) => {
-      const filtered = Object.entries(current).reduce((result, entry) => {
-        const [tabId, handle] = entry;
-        if (liveIds.has(tabId)) {
-          result[tabId] = handle;
-        }
-        return result;
-      }, {} as Record<string, FileSystemFileHandle>);
+      const filtered = Object.entries(current).reduce(
+        (result, entry) => {
+          const [tabId, handle] = entry;
+          if (liveIds.has(tabId)) {
+            result[tabId] = handle;
+          }
+          return result;
+        },
+        {} as Record<string, FileSystemFileHandle>,
+      );
       return filtered;
     });
 
     setTabLocalPaths((current) => {
-      const filtered = Object.entries(current).reduce((result, entry) => {
-        const [tabId, path] = entry;
-        if (liveIds.has(tabId)) {
-          result[tabId] = path;
-        }
-        return result;
-      }, {} as Record<string, string>);
+      const filtered = Object.entries(current).reduce(
+        (result, entry) => {
+          const [tabId, path] = entry;
+          if (liveIds.has(tabId)) {
+            result[tabId] = path;
+          }
+          return result;
+        },
+        {} as Record<string, string>,
+      );
       return filtered;
     });
   }, [context.tabs]);
@@ -698,9 +717,13 @@ const Buttons = (props): JSX.Element => {
           const resolvedHandle = await getFileHandleFromRelativePath(
             localFolder,
             existingLocalPath,
-            true
+            true,
           );
-          const savedHandle = await saveFile(props.app, context, resolvedHandle);
+          const savedHandle = await saveFile(
+            props.app,
+            context,
+            resolvedHandle,
+          );
           if (savedHandle.status === 'saved' && savedHandle.handle) {
             await refreshLocalFolderFiles(localFolder);
             setTabFileHandles((current) => ({
@@ -739,10 +762,18 @@ const Buttons = (props): JSX.Element => {
       <S.DemoButton onClick={saveActiveFile} disabled={isSaving}>
         {isSaving ? 'Saving...' : 'Save'}
       </S.DemoButton>
-      <S.DemoButton hover="rgb(248, 19, 19)" onClick={clearLocal} disabled={isSaving}>
+      <S.DemoButton
+        hover="rgb(248, 19, 19)"
+        onClick={clearLocal}
+        disabled={isSaving}
+      >
         Clear
       </S.DemoButton>
-      <S.DemoButton hover="rgb(224, 186, 15)" onClick={openEditor} disabled={isSaving}>
+      <S.DemoButton
+        hover="rgb(224, 186, 15)"
+        onClick={openEditor}
+        disabled={isSaving}
+      >
         Edit
       </S.DemoButton>
       {isSaving && <S.SavingIndicator>Saving</S.SavingIndicator>}
@@ -758,8 +789,14 @@ const Buttons = (props): JSX.Element => {
         width={'200px'}
         right={0}
       />
-      <S.DemoButton onClick={changeGithub} disabled={isSaving}>Change</S.DemoButton>
-      <S.DemoButton onClick={selectLocalFolder} hover="rgb(121, 194, 60)" disabled={isSaving}>
+      <S.DemoButton onClick={changeGithub} disabled={isSaving}>
+        Change
+      </S.DemoButton>
+      <S.DemoButton
+        onClick={selectLocalFolder}
+        hover="rgb(121, 194, 60)"
+        disabled={isSaving}
+      >
         {localFolderName ? `Folder: ${localFolderName}` : 'Select Folder'}
       </S.DemoButton>
       {localFolder && (
@@ -859,14 +896,14 @@ export class BodyWidget extends React.Component {
 
       // Find the tab by ID
       const activeTab = context.tabs.find(
-        (tab) => tab.id === context.activeTabId
+        (tab) => tab.id === context.activeTabId,
       );
       if (activeTab) {
         // Apply the active tab without triggering a re-render
         const model = deserializeModel(
           this.state.app,
           activeTab.model,
-          context
+          context,
         );
         let trees = {};
 
@@ -915,14 +952,14 @@ export class BodyWidget extends React.Component {
           <S.Layer
             onDrop={(event) => {
               var data = parse(
-                event.dataTransfer.getData('storm-diagram-node')
+                event.dataTransfer.getData('storm-diagram-node'),
               );
 
               var node: BaseNodeModel<
                 BaseNodeModelGenerics<BaseNodeModelOptions>
               > = null!;
               const factory = AllNodeFactories.find(
-                (factory) => factory.options.id === data.id
+                (factory) => factory.options.id === data.id,
               );
               node = factory.generateModel(undefined);
               node.setupPorts();
