@@ -50,6 +50,7 @@ export class LocationNodeWidget extends BaseNodeWidget<LocationNodeProps> {
             values={[
               { label: 'Area', value: 'area' },
               { label: 'Location', value: 'location' },
+              { label: 'Region', value: 'region' },
             ]}
             value={node.getLocationType()}
             placeholder="Type"
