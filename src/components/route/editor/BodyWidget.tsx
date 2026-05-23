@@ -266,15 +266,6 @@ const createOutput = (app: Application) => {
   return output;
 };
 
-const sanitizeFileName = (value: string) => {
-  const sanitized = value
-    .replace(/[<>:"/\\|?*]/g, '_')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  return sanitized.length > 0 ? sanitized : 'dialogue';
-};
-
 const ensureReadWritePermission = async (
   handle: FileSystemFileHandle
 ): Promise<boolean> => {
@@ -298,6 +289,33 @@ const ensureReadWritePermission = async (
   } catch {
     return false;
   }
+};
+
+const getFileHandleFromRelativePath = async (
+  directoryHandle: FileSystemDirectoryHandle,
+  relativePath: string,
+  create: boolean
+): Promise<FileSystemFileHandle> => {
+  const normalizedPath = relativePath
+    .split('/')
+    .map((segment) => segment.trim())
+    .filter((segment) => segment.length > 0);
+
+  if (normalizedPath.length === 0) {
+    throw new Error('Invalid file path');
+  }
+
+  const fileName = normalizedPath[normalizedPath.length - 1];
+  const folderParts = normalizedPath.slice(0, normalizedPath.length - 1);
+
+  let currentDirectory = directoryHandle;
+  for (const folderPart of folderParts) {
+    currentDirectory = await currentDirectory.getDirectoryHandle(folderPart, {
+      create,
+    });
+  }
+
+  return currentDirectory.getFileHandle(fileName, { create });
 };
 
 type SaveResult = {
@@ -408,39 +426,11 @@ const saveFile = async (
   return { status: 'saved', handle: fileHandle } as SaveResult;
 };
 
-const saveFileToDirectory = async (
+const clear = async (
   app: Application,
   context: DialogueContextInterface,
-  directoryHandle: FileSystemDirectoryHandle
+  onCreate?: (tabId: string | null) => void
 ) => {
-  try {
-    const tab = context.tabs.find((entry) => entry.id === context.activeTabId);
-    const fileName = `${sanitizeFileName(tab?.title || 'dialogue')}.json`;
-    const fileHandle = await directoryHandle.getFileHandle(fileName, {
-      create: true,
-    });
-
-    const hasPermission = await ensureReadWritePermission(fileHandle);
-    if (!hasPermission) {
-      return { status: 'cancelled' } as SaveResult;
-    }
-
-    const output = createOutput(app);
-    const stream = await fileHandle.createWritable();
-    await stream.write(JSON.stringify(output, null, 2));
-    await stream.close();
-
-    return {
-      status: 'saved',
-      handle: fileHandle,
-      fileName,
-    } as SaveResult;
-  } catch (error) {
-    return { status: 'failed' } as SaveResult;
-  }
-};
-
-const clear = async (app: Application, context: DialogueContextInterface) => {
   confirmAlert({
     customUI: ({ onClose }) => {
       let value = 'New Diagram';
@@ -472,6 +462,7 @@ const clear = async (app: Application, context: DialogueContextInterface) => {
               tab.title = value;
               app.setModel(newModel, {});
               context.setApp(app);
+              onCreate?.(context.activeTabId);
               onClose();
             }}
           >
@@ -494,6 +485,7 @@ const Buttons = (props): JSX.Element => {
   const [localSelection, setLocalSelection] = React.useState('');
   const [localFileHandles, setLocalFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
   const [tabFileHandles, setTabFileHandles] = React.useState<Record<string, FileSystemFileHandle>>({});
+  const [tabLocalPaths, setTabLocalPaths] = React.useState<Record<string, string>>({});
   const [isSaving, setIsSaving] = React.useState(false);
   const localInputRef = React.useRef<any>(null);
 
@@ -522,10 +514,43 @@ const Buttons = (props): JSX.Element => {
       }, {} as Record<string, FileSystemFileHandle>);
       return filtered;
     });
+
+    setTabLocalPaths((current) => {
+      const filtered = Object.entries(current).reduce((result, entry) => {
+        const [tabId, path] = entry;
+        if (liveIds.has(tabId)) {
+          result[tabId] = path;
+        }
+        return result;
+      }, {} as Record<string, string>);
+      return filtered;
+    });
   }, [context.tabs]);
 
   const clearLocal = () => {
-    clear(props.app, context);
+    clear(props.app, context, (tabId) => {
+      if (!tabId) {
+        return;
+      }
+
+      setTabFileHandles((current) => {
+        if (!current[tabId]) {
+          return current;
+        }
+        const next = { ...current };
+        delete next[tabId];
+        return next;
+      });
+
+      setTabLocalPaths((current) => {
+        if (!current[tabId]) {
+          return current;
+        }
+        const next = { ...current };
+        delete next[tabId];
+        return next;
+      });
+    });
     setGithub('');
   };
 
@@ -616,6 +641,10 @@ const Buttons = (props): JSX.Element => {
         ...current,
         [tabId]: handle,
       }));
+      setTabLocalPaths((current) => ({
+        ...current,
+        [tabId]: path,
+      }));
       // Reset dropdown after file loads and blur it.
       setLocalSelection('');
       if (localInputRef.current) {
@@ -638,6 +667,7 @@ const Buttons = (props): JSX.Element => {
 
     try {
       const existingHandle = tabFileHandles[activeTabId];
+      const existingLocalPath = tabLocalPaths[activeTabId];
 
       // First preference: save directly back to known file handle.
       // On cancel/deny, fallback once to classic Save As.
@@ -661,31 +691,30 @@ const Buttons = (props): JSX.Element => {
         return;
       }
 
-      // Second preference: save into selected local folder by active tab title.
-      // On cancel/deny, fallback once to classic Save As.
-      if (localFolder) {
-        const result = await saveFileToDirectory(props.app, context, localFolder);
-        if (result.status === 'saved' && result.handle) {
-          await refreshLocalFolderFiles(localFolder);
-          setLocalSelection(result.fileName || '');
-          setTabFileHandles((current) => ({
-            ...current,
-            [activeTabId]: result.handle,
-          }));
-          return;
+      // Second preference: resolve the original relative path under the selected
+      // local folder so files loaded from subfolders save back to that subfolder.
+      if (localFolder && existingLocalPath) {
+        try {
+          const resolvedHandle = await getFileHandleFromRelativePath(
+            localFolder,
+            existingLocalPath,
+            true
+          );
+          const savedHandle = await saveFile(props.app, context, resolvedHandle);
+          if (savedHandle.status === 'saved' && savedHandle.handle) {
+            await refreshLocalFolderFiles(localFolder);
+            setTabFileHandles((current) => ({
+              ...current,
+              [activeTabId]: savedHandle.handle,
+            }));
+            return;
+          }
+        } catch {
+          // Fall through to explicit Save As when path resolution fails.
         }
-
-        const pickedHandle = await saveFile(props.app, context);
-        if (pickedHandle.status === 'saved' && pickedHandle.handle) {
-          setTabFileHandles((current) => ({
-            ...current,
-            [activeTabId]: pickedHandle.handle,
-          }));
-        }
-        return;
       }
 
-      // Fallback: open the classic save file dialog.
+      // Fallback: always open Save As for unsourced/new tabs.
       const pickedHandle = await saveFile(props.app, context);
       if (pickedHandle.status === 'saved' && pickedHandle.handle) {
         setTabFileHandles((current) => ({
