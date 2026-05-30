@@ -119,7 +119,6 @@ export const ConditionBlock = (props: {
   }
 
   const hasRealCondition = option.conditions[0]?.length > 0;
-  const lastCondIndex = option.conditions.length - 1;
 
   // Build AND-groups: a new group starts at i=0 or wherever ors[i]=true
   const groups: number[][] = [];
