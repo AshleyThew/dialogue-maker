@@ -164,7 +164,6 @@ export const ConditionBlock = (props: {
                   (c) => c.condition === cond,
                 );
                 const isFirstOverall = cindex === 0;
-                const isLast = cindex === lastCondIndex;
                 return (
                   <div
                     key={`c${cindex}`}
