@@ -95,6 +95,10 @@ export namespace C {
 
     cursor: pointer;
   `;
+
+  export const AddGroup = styled.span`
+    display: none;
+  `;
 }
 
 export const ConditionBlock = (props: {
@@ -105,144 +109,197 @@ export const ConditionBlock = (props: {
   const { conditions } = React.useContext(DialogueContext);
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
   const { option } = props;
+
+  // Backward compat: ensure arrays are populated
+  if (!option.ors || option.ors.length !== option.conditions.length) {
+    option.ors = option.conditions.map(() => false);
+  }
+  if (!option.negates || option.negates.length !== option.conditions.length) {
+    option.negates = option.conditions.map(() => false);
+  }
+
+  const hasRealCondition = option.conditions[0]?.length > 0;
+  const lastCondIndex = option.conditions.length - 1;
+
+  // Build AND-groups: a new group starts at i=0 or wherever ors[i]=true
+  const groups: number[][] = [];
+  option.conditions.forEach((_, i) => {
+    if (i === 0 || option.ors[i]) {
+      groups.push([i]);
+    } else {
+      groups[groups.length - 1].push(i);
+    }
+  });
+
   return (
-    <div style={{ display: 'table', borderSpacing: '0px' }}>
-      {option.conditions.map((cond, cindex) => {
-        const condition: ConditionProps = conditions.find(
-          (condition) => condition.condition === cond,
-        );
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {groups.map((groupIndices, gidx) => {
+        const grouped = groupIndices.length > 1;
         return (
-          <div
-            key={`c${cindex}`}
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
-            {props.remove && cindex === 0 && (
-              <C.DeleteLine
-                data-no-drag
-                title="Remove option"
-                style={{ WebkitTextStroke: '1px black' }}
-                onClick={() => {
-                  props.remove();
-                  forceUpdate();
-                }}
-              >
-                &#x268B;
-              </C.DeleteLine>
-            )}
-            {props.option.ors[cindex] !== undefined && cindex > 0 && (
+          <React.Fragment key={`g${gidx}`}>
+            {gidx > 0 && (
+              // OR divider between groups — click to merge into AND
               <C.AndOrToggle
                 data-no-drag
-                title="Toggle AND/OR"
+                title="OR — click to change to AND"
                 onClick={() => {
-                  props.option.ors[cindex] = !props.option.ors[cindex];
+                  option.ors[groupIndices[0]] = false;
                   forceUpdate();
                 }}
               >
-                {props.option.ors[cindex] ? 'OR' : 'AND'}
+                OR
               </C.AndOrToggle>
             )}
-            {props.option.negates[cindex] && (
-              <span style={{ margin: '0px 5px' }}>!</span>
-            )}
-            <DropdownInput
-              values={createLabels(conditions, 'condition')}
-              value={option.conditions[cindex]}
-              placeholder="If"
-              setValue={(value: string) => {
-                option.conditions[cindex] = value;
-                const condition: ConditionProps = conditions.find(
-                  (condition) => condition.condition === value,
-                );
-                option.args[cindex] = Array(condition.variables.length).fill(
-                  '',
-                );
-                forceUpdate();
+            <div
+              style={{
+                borderLeft: grouped
+                  ? '2px solid rgba(0,255,0,0.35)'
+                  : undefined,
+                paddingLeft: grouped ? 4 : undefined,
               }}
-            />
-            {condition &&
-              condition.variables.map((variable, vindex) => {
-                const setValue = (value: string) => {
-                  const val = option.args[cindex];
-                  val[vindex] = value;
-                  forceUpdate();
-                };
-
-                var key = `v${vindex}`;
+            >
+              {groupIndices.map((cindex, rowInGroup) => {
+                const cond = option.conditions[cindex];
+                const condition: ConditionProps = conditions.find(
+                  (c) => c.condition === cond,
+                );
+                const isFirstOverall = cindex === 0;
+                const isLast = cindex === lastCondIndex;
                 return (
-                  <VariableEditor
-                    key={key}
-                    variable={variable}
-                    args={option.args[cindex]}
-                    index={vindex}
-                    setValue={setValue}
-                  />
+                  <div
+                    key={`c${cindex}`}
+                    style={{ display: 'flex', alignItems: 'center' }}
+                  >
+                    {props.remove && isFirstOverall && (
+                      <C.DeleteLine
+                        data-no-drag
+                        title="Remove option"
+                        style={{ WebkitTextStroke: '1px black' }}
+                        onClick={() => {
+                          props.remove();
+                          forceUpdate();
+                        }}
+                      >
+                        &#x268B;
+                      </C.DeleteLine>
+                    )}
+                    {rowInGroup > 0 && (
+                      // AND badge within group — click to split into OR
+                      <C.AndOrToggle
+                        data-no-drag
+                        title="AND — click to change to OR"
+                        onClick={() => {
+                          option.ors[cindex] = true;
+                          forceUpdate();
+                        }}
+                      >
+                        AND
+                      </C.AndOrToggle>
+                    )}
+                    {option.negates[cindex] && (
+                      <span style={{ margin: '0px 5px' }}>!</span>
+                    )}
+                    <DropdownInput
+                      values={createLabels(conditions, 'condition')}
+                      value={option.conditions[cindex]}
+                      placeholder="If"
+                      setValue={(value: string) => {
+                        option.conditions[cindex] = value;
+                        const found: ConditionProps = conditions.find(
+                          (c) => c.condition === value,
+                        );
+                        option.args[cindex] = Array(
+                          found?.variables.length ?? 0,
+                        ).fill('') as any;
+                        forceUpdate();
+                      }}
+                    />
+                    {condition &&
+                      condition.variables.map((variable, vindex) => {
+                        const setValue = (value: string) => {
+                          option.args[cindex][vindex] = value;
+                          forceUpdate();
+                        };
+                        return (
+                          <VariableEditor
+                            key={`v${vindex}`}
+                            variable={variable}
+                            args={option.args[cindex]}
+                            index={vindex}
+                            setValue={setValue}
+                          />
+                        );
+                      })}
+                    {cond.length > 0 && (
+                      <C.Plus
+                        data-no-drag
+                        title="Add AND condition"
+                        onClick={() => {
+                          const insertAt = cindex + 1;
+                          option.conditions.splice(insertAt, 0, '');
+                          (option.args as string[][]).splice(insertAt, 0, []);
+                          option.ors.splice(insertAt, 0, false);
+                          option.negates.splice(insertAt, 0, false);
+                          forceUpdate();
+                        }}
+                      >
+                        &#x271A;
+                      </C.Plus>
+                    )}
+                    {cond.length > 0 && (
+                      <C.Or
+                        data-no-drag
+                        title="Add OR condition"
+                        onClick={() => {
+                          const insertAt = cindex + 1;
+                          option.conditions.splice(insertAt, 0, '');
+                          (option.args as string[][]).splice(insertAt, 0, []);
+                          option.ors.splice(insertAt, 0, true);
+                          option.negates.splice(insertAt, 0, false);
+                          forceUpdate();
+                        }}
+                      >
+                        &#x2228;
+                      </C.Or>
+                    )}
+                    {hasRealCondition && (
+                      <C.Negate
+                        data-no-drag
+                        title="Negate condition"
+                        onClick={() => {
+                          option.negates[cindex] = !option.negates[cindex];
+                          forceUpdate();
+                        }}
+                      >
+                        !!
+                      </C.Negate>
+                    )}
+                    {hasRealCondition && (
+                      <C.DeleteRow
+                        data-no-drag
+                        title="Remove condition"
+                        onClick={() => {
+                          option.conditions.splice(cindex, 1);
+                          (option.args as string[][]).splice(cindex, 1);
+                          option.ors.splice(cindex, 1);
+                          option.negates.splice(cindex, 1);
+                          if (option.conditions.length === 0) {
+                            option.conditions.push('');
+                            (option.args as string[][]).push([]);
+                            option.ors.push(false);
+                            option.negates.push(false);
+                          }
+                          forceUpdate();
+                        }}
+                      >
+                        &#x268A;
+                      </C.DeleteRow>
+                    )}
+                  </div>
                 );
               })}
-
-            {cond.length > 0 && cindex === option.conditions.length - 1 && (
-              <C.Plus
-                data-no-drag
-                title="Add condition"
-                onClick={(e) => {
-                  option.conditions.push('');
-                  option.args.push([]);
-                  option.ors.push(false);
-                  option.negates.push(false);
-                  forceUpdate();
-                }}
-              >
-                &#x271A;
-              </C.Plus>
-            )}
-            {cond.length > 0 && cindex === option.conditions.length - 1 && (
-              <C.Or
-                data-no-drag
-                title="Or condition"
-                onClick={(e) => {
-                  option.conditions.push('');
-                  option.args.push([]);
-                  option.ors.push(true);
-                  option.negates.push(false);
-                  forceUpdate();
-                }}
-              >
-                &#x2228;
-              </C.Or>
-            )}
-            {option.conditions[0].length > 0 && (
-              <C.Negate
-                data-no-drag
-                title="Negate condition"
-                onClick={() => {
-                  option.negates[cindex] = !option.negates[cindex];
-                  forceUpdate();
-                }}
-              >
-                !!
-              </C.Negate>
-            )}
-            {option.conditions[0].length > 0 && (
-              <C.DeleteRow
-                data-no-drag
-                title="Remove condition"
-                onClick={() => {
-                  option.conditions.splice(cindex, 1);
-                  option.args.splice(cindex, 1);
-                  option.ors.splice(cindex, 1);
-                  option.negates.splice(cindex, 1);
-                  if (option.conditions.length === 0) {
-                    option.conditions.push('');
-                    option.args.push([]);
-                    option.ors.push(false);
-                    option.negates.push(false);
-                  }
-                  forceUpdate();
-                }}
-              >
-                &#x268A;
-              </C.DeleteRow>
-            )}
-          </div>
+            </div>
+          </React.Fragment>
         );
       })}
     </div>

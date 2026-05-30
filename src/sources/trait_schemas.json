@@ -1,0 +1,50 @@
+{
+  "banktrait": {},
+  "betapartyhattrait": {},
+  "capetrait": {
+    "itemStack": {
+      "type": "source",
+      "source": "items"
+    }
+  },
+  "chartershiptrait": {
+    "ship": {
+      "type": "string"
+    }
+  },
+  "cluescrolltrait": {},
+  "cookingguildbanktrait": {},
+  "cowtrait": {},
+  "dailytrait": {},
+  "disabledhitboxtrait": {},
+  "getrait": {},
+  "hunterimplingtrait": {},
+  "hunterrandomwalk": {},
+  "lookclose": {},
+  "mortmyreghast": {},
+  "randomwalk": {},
+  "sheeptrait": {},
+  "shoptrait": {
+    "shopID": {
+      "type": "source",
+      "source": "shops"
+    }
+  },
+  "skillcapetrait": {
+    "type": {
+      "type": "source",
+      "source": "skills"
+    }
+  },
+  "skintrait": {
+    "skin": {
+      "type": "source",
+      "source": "skins"
+    }
+  },
+  "thievingtrait": {
+    "thievingTableID": {
+      "type": "string"
+    }
+  }
+}

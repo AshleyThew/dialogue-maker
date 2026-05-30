@@ -27,7 +27,7 @@ export interface DialogueContextInterface {
   conditions: ConditionProps[];
   actions: ActionProps[];
   switchs: { [key: string]: string[] };
-  sources?: { [key: string]: string[] };
+  sources?: { [key: string]: string[] | { [key: string]: any } };
   app: Application;
   setApp: Function;
   repo: string;
@@ -51,8 +51,7 @@ export interface DialogueContextExtraInterface {
 }
 
 export interface DialogueContextCombined
-  extends DialogueContextInterface,
-    DialogueContextExtraInterface {}
+  extends DialogueContextInterface, DialogueContextExtraInterface {}
 
 export const DialogueContext =
   React.createContext<DialogueContextCombined | null>(null);
@@ -78,7 +77,7 @@ const getCustomConditions = (extra: any): ConditionProps[] => {
 const normalizeDefinitionsByKey = (
   values: any[],
   key: string,
-  allowEmptyKey: boolean
+  allowEmptyKey: boolean,
 ) => {
   return values
     .filter((entry) => entry && typeof entry[key] === 'string')
@@ -114,7 +113,7 @@ export const DialogueContextProvider = (props) => {
     ...quests,
   });
   const [repo, setRepo] = React.useState(
-    localStorage.getItem('minescape.repo') || 'MineScape-me/MineScape/main'
+    localStorage.getItem('minescape.repo') || 'MineScape-me/MineScape/main',
   );
   const [app, setApp] = React.useState<Application>(null);
   const [webSocket, setWebSocket] = React.useState<WebSocket>(null);
@@ -130,23 +129,23 @@ export const DialogueContextProvider = (props) => {
   const [extra, setExtra] = React.useState<DialogueContextCombined>(stored);
   const runtimeActions = React.useMemo(
     () => mergeDefinitionsByKey(actions, getCustomActions(extra), 'action'),
-    [extra]
+    [extra],
   );
   const runtimeConditions = React.useMemo(
     () =>
       mergeDefinitionsByKey(
         conditions,
         getCustomConditions(extra),
-        'condition'
+        'condition',
       ),
-    [extra]
+    [extra],
   );
 
   // Tab management functions
   const addTab = (
     title: string,
     model: any,
-    trees: { [key: string]: any } = {}
+    trees: { [key: string]: any } = {},
   ): string => {
     const id = generateUUID();
     const newTab: DialogueTab = {
@@ -387,7 +386,7 @@ export const DialogueContextProvider = (props) => {
           .split('\n')
           .filter((line) => line !== '')
           .map((file) =>
-            file.replace('dialogue/regions/', '').replace('.json', '')
+            file.replace('dialogue/regions/', '').replace('.json', ''),
           )
           .sort();
         var files = [...new Set([...github])];
