@@ -244,8 +244,7 @@ export const EditableInput = (props: EditableInputProps) => {
       data-no-drag
       style={{
         ...props.style,
-        width: widthCh,
-        maxWidth: widthCh,
+        ...(props.style?.width ? {} : { width: widthCh }),
         textAlign: 'center',
       }}
       onClick={() => !disabled && setFocused(true)}
@@ -310,17 +309,19 @@ export const EditableText = (props: EditableTextProps) => {
   }
 
   return (
-    <S.DisplayTextArea
+    <div
       data-no-drag
-      style={{ ...props.style, width: getWidth(displayValue) }}
+      style={{ cursor: 'text', textAlign: 'center', width: '100%' }}
       onClick={() => setFocused(true)}
     >
-      {displayValue ? (
-        parseMinecraftColors(displayValue)
-      ) : (
-        <span style={{ opacity: 0.4 }}>{props.placeholder}</span>
-      )}
-    </S.DisplayTextArea>
+      <S.DisplayTextArea style={{ ...props.style, width: getWidth(displayValue) }}>
+        {displayValue ? (
+          parseMinecraftColors(displayValue)
+        ) : (
+          <span style={{ opacity: 0.4 }}>{props.placeholder}</span>
+        )}
+      </S.DisplayTextArea>
+    </div>
   );
 };
 

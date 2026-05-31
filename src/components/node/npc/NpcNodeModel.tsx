@@ -11,7 +11,7 @@ export interface TraitConfig {
   args: { [key: string]: string };
 }
 
-export type NpcEntityType = 'ARMOR_STAND' | 'PLAYER';
+export type NpcEntityType = 'ARMOR_STAND' | 'PLAYER' | 'CAT';
 
 export type EquipmentSlot =
   | 'HAND'

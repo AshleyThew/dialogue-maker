@@ -124,6 +124,7 @@ export class NpcNodeWidget extends BaseNodeWidget<NpcNodeProps> {
     const entityTypeOptions = [
       { label: 'PLAYER', value: 'PLAYER' },
       { label: 'ARMOR_STAND', value: 'ARMOR_STAND' },
+      { label: 'CAT', value: 'CAT' },
     ];
     return super.construct(
       <div>
