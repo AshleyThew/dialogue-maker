@@ -121,6 +121,12 @@ export class NpcNodeWidget extends BaseNodeWidget<NpcNodeProps> {
     const locations = node.getOptions().locations;
     const traits = node.getOptions().traits;
     const equipment = node.getOptions().equipment || {};
+    const itemValues = new Set(itemList.map((i: any) => i.value));
+    Object.entries(equipment).forEach(([slot, value]) => {
+      if (value && !itemValues.has(value)) {
+        this.customSlots.add(slot);
+      }
+    });
     const entityTypeOptions = [
       { label: 'PLAYER', value: 'PLAYER' },
       { label: 'ARMOR_STAND', value: 'ARMOR_STAND' },

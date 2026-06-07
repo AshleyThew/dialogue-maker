@@ -557,6 +557,57 @@ export const Tray = (props: {
             }}
           >
             <div style={{ color: '#ffffff', width: '100%' }}>
+              <p style={{ color: '#23f0e5', marginBottom: '4px' }}>Chat Colors:</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '3px', marginBottom: '4px' }}>
+                {[
+                  { code: '§0', hex: '#000000', title: 'Black' },
+                  { code: '§1', hex: '#0000AA', title: 'Dark Blue' },
+                  { code: '§2', hex: '#00AA00', title: 'Dark Green' },
+                  { code: '§3', hex: '#00AAAA', title: 'Dark Aqua' },
+                  { code: '§4', hex: '#AA0000', title: 'Dark Red' },
+                  { code: '§5', hex: '#AA00AA', title: 'Dark Purple' },
+                  { code: '§6', hex: '#FFAA00', title: 'Gold' },
+                  { code: '§7', hex: '#AAAAAA', title: 'Gray' },
+                  { code: '§8', hex: '#555555', title: 'Dark Gray' },
+                  { code: '§9', hex: '#5555FF', title: 'Blue' },
+                  { code: '§a', hex: '#55FF55', title: 'Green' },
+                  { code: '§b', hex: '#55FFFF', title: 'Aqua' },
+                  { code: '§c', hex: '#FF5555', title: 'Red' },
+                  { code: '§d', hex: '#FF55FF', title: 'Light Purple' },
+                  { code: '§e', hex: '#FFFF55', title: 'Yellow' },
+                  { code: '§f', hex: '#FFFFFF', title: 'White' },
+                ].map(({ code, hex, title }) => (
+                  <div
+                    key={code}
+                    title={`${title} — click to copy ${code}`}
+                    onClick={() => navigator.clipboard.writeText(code)}
+                    style={{ background: hex, border: '1px solid #555', borderRadius: '2px', textAlign: 'center', cursor: 'pointer', padding: '2px 0', fontSize: '10px', color: hex === '#000000' ? '#666' : '#000', fontWeight: 'bold', fontFamily: 'monospace' }}
+                  >
+                    {code[1]}
+                  </div>
+                ))}
+              </div>
+              <p style={{ color: '#23f0e5', marginBottom: '4px' }}>Formatting:</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '3px', marginBottom: '6px' }}>
+                {[
+                  { code: '§k', title: 'Obfuscated' },
+                  { code: '§l', title: 'Bold' },
+                  { code: '§m', title: 'Strikethrough' },
+                  { code: '§n', title: 'Underline' },
+                  { code: '§o', title: 'Italic' },
+                  { code: '§r', title: 'Reset' },
+                ].map(({ code, title }) => (
+                  <div
+                    key={code}
+                    title={`${title} — click to copy ${code}`}
+                    onClick={() => navigator.clipboard.writeText(code)}
+                    style={{ background: '#333', border: '1px solid #555', borderRadius: '2px', textAlign: 'center', cursor: 'pointer', padding: '2px 0', fontSize: '10px', color: '#ddd', fontFamily: 'monospace' }}
+                  >
+                    {code}
+                  </div>
+                ))}
+              </div>
+              <p style={{ color: '#777', fontSize: '10px', marginBottom: '6px' }}>Click to copy</p>
               <p style={{ color: '#23f0e5' }}>Shortcuts:</p>
               <p>
                 Duplicate: Ctrl + d
