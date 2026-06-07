@@ -47,6 +47,12 @@
       "source": "skins"
     }
   },
+  "teleportstrait": {
+    "teleport": {
+      "type": "source",
+      "source": "teleports"
+    }
+  },
   "thievingtrait": {
     "thievingTableID": {
       "type": "string"
