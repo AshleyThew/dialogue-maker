@@ -85,7 +85,9 @@ export class NpcNodeModel extends BaseNodeModel<
 
   doClone(lookupTable: {}, clone: any): void {
     super.doClone(lookupTable, clone);
-    clone.options.traits = JSON.parse(JSON.stringify(clone.options.traits));
+    clone.options.locations = JSON.parse(JSON.stringify(clone.options.locations || []));
+    clone.options.traits = JSON.parse(JSON.stringify(clone.options.traits || []));
+    clone.options.equipment = JSON.parse(JSON.stringify(clone.options.equipment || {}));
     const data = JSON.parse(JSON.stringify(clone.options.conditions));
     clone.options.conditions = new Conditions(
       data.conditions,
