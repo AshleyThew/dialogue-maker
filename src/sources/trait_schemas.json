@@ -19,7 +19,12 @@
   "disabledhitboxtrait": {},
   "getrait": {},
   "hunterimplingtrait": {},
-  "hunterrandomwalk": {},
+  "hunterrandomwalk": {
+    "trapType": {
+      "type": "source",
+      "source": "hunter_trap_types"
+    }
+  },
   "lookclose": {},
   "mortmyreghast": {},
   "randomwalk": {},
