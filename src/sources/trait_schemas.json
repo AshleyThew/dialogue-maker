@@ -48,6 +48,12 @@
       "source": "skins"
     }
   },
+  "spirittreetrait": {
+    "treeLocation": {
+      "type": "source",
+      "source": "spirit_tree_locations"
+    }
+  },
   "teleportstrait": {
     "teleport": {
       "type": "source",
