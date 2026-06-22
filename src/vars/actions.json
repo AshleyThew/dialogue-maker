@@ -153,6 +153,16 @@
     ]
   },
   {
+    "action": "setSlayerMasterProfile",
+    "variables": [
+      {
+        "source": "slayer_masters",
+        "type": "list",
+        "placeholder": "slayerMaster"
+      }
+    ]
+  },
+  {
     "action": "takeDamage",
     "variables": [
       { "type": "number", "placeholder": "from" },

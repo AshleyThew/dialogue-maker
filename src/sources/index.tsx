@@ -23,6 +23,7 @@ export { default as skins } from './skins.json';
 export { default as directions } from './directions.json';
 export { default as hunter_trap_types } from './hunter_trap_types.json';
 export { default as spirit_tree_locations } from './spirit_tree_locations.json';
+export { default as slayer_masters } from './slayer_masters.json';
 
 export { default as trait_schemas } from './trait_schemas.json';
 export const dialogues = [];
