@@ -168,5 +168,11 @@
       { "type": "number", "placeholder": "from" },
       { "type": "number", "placeholder": "to" }
     ]
+  },
+  {
+    "action": "canoe",
+    "variables": [
+      { "source": "canoe_stations", "type": "list", "placeholder": "station" }
+    ]
   }
 ]
