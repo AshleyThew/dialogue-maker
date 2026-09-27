@@ -336,12 +336,32 @@ export const DropdownInput = React.forwardRef(
       width?: string;
       right?: number;
       creatable?: boolean;
+      fitMenu?: boolean;
     },
     ref: React.Ref<any>,
   ) => {
+    // The virtualized menu list can't size itself to its options, so widen the
+    // menu to the longest label (capped to the viewport) when asked.
+    const longestLabel = React.useMemo(
+      () =>
+        props.fitMenu
+          ? props.values.reduce(
+              (max, option) => Math.max(max, String(option?.label ?? '').length),
+              0,
+            )
+          : 0,
+      [props.fitMenu, props.values],
+    );
+    const menuWidth = props.fitMenu
+      ? `min(max(${props.width || '100%'}, ${longestLabel + 3}ch), 90vw)`
+      : props.width || '100%';
+
     const style = {
       container: (_provided, state) => ({
         display: 'inline-block',
+        // Anchor `right` to this dropdown rather than the page.
+        position:
+          props.right !== undefined ? ('relative' as const) : undefined,
         flexGrow: '0!important',
         minWidth: state.selectProps.minWidth,
       }),
@@ -352,7 +372,7 @@ export const DropdownInput = React.forwardRef(
         margin: '0 0',
         top: '',
         right: props.right,
-        width: props.width || '100%',
+        width: menuWidth,
         fontSize: '11px',
       }),
       indicatorSeparator: () => ({ display: 'none' }),
@@ -370,6 +390,11 @@ export const DropdownInput = React.forwardRef(
         ...provided,
         padding: '2px 0px',
         minHeight: '16px',
+        ...(props.fitMenu && {
+          whiteSpace: 'nowrap' as const,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }),
       }),
     };
 

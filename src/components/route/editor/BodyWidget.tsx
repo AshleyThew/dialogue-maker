@@ -25,6 +25,7 @@ import { Editor } from './Editor';
 import { createLabels } from '../../../utils/Utils';
 import { parse } from 'secure-json-parse';
 import { TabsBar } from './TabsBar';
+import { SkinSidebar } from './SkinSidebar';
 
 namespace S {
   export const Body = styled.div`
@@ -484,6 +485,7 @@ const Buttons = (props): JSX.Element => {
   const [localFolderName, setLocalFolderName] = React.useState('');
   const [localFiles, setLocalFiles] = React.useState<string[]>([]);
   const [localSelection, setLocalSelection] = React.useState('');
+  const [localFolderPath, setLocalFolderPath] = React.useState<string[]>([]);
   const [localFileHandles, setLocalFileHandles] = React.useState<
     Record<string, FileSystemFileHandle>
   >({});
@@ -514,6 +516,63 @@ const Buttons = (props): JSX.Element => {
     },
     [],
   );
+
+  // One dropdown per folder depth, each listing the subfolders of the folder
+  // chosen before it. Segments that no longer exist (e.g. after a refresh) are
+  // dropped so the filter never points at a missing folder.
+  const localFolderLevels = React.useMemo(() => {
+    const levels: { options: string[]; selected: string }[] = [];
+    let prefix = '';
+
+    for (let depth = 0; depth <= localFolderPath.length; depth++) {
+      const subfolders = new Set<string>();
+      localFiles.forEach((path) => {
+        if (!path.startsWith(prefix)) {
+          return;
+        }
+        const rest = path.slice(prefix.length).split('/');
+        if (rest.length > 1) {
+          subfolders.add(rest[0]);
+        }
+      });
+
+      if (subfolders.size === 0) {
+        break;
+      }
+
+      const selected = localFolderPath[depth];
+      const valid = selected !== undefined && subfolders.has(selected);
+      levels.push({
+        options: Array.from(subfolders).sort((a, b) => a.localeCompare(b)),
+        selected: valid ? selected : '',
+      });
+
+      if (!valid) {
+        break;
+      }
+      prefix += `${selected}/`;
+    }
+
+    return { levels, prefix };
+  }, [localFiles, localFolderPath]);
+
+  const filteredLocalFiles = React.useMemo(
+    () =>
+      localFiles
+        .filter((path) => path.startsWith(localFolderLevels.prefix))
+        .map((path) => ({
+          label: path.slice(localFolderLevels.prefix.length),
+          value: path,
+        })),
+    [localFiles, localFolderLevels.prefix],
+  );
+
+  const selectLocalSubfolder = (depth: number, folder: string) => {
+    setLocalFolderPath((current) => {
+      const next = current.slice(0, depth);
+      return folder ? [...next, folder] : next;
+    });
+  };
 
   React.useEffect(() => {
     const liveIds = new Set(context.tabs.map((tab) => tab.id));
@@ -642,6 +701,7 @@ const Buttons = (props): JSX.Element => {
       setLocalFolderName(folderHandle.name || 'Selected Folder');
       await refreshLocalFolderFiles(folderHandle);
       setLocalSelection('');
+      setLocalFolderPath([]);
     } catch (error) {
       return;
     }
@@ -788,6 +848,7 @@ const Buttons = (props): JSX.Element => {
         placeholder={`Github (${context.sources.dialogues?.length})`}
         width={'200px'}
         right={0}
+        fitMenu
       />
       <S.DemoButton onClick={changeGithub} disabled={isSaving}>
         Change
@@ -801,16 +862,32 @@ const Buttons = (props): JSX.Element => {
       </S.DemoButton>
       {localFolder && (
         <>
+          {localFolderLevels.levels.map((level, depth) => (
+            <DropdownInput
+              key={depth}
+              values={[
+                { label: '(all)', value: '' },
+                ...createLabels(level.options),
+              ]}
+              value={level.selected}
+              setValue={(e) => selectLocalSubfolder(depth, e)}
+              placeholder={depth === 0 ? 'All folders' : 'All'}
+              width={'200px'}
+              right={0}
+              fitMenu
+            />
+          ))}
           <DropdownInput
             ref={localInputRef}
-            values={createLabels(localFiles)}
+            values={filteredLocalFiles}
             value={localSelection}
             setValue={(e) => {
               loadLocalFile(e);
             }}
-            placeholder={`Local (${localFiles.length})`}
+            placeholder={`Local (${filteredLocalFiles.length})`}
             width={'200px'}
             right={0}
+            fitMenu
           />
         </>
       )}
@@ -986,6 +1063,7 @@ export class BodyWidget extends React.Component {
               <CanvasWidget engine={this.state.app.getDiagramEngine()} />
             </DialogueSidebar>
           </S.Layer>
+          <SkinSidebar />
         </S.Content>
       </S.Body>
     );

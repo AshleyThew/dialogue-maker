@@ -3,6 +3,7 @@ import { Application } from '../Application';
 import { ActionProps } from './editor/Action';
 import { ConditionProps } from './editor/Condition';
 import * as Sources from '../sources/';
+import { fetchRemoteSource, remoteSources } from '../sources/remote';
 import * as vars from '../vars';
 import { parse } from 'secure-json-parse';
 
@@ -377,6 +378,25 @@ export const DialogueContextProvider = (props) => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [extra, sources, Object.keys(sources).length]);
+
+  React.useEffect(() => {
+    Object.entries(remoteSources).forEach(([key, source]) => {
+      fetchRemoteSource(source)
+        .then((value) => {
+          setSources((sources) => ({ ...sources, [key]: value }));
+          setDefault((def: any) => {
+            def.sources[key] = value;
+            return def;
+          });
+        })
+        .catch((e) => {
+          console.warn(
+            `Remote source "${key}" failed to load, using bundled copy:`,
+            e,
+          );
+        });
+    });
+  }, []);
 
   React.useEffect(() => {
     fetch(`https://raw.githubusercontent.com/${repo}/dialogue/paths.txt`)

@@ -15,6 +15,7 @@ import {
 import { createLabels, validateLocationFormat } from '../../../utils/Utils';
 import { ConditionBlock } from '../../editor/Condition';
 import styled from '@emotion/styled';
+import { DialogueContext } from '../../DialogueContext';
 
 export interface NpcNodeProps extends BaseNodeProps<NpcNodeModel> {}
 
@@ -56,6 +57,8 @@ const TraitItem: React.FC<{
   onRemove: () => void;
 }> = ({ config, onChange, onRemove }) => {
   const schema = (sources.trait_schemas as any)[config.trait] || {};
+  // Context sources include ones fetched from URLs at startup (e.g. skins).
+  const liveSources = React.useContext(DialogueContext)?.sources;
   return (
     <div style={{ marginBottom: 4 }}>
       <div
@@ -83,7 +86,11 @@ const TraitItem: React.FC<{
           <div key={field} style={{ flex: 1 }}>
             {def.type === 'source' ? (
               <DropdownInput
-                values={createLabels((sources as any)[def.source] || [])}
+                values={createLabels(
+                  liveSources?.[def.source] ||
+                    (sources as any)[def.source] ||
+                    [],
+                )}
                 value={config.args[field] || ''}
                 setValue={(v) => {
                   config.args[field] = v;
