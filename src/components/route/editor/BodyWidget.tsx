@@ -525,12 +525,13 @@ const Buttons = (props): JSX.Element => {
     let prefix = '';
 
     for (let depth = 0; depth <= localFolderPath.length; depth++) {
+      const levelPrefix = prefix;
       const subfolders = new Set<string>();
       localFiles.forEach((path) => {
-        if (!path.startsWith(prefix)) {
+        if (!path.startsWith(levelPrefix)) {
           return;
         }
-        const rest = path.slice(prefix.length).split('/');
+        const rest = path.slice(levelPrefix.length).split('/');
         if (rest.length > 1) {
           subfolders.add(rest[0]);
         }
